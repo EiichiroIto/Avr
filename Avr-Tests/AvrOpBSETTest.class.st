@@ -1,0 +1,30 @@
+"
+An AvrOpBCLRTest is a test class for testing the behavior of AvrOpBCLR
+"
+Class {
+	#name : 'AvrOpBSETTest',
+	#superclass : 'TestCase',
+	#traits : 'TAvrOneRegisterOpTest',
+	#classTraits : 'TAvrOneRegisterOpTest classTrait',
+	#category : 'Avr-Tests-Core',
+	#package : 'Avr-Tests',
+	#tag : 'Core'
+}
+
+{ #category : 'instance creation' }
+AvrOpBSETTest >> newOp [
+
+	^ AvrOpBSET new
+]
+
+{ #category : 'tests' }
+AvrOpBSETTest >> testMnemonic [
+
+	self assert: self newOp mnemonic equals: #BSET
+]
+
+{ #category : 'tests' }
+AvrOpBSETTest >> testOpcode [
+
+	self assert: self newOp opcode equals: 16r9408
+]
