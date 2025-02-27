@@ -4,9 +4,9 @@ Class {
 	#instVars : [
 		'output'
 	],
-	#category : 'Avr-CodeGenerator',
+	#category : 'Avr-Utils',
 	#package : 'Avr',
-	#tag : 'CodeGenerator'
+	#tag : 'Utils'
 }
 
 { #category : 'accessing' }

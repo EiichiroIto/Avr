@@ -5,9 +5,9 @@ Class {
 		'address',
 		'op'
 	],
-	#category : 'Avr-Arduino',
+	#category : 'Avr-Assembly',
 	#package : 'Avr',
-	#tag : 'Arduino'
+	#tag : 'Assembly'
 }
 
 { #category : 'accessing' }

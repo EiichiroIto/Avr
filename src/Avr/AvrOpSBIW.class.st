@@ -3,9 +3,9 @@ Class {
 	#superclass : 'AvrRegisterWithImmediate',
 	#traits : 'TAvrRegisterAndImmediateOp2',
 	#classTraits : 'TAvrRegisterAndImmediateOp2 classTrait',
-	#category : 'Avr-Core',
+	#category : 'Avr-Instructions',
 	#package : 'Avr',
-	#tag : 'Core'
+	#tag : 'Instructions'
 }
 
 { #category : 'accessing' }

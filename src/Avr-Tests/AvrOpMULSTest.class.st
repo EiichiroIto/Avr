@@ -6,9 +6,9 @@ Class {
 	#superclass : 'TestCase',
 	#traits : 'TAvrTwoRegistersOp3Test',
 	#classTraits : 'TAvrTwoRegistersOp3Test classTrait',
-	#category : 'Avr-Tests-Core',
+	#category : 'Avr-Tests-Instructions',
 	#package : 'Avr-Tests',
-	#tag : 'Core'
+	#tag : 'Instructions'
 }
 
 { #category : 'instance creation' }

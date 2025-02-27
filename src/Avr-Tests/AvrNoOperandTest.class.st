@@ -4,9 +4,9 @@ An AvrNoOperandTest is a test class for testing the behavior of AvrNoOperand
 Class {
 	#name : 'AvrNoOperandTest',
 	#superclass : 'TestCase',
-	#category : 'Avr-Tests-Core',
+	#category : 'Avr-Tests-Instructions',
 	#package : 'Avr-Tests',
-	#tag : 'Core'
+	#tag : 'Instructions'
 }
 
 { #category : 'instance creation' }

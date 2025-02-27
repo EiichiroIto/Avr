@@ -4,9 +4,9 @@ An AvrOneRegisterTest is a test class for testing the behavior of AvrOneRegister
 Class {
 	#name : 'AvrOneRegisterTest',
 	#superclass : 'TestCase',
-	#category : 'Avr-Tests-Core',
+	#category : 'Avr-Tests-Instructions',
 	#package : 'Avr-Tests',
-	#tag : 'Core'
+	#tag : 'Instructions'
 }
 
 { #category : 'instance creation' }

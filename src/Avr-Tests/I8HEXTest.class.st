@@ -16,6 +16,42 @@ I8HEXTest >> newObj [
 ]
 
 { #category : 'tests' }
+I8HEXTest >> testBinary [
+
+	| obj a |
+	obj := self newObj.
+	self assert: (obj binary isKindOf: ByteArray).
+	a := #[ 1 2 3 ].
+	obj binary: a.
+	self assert: obj binary identicalTo: a
+]
+
+{ #category : 'tests' }
+I8HEXTest >> testBinarySize [
+
+	| obj |
+	obj := self newObj.
+	self assert: obj binarySize equals: 0.
+	obj binarySize: 123.
+	self assert: obj binarySize equals: 123
+]
+
+{ #category : 'tests' }
+I8HEXTest >> testDefaultSize [
+
+	self assert: self newObj defaultSize isInteger
+]
+
+{ #category : 'tests' }
+I8HEXTest >> testInitialize [
+
+	| obj |
+	obj := self newObj.
+	self assert: (obj binary isKindOf: ByteArray).
+	self assert: obj binarySize isInteger
+]
+
+{ #category : 'tests' }
 I8HEXTest >> testNewSizeFor [
 
 	| obj |
@@ -77,4 +113,11 @@ I8HEXTest >> testReadString [
 		should: [
 		obj readString: ':100000000C945C000C946E000C946E000C946E00CA0' ]
 		raise: Error
+]
+
+{ #category : 'tests' }
+I8HEXTest >> testWriteSize [
+
+	self assert: self newObj writeSize isInteger.
+	self assert: self newObj writeSize > 0
 ]

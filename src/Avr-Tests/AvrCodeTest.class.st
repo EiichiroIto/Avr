@@ -4,9 +4,9 @@ An AvrCodeTest is a test class for testing the behavior of AvrCode
 Class {
 	#name : 'AvrCodeTest',
 	#superclass : 'TestCase',
-	#category : 'Avr-Tests-Arduino',
+	#category : 'Avr-Tests-Assembly',
 	#package : 'Avr-Tests',
-	#tag : 'Arduino'
+	#tag : 'Assembly'
 }
 
 { #category : 'instance creation' }

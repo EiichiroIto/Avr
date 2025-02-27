@@ -1,8 +1,8 @@
 Trait {
 	#name : 'TAvrAbsoluteOp',
-	#category : 'Avr-Core',
+	#category : 'Avr-Instructions',
 	#package : 'Avr',
-	#tag : 'Core'
+	#tag : 'Instructions'
 }
 
 { #category : 'accessing' }

@@ -1,9 +1,9 @@
 Class {
 	#name : 'AvrOpCBI',
 	#superclass : 'AvrInputOutput',
-	#category : 'Avr-Core',
+	#category : 'Avr-Instructions',
 	#package : 'Avr',
-	#tag : 'Core'
+	#tag : 'Instructions'
 }
 
 { #category : 'accessing' }

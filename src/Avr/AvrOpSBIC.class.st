@@ -3,9 +3,9 @@ Class {
 	#superclass : 'AvrRegisterWithImmediate',
 	#traits : 'TAvrIORegAndBitOp',
 	#classTraits : 'TAvrIORegAndBitOp classTrait',
-	#category : 'Avr-Core',
+	#category : 'Avr-Instructions',
 	#package : 'Avr',
-	#tag : 'Core'
+	#tag : 'Instructions'
 }
 
 { #category : 'accessing' }

@@ -6,9 +6,9 @@ Class {
 		'address',
 		'labels'
 	],
-	#category : 'Avr-Arduino',
+	#category : 'Avr-Assembly',
 	#package : 'Avr',
-	#tag : 'Arduino'
+	#tag : 'Assembly'
 }
 
 { #category : 'adding' }

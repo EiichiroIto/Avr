@@ -2,7 +2,6 @@ Class {
 	#name : 'I8HEX',
 	#superclass : 'Object',
 	#instVars : [
-		'baseAddress',
 		'binary',
 		'binarySize'
 	],
@@ -15,18 +14,6 @@ Class {
 I8HEX class >> fromFileNamed: aString [
 
 	^ self new readFrom: aString asFileReference readStream
-]
-
-{ #category : 'accessing' }
-I8HEX >> baseAddress [
-
-	^ baseAddress
-]
-
-{ #category : 'accessing' }
-I8HEX >> baseAddress: anObject [
-
-	baseAddress := anObject
 ]
 
 { #category : 'accessing' }
@@ -62,7 +49,6 @@ I8HEX >> defaultSize [
 { #category : 'initialization' }
 I8HEX >> initialize [
 
-	baseAddress := 0.
 	binary := ByteArray new: self defaultSize.
 	binarySize := 0
 ]
@@ -85,7 +71,7 @@ I8HEX >> put: anArray address: anInteger [
 	binarySize := binarySize max: anInteger + anArray size
 ]
 
-{ #category : 'instance creation' }
+{ #category : 'reading' }
 I8HEX >> readFrom: aStream [
 
 	| line arr |

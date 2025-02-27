@@ -3,9 +3,9 @@ Class {
 	#superclass : 'AvrOneRegister',
 	#traits : 'TAvrRegisterOp1',
 	#classTraits : 'TAvrRegisterOp1 classTrait',
-	#category : 'Avr-Core',
+	#category : 'Avr-Instructions',
 	#package : 'Avr',
-	#tag : 'Core'
+	#tag : 'Instructions'
 }
 
 { #category : 'accessing' }
