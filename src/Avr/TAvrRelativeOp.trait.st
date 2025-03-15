@@ -12,6 +12,12 @@ TAvrRelativeOp >> category [
 ]
 
 { #category : 'accessing' }
+TAvrRelativeOp >> fromWord: anInteger [
+
+	self immediate: (anInteger expandSignWith: 16r0FFF)
+]
+
+{ #category : 'accessing' }
 TAvrRelativeOp >> immediateRange [
 
 	^ -2048 to: 2047

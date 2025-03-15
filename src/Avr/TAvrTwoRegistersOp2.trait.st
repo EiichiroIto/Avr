@@ -12,6 +12,13 @@ TAvrTwoRegistersOp2 >> destRange [
 ]
 
 { #category : 'accessing' }
+TAvrTwoRegistersOp2 >> fromWord: anInteger [
+
+	self source: (anInteger bitAnd: 2r1111) * 2.
+	self dest: (anInteger >> 4 bitAnd: 2r1111) * 2
+]
+
+{ #category : 'accessing' }
 TAvrTwoRegistersOp2 >> opcodeMask [
 
 	^ 16rFF00

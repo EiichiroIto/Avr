@@ -12,6 +12,12 @@ TAvrBranchOp >> category [
 ]
 
 { #category : 'accessing' }
+TAvrBranchOp >> fromWord: anInteger [
+
+	self immediate: (anInteger >> 3 expandSignWith: 16r7F)
+]
+
+{ #category : 'accessing' }
 TAvrBranchOp >> immediateRange [
 
 	^ -64 to: 63

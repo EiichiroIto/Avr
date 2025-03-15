@@ -12,6 +12,12 @@ AvrNoOperand >> arguments [
 	^ Array new
 ]
 
+{ #category : 'accessing' }
+AvrNoOperand >> fromWord: anInteger [
+
+	self
+]
+
 { #category : 'testing' }
 AvrNoOperand >> isValid [
 

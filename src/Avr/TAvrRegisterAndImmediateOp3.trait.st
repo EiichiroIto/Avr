@@ -6,9 +6,28 @@ Trait {
 }
 
 { #category : 'accessing' }
+TAvrRegisterAndImmediateOp3 >> codeSize [
+
+	^ 4
+]
+
+{ #category : 'accessing' }
 TAvrRegisterAndImmediateOp3 >> extendedCode [
 
 	^ self immediate bitAnd: 16rFFFF
+]
+
+{ #category : 'accessing' }
+TAvrRegisterAndImmediateOp3 >> fromWord: anInteger [
+
+	self error
+]
+
+{ #category : 'accessing' }
+TAvrRegisterAndImmediateOp3 >> fromWord: anInteger withExtended: anInteger2 [
+
+	self register: (anInteger >> 4 bitAnd: 2r11111).
+	self immediate: (anInteger2 bitAnd: 16rFFFF)
 ]
 
 { #category : 'accessing' }

@@ -103,6 +103,17 @@ AvrProgram >> newItem [
 ]
 
 { #category : 'printing' }
+AvrProgram >> print [
+
+	| stream |
+	stream := String new writeStream.
+	codes do: [ :each |
+		each printOn: stream.
+		stream nextPut: Character cr ].
+	^ stream contents
+]
+
+{ #category : 'printing' }
 AvrProgram >> printMethodString [
 
 	| stream |

@@ -32,7 +32,7 @@ AvrOpIN >> opcode [
 	^ 16rB000
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'accessing' }
 AvrOpIN >> selector [
 
 	^ #inR:address:

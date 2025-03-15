@@ -1,54 +1,42 @@
 Trait {
-	#name : 'TAvrImmediateOpTest',
+	#name : 'TAvrRegisterOp2Test',
 	#category : 'Avr-Tests-Instructions',
 	#package : 'Avr-Tests',
 	#tag : 'Instructions'
 }
 
 { #category : 'tests' }
-TAvrImmediateOpTest >> testCategory [
+TAvrRegisterOp2Test >> testCategory [
 
 	self assert: self newOp category isSymbol
 ]
 
 { #category : 'tests' }
-TAvrImmediateOpTest >> testDescription [
+TAvrRegisterOp2Test >> testDescription [
 
 	self assert: self newOp description isString
 ]
 
 { #category : 'tests' }
-TAvrImmediateOpTest >> testFromWord [
+TAvrRegisterOp2Test >> testFromWord [
 
 	| op word |
 	op := self newOp.
-	op immediate: 0.
+	op register: 0.
 	word := op operand.
 	op := self newOp.
 	op fromWord: word.
-	self assert: op immediate equals: 0.
+	self assert: op register equals: 0.
 	op := self newOp.
-	op immediate: -2000.
+	op register: 7.
 	word := op operand.
 	op := self newOp.
 	op fromWord: word.
-	self assert: op immediate equals: -2000.
-	op := self newOp.
-	op immediate: 2000.
-	word := op operand.
-	op := self newOp.
-	op fromWord: word.
-	self assert: op immediate equals: 2000
+	self assert: op register equals: 7
 ]
 
 { #category : 'tests' }
-TAvrImmediateOpTest >> testImmediateRange [
-
-	self assert: self newOp immediateRange isCollection
-]
-
-{ #category : 'tests' }
-TAvrImmediateOpTest >> testOpcodeMask [
+TAvrRegisterOp2Test >> testOpcodeMask [
 
 	| op mask |
 	op := self newOp.
@@ -57,7 +45,23 @@ TAvrImmediateOpTest >> testOpcodeMask [
 ]
 
 { #category : 'tests' }
-TAvrImmediateOpTest >> testSelector [
+TAvrRegisterOp2Test >> testOperand [
+
+	| obj |
+	obj := self newOp.
+	obj registerRange do: [ :each |
+		obj register: each.
+		self assert: obj operand equals: each << 4 ]
+]
+
+{ #category : 'tests' }
+TAvrRegisterOp2Test >> testRegisterRange [
+
+	self assert: self newOp registerRange isCollection
+]
+
+{ #category : 'tests' }
+TAvrRegisterOp2Test >> testSelector [
 
 	self assert: self newOp selector isSymbol
 ]

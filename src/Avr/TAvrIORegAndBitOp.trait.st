@@ -12,6 +12,13 @@ TAvrIORegAndBitOp >> category [
 ]
 
 { #category : 'accessing' }
+TAvrIORegAndBitOp >> fromWord: anInteger [
+
+	self register: (anInteger >> 3 bitAnd: 2r11111).
+	self immediate: (anInteger bitAnd: 2r111)
+]
+
+{ #category : 'accessing' }
 TAvrIORegAndBitOp >> immediateRange [
 
 	^ 0 to: 7
@@ -33,10 +40,10 @@ TAvrIORegAndBitOp >> operand [
 { #category : 'accessing' }
 TAvrIORegAndBitOp >> operandText [
 
-	^ (self immediate
+	^ (self register
 		   ifNil: [ 'nil' ]
 		   ifNotNil: [ :r | '0x' , r printStringHex ]) , ', '
-	  , (self printDecImmediate: self register)
+	  , (self printDecImmediate: self immediate)
 ]
 
 { #category : 'accessing' }

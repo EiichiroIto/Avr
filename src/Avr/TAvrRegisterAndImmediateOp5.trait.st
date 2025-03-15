@@ -12,6 +12,13 @@ TAvrRegisterAndImmediateOp5 >> category [
 ]
 
 { #category : 'accessing' }
+TAvrRegisterAndImmediateOp5 >> fromWord: anInteger [
+
+	self register: (anInteger bitAnd: 2r111).
+	self immediate: (anInteger >> 3 expandSignWith: 2r1111111)
+]
+
+{ #category : 'accessing' }
 TAvrRegisterAndImmediateOp5 >> immediateRange [
 
 	^ -64 to: 63

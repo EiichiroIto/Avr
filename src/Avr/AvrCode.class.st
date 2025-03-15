@@ -62,7 +62,7 @@ AvrCode >> printOpOn: aStream [
 	aStream
 		nextPutAll: op mnemonic asLowercase;
 		nextPut: Character tab;
-		nextPutAll: op operandText asLowercase
+		nextPutAll: op operandText
 ]
 
 { #category : 'printing' }

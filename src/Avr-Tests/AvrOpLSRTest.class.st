@@ -4,8 +4,8 @@ An AvrOpCOMTest is a test class for testing the behavior of AvrOpCOM
 Class {
 	#name : 'AvrOpLSRTest',
 	#superclass : 'TestCase',
-	#traits : 'TAvrOneRegisterOpTest',
-	#classTraits : 'TAvrOneRegisterOpTest classTrait',
+	#traits : 'TAvrRegisterOp1Test',
+	#classTraits : 'TAvrRegisterOp1Test classTrait',
 	#category : 'Avr-Tests-Instructions',
 	#package : 'Avr-Tests',
 	#tag : 'Instructions'

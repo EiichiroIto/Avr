@@ -32,7 +32,7 @@ AvrOpLDS >> opcode [
 	^ 16r9000
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'accessing' }
 AvrOpLDS >> selector [
 
 	^ #ldsR:address:

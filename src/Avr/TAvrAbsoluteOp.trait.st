@@ -12,9 +12,29 @@ TAvrAbsoluteOp >> category [
 ]
 
 { #category : 'accessing' }
+TAvrAbsoluteOp >> codeSize [
+
+	^ 4
+]
+
+{ #category : 'accessing' }
 TAvrAbsoluteOp >> extendedCode [
 
 	^ self immediate bitAnd: 16rFFFF
+]
+
+{ #category : 'accessing' }
+TAvrAbsoluteOp >> fromWord: anInteger [
+
+	self error
+]
+
+{ #category : 'accessing' }
+TAvrAbsoluteOp >> fromWord: anInteger withExtended: anInteger2 [
+
+	self immediate:
+		(((anInteger bitAnd: 16r01) bitOr: (anInteger >> 3 bitAnd: 16r3E))
+		 << 16 bitOr: (anInteger2 bitAnd: 16rFFFF))
 ]
 
 { #category : 'accessing' }

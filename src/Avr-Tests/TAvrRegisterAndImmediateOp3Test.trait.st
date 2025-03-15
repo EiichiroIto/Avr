@@ -12,6 +12,12 @@ TAvrRegisterAndImmediateOp3Test >> testCategory [
 ]
 
 { #category : 'tests' }
+TAvrRegisterAndImmediateOp3Test >> testCodeSize [
+
+	self assert: self newOp codeSize equals: 4
+]
+
+{ #category : 'tests' }
 TAvrRegisterAndImmediateOp3Test >> testDescription [
 
 	self assert: self newOp description isString
@@ -24,6 +30,36 @@ TAvrRegisterAndImmediateOp3Test >> testExtendedCode [
 	obj := self newOp.
 	obj immediate: 16r123456.
 	self assert: obj extendedCode equals: 16r3456
+]
+
+{ #category : 'tests' }
+TAvrRegisterAndImmediateOp3Test >> testFromWord [
+
+	self should: [ self newOp fromWord: 0 ] raise: Error
+]
+
+{ #category : 'tests' }
+TAvrRegisterAndImmediateOp3Test >> testFromWordWithExtended [
+
+	| op word1 word2 |
+	op := self newOp.
+	op register: 0.
+	op immediate: 16r1234.
+	word1 := op operand.
+	word2 := op extendedCode.
+	op := self newOp.
+	op fromWord: word1 withExtended: word2.
+	self assert: op register equals: 0.
+	self assert: op immediate equals: 16r1234.
+	op := self newOp.
+	op register: 31.
+	op immediate: 16rFEDC.
+	word1 := op operand.
+	word2 := op extendedCode.
+	op := self newOp.
+	op fromWord: word1 withExtended: word2.
+	self assert: op register equals: 31.
+	self assert: op immediate equals: 16rFEDC
 ]
 
 { #category : 'tests' }

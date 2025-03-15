@@ -6,6 +6,12 @@ Trait {
 }
 
 { #category : 'accessing' }
+TAvrRegisterOp1 >> fromWord: anInteger [
+
+	self register: (anInteger >> 4 bitAnd: 2r11111)
+]
+
+{ #category : 'accessing' }
 TAvrRegisterOp1 >> opcodeMask [
 
 	^ 16rFE0F

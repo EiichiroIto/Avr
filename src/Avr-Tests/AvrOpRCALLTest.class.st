@@ -4,8 +4,8 @@ An AvrOpRCALLTest is a test class for testing the behavior of AvrOpRCALL
 Class {
 	#name : 'AvrOpRCALLTest',
 	#superclass : 'TestCase',
-	#traits : 'TAvrImmediateOpTest',
-	#classTraits : 'TAvrImmediateOpTest classTrait',
+	#traits : 'TAvrRelativeOpTest',
+	#classTraits : 'TAvrRelativeOpTest classTrait',
 	#category : 'Avr-Tests-Instructions',
 	#package : 'Avr-Tests',
 	#tag : 'Instructions'

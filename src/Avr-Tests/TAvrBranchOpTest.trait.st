@@ -1,24 +1,24 @@
 Trait {
-	#name : 'TAvrRelativeOpTest',
+	#name : 'TAvrBranchOpTest',
 	#category : 'Avr-Tests-Instructions',
 	#package : 'Avr-Tests',
 	#tag : 'Instructions'
 }
 
 { #category : 'tests' }
-TAvrRelativeOpTest >> testCategory [
+TAvrBranchOpTest >> testCategory [
 
 	self assert: self newOp category isSymbol
 ]
 
 { #category : 'tests' }
-TAvrRelativeOpTest >> testDescription [
+TAvrBranchOpTest >> testDescription [
 
 	self assert: self newOp description isString
 ]
 
 { #category : 'tests' }
-TAvrRelativeOpTest >> testFromWord [
+TAvrBranchOpTest >> testFromWord [
 
 	| op word |
 	op := self newOp.
@@ -42,19 +42,19 @@ TAvrRelativeOpTest >> testFromWord [
 ]
 
 { #category : 'tests' }
-TAvrRelativeOpTest >> testImmediateRange [
+TAvrBranchOpTest >> testImmediateRange [
 
 	self assert: self newOp immediateRange isCollection
 ]
 
 { #category : 'tests' }
-TAvrRelativeOpTest >> testIsRelative [
+TAvrBranchOpTest >> testIsRelative [
 
 	self assert: self newOp isRelative
 ]
 
 { #category : 'tests' }
-TAvrRelativeOpTest >> testOpcodeMask [
+TAvrBranchOpTest >> testOpcodeMask [
 
 	| op mask |
 	op := self newOp.
@@ -63,7 +63,7 @@ TAvrRelativeOpTest >> testOpcodeMask [
 ]
 
 { #category : 'tests' }
-TAvrRelativeOpTest >> testOperand [
+TAvrBranchOpTest >> testOperand [
 
 	| op |
 	op := self newOp.
@@ -74,7 +74,7 @@ TAvrRelativeOpTest >> testOperand [
 ]
 
 { #category : 'tests' }
-TAvrRelativeOpTest >> testOperandText [
+TAvrBranchOpTest >> testOperandText [
 
 	| op |
 	op := self newOp.
@@ -86,7 +86,7 @@ TAvrRelativeOpTest >> testOperandText [
 ]
 
 { #category : 'tests' }
-TAvrRelativeOpTest >> testSelector [
+TAvrBranchOpTest >> testSelector [
 
 	self assert: self newOp selector isSymbol
 ]

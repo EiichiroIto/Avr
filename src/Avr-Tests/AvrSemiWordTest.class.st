@@ -18,6 +18,19 @@ AvrSemiWordTest >> newOp [
 ]
 
 { #category : 'tests' }
+AvrSemiWordTest >> testFromWord [
+
+	| op |
+	op := self newOp.
+	op immediate: 0.
+	op fromWord: op operand.
+	self assert: op immediate equals: 0.
+	op immediate: 65535.
+	op fromWord: op operand.
+	self assert: op immediate equals: 65535
+]
+
+{ #category : 'tests' }
 AvrSemiWordTest >> testMnemonic [
 
 	self assert: self newOp mnemonic equals: #'.WORD'

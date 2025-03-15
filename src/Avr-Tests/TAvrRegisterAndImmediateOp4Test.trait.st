@@ -18,6 +18,36 @@ TAvrRegisterAndImmediateOp4Test >> testDescription [
 ]
 
 { #category : 'tests' }
+TAvrRegisterAndImmediateOp4Test >> testFromWord [
+
+	| op word |
+	op := self newOp.
+	op register: 0.
+	op immediate: 0.
+	word := op operand.
+	op := self newOp.
+	op fromWord: word.
+	self assert: op register equals: 0.
+	self assert: op immediate equals: 0.
+	op := self newOp.
+	op register: 15.
+	op immediate: 31.
+	word := op operand.
+	op := self newOp.
+	op fromWord: word.
+	self assert: op register equals: 15.
+	self assert: op immediate equals: 31.
+	op := self newOp.
+	op register: 31.
+	op immediate: 63.
+	word := op operand.
+	op := self newOp.
+	op fromWord: word.
+	self assert: op register equals: 31.
+	self assert: op immediate equals: 63
+]
+
+{ #category : 'tests' }
 TAvrRegisterAndImmediateOp4Test >> testImmediateRange [
 
 	| obj |

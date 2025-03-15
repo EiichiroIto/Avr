@@ -4,8 +4,8 @@ An AvrOpBCLRTest is a test class for testing the behavior of AvrOpBCLR
 Class {
 	#name : 'AvrOpBSETTest',
 	#superclass : 'TestCase',
-	#traits : 'TAvrOneRegisterOpTest',
-	#classTraits : 'TAvrOneRegisterOpTest classTrait',
+	#traits : 'TAvrRegisterOp2Test',
+	#classTraits : 'TAvrRegisterOp2Test classTrait',
 	#category : 'Avr-Tests-Instructions',
 	#package : 'Avr-Tests',
 	#tag : 'Instructions'

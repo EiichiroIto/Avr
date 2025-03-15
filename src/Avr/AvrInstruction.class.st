@@ -18,9 +18,10 @@ AvrInstruction >> binaryCodes [
 	| code binaries |
 	code := self opcode bitOr: self operand.
 	binaries := (code asByteArrayOfSize: 2) reversed.
-	self extendedCode ifNotNil: [ :ext |
-		binaries := binaries , (ext asByteArrayOfSize: 2) reversed ].
-	^ binaries
+	^ self codeSize = 2
+		  ifTrue: [ binaries ]
+		  ifFalse: [
+		  binaries , (self extendedCode asByteArrayOfSize: 2) reversed ]
 ]
 
 { #category : 'accessing' }
@@ -32,7 +33,7 @@ AvrInstruction >> category [
 { #category : 'accessing' }
 AvrInstruction >> codeSize [
 
-	^ self extendedCode ifNil: [ 2 ] ifNotNil: [ 4 ]
+	^ 2
 ]
 
 { #category : 'accessing' }
@@ -45,6 +46,18 @@ AvrInstruction >> description [
 AvrInstruction >> extendedCode [
 
 	^ nil
+]
+
+{ #category : 'accessing' }
+AvrInstruction >> fromWord: anInteger [
+
+	self subclassResponsibility
+]
+
+{ #category : 'accessing' }
+AvrInstruction >> fromWord: anInteger withExtended: anInteger2 [
+
+	self error
 ]
 
 { #category : 'testing' }
@@ -69,6 +82,12 @@ AvrInstruction >> isValid [
 AvrInstruction >> machineWord [
 
 	^ self opcode bitOr: self operand
+]
+
+{ #category : 'testing' }
+AvrInstruction >> matches: anInteger [
+
+	^ (anInteger bitAnd: self opcodeMask) = self opcode
 ]
 
 { #category : 'accessing' }
@@ -134,7 +153,8 @@ AvrInstruction >> printHexImmediate: anObject [
 	anObject in: [ :value |
 		value ifNil: [ ^ 'nil' ].
 		value isString ifTrue: [ ^ '@' , value ].
-		^ '0x' , value printStringHex asLowercase ]
+		^ '0x'
+		  , (value printStringBase: 16 length: 2 padded: true) asLowercase ]
 ]
 
 { #category : 'printing' }

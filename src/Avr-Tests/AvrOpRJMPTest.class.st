@@ -4,8 +4,8 @@ An AvrOpRJMPTest is a test class for testing the behavior of AvrOpRJMP
 Class {
 	#name : 'AvrOpRJMPTest',
 	#superclass : 'TestCase',
-	#traits : 'TAvrImmediateOpTest',
-	#classTraits : 'TAvrImmediateOpTest classTrait',
+	#traits : 'TAvrRelativeOpTest',
+	#classTraits : 'TAvrRelativeOpTest classTrait',
 	#category : 'Avr-Tests-Instructions',
 	#package : 'Avr-Tests',
 	#tag : 'Instructions'

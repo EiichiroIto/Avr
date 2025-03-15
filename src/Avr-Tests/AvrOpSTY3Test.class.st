@@ -4,8 +4,8 @@ An AvrOpCOMTest is a test class for testing the behavior of AvrOpCOM
 Class {
 	#name : 'AvrOpSTY3Test',
 	#superclass : 'TestCase',
-	#traits : 'TAvrOneRegisterOpTest',
-	#classTraits : 'TAvrOneRegisterOpTest classTrait',
+	#traits : 'TAvrRegisterOp1Test',
+	#classTraits : 'TAvrRegisterOp1Test classTrait',
 	#category : 'Avr-Tests-Instructions',
 	#package : 'Avr-Tests',
 	#tag : 'Instructions'
@@ -29,7 +29,7 @@ AvrOpSTY3Test >> testOpcode [
 	self assert: self newOp opcode equals: 16r920A
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'tests' }
 AvrOpSTY3Test >> testOperandText [
 
 	| obj |

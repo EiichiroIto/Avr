@@ -1,24 +1,42 @@
 Trait {
-	#name : 'TAvrOneRegisterOpTest',
+	#name : 'TAvrRegisterOp1Test',
 	#category : 'Avr-Tests-Instructions',
 	#package : 'Avr-Tests',
 	#tag : 'Instructions'
 }
 
 { #category : 'tests' }
-TAvrOneRegisterOpTest >> testCategory [
+TAvrRegisterOp1Test >> testCategory [
 
 	self assert: self newOp category isSymbol
 ]
 
 { #category : 'tests' }
-TAvrOneRegisterOpTest >> testDescription [
+TAvrRegisterOp1Test >> testDescription [
 
 	self assert: self newOp description isString
 ]
 
 { #category : 'tests' }
-TAvrOneRegisterOpTest >> testOpcodeMask [
+TAvrRegisterOp1Test >> testFromWord [
+
+	| op word |
+	op := self newOp.
+	op register: 0.
+	word := op operand.
+	op := self newOp.
+	op fromWord: word.
+	self assert: op register equals: 0.
+	op := self newOp.
+	op register: 31.
+	word := op operand.
+	op := self newOp.
+	op fromWord: word.
+	self assert: op register equals: 31
+]
+
+{ #category : 'tests' }
+TAvrRegisterOp1Test >> testOpcodeMask [
 
 	| op mask |
 	op := self newOp.
@@ -27,7 +45,7 @@ TAvrOneRegisterOpTest >> testOpcodeMask [
 ]
 
 { #category : 'tests' }
-TAvrOneRegisterOpTest >> testOperand [
+TAvrRegisterOp1Test >> testOperand [
 
 	| obj |
 	obj := self newOp.
@@ -37,13 +55,13 @@ TAvrOneRegisterOpTest >> testOperand [
 ]
 
 { #category : 'tests' }
-TAvrOneRegisterOpTest >> testRegisterRange [
+TAvrRegisterOp1Test >> testRegisterRange [
 
 	self assert: self newOp registerRange isCollection
 ]
 
 { #category : 'tests' }
-TAvrOneRegisterOpTest >> testSelector [
+TAvrRegisterOp1Test >> testSelector [
 
 	self assert: self newOp selector isSymbol
 ]

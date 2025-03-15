@@ -12,6 +12,12 @@ TAvrRegisterOp2 >> category [
 ]
 
 { #category : 'accessing' }
+TAvrRegisterOp2 >> fromWord: anInteger [
+
+	self register: (anInteger >> 4 bitAnd: 2r111)
+]
+
+{ #category : 'accessing' }
 TAvrRegisterOp2 >> opcodeMask [
 
 	^ 16rFF8F

@@ -18,6 +18,36 @@ TAvrIORegAndBitOpTest >> testDescription [
 ]
 
 { #category : 'tests' }
+TAvrIORegAndBitOpTest >> testFromWord [
+
+	| op word |
+	op := self newOp.
+	op register: 0.
+	op immediate: 0.
+	word := op operand.
+	op := self newOp.
+	op fromWord: word.
+	self assert: op register equals: 0.
+	self assert: op immediate equals: 0.
+	op := self newOp.
+	op register: 15.
+	op immediate: 4.
+	word := op operand.
+	op := self newOp.
+	op fromWord: word.
+	self assert: op register equals: 15.
+	self assert: op immediate equals: 4.
+	op := self newOp.
+	op register: 31.
+	op immediate: 7.
+	word := op operand.
+	op := self newOp.
+	op fromWord: word.
+	self assert: op register equals: 31.
+	self assert: op immediate equals: 7
+]
+
+{ #category : 'tests' }
 TAvrIORegAndBitOpTest >> testImmediateRange [
 
 	| obj |
@@ -54,7 +84,7 @@ TAvrIORegAndBitOpTest >> testOperandText [
 	self assert: obj operandText equals: 'nil, nil'.
 	obj register: 5.
 	obj immediate: 20.
-	self assert: obj operandText equals: '0x14, 5'
+	self assert: obj operandText equals: '0x5, 20'
 ]
 
 { #category : 'tests' }

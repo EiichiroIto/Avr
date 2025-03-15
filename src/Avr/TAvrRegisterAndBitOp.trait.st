@@ -6,6 +6,13 @@ Trait {
 }
 
 { #category : 'accessing' }
+TAvrRegisterAndBitOp >> fromWord: anInteger [
+
+	self register: (anInteger >> 4 bitAnd: 2r11111).
+	self immediate: (anInteger bitAnd: 2r111)
+]
+
+{ #category : 'accessing' }
 TAvrRegisterAndBitOp >> immediateRange [
 
 	^ 0 to: 7

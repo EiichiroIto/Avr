@@ -28,6 +28,20 @@ AvrOpCBITest >> testDescription [
 ]
 
 { #category : 'tests' }
+AvrOpCBITest >> testFromWord [
+
+	| op word |
+	op := self newOp.
+	op bit: 5.
+	op io: 30.
+	word := op operand.
+	op := self newOp.
+	op fromWord: word.
+	self assert: op bit equals: 5.
+	self assert: op io equals: 30
+]
+
+{ #category : 'tests' }
 AvrOpCBITest >> testMnemonic [
 
 	self assert: self newOp mnemonic equals: #CBI

@@ -28,6 +28,12 @@ AvrInstructionTest >> testExtendedCode [
 ]
 
 { #category : 'tests' }
+AvrInstructionTest >> testFromWordWithExtended [
+
+	self should: [ self newOp fromWord: 0 withExtended: 0 ] raise: Error
+]
+
+{ #category : 'tests' }
 AvrInstructionTest >> testIsAbsolute [
 
 	self deny: self newOp isAbsolute

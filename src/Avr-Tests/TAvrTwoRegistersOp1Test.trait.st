@@ -25,6 +25,36 @@ TAvrTwoRegistersOp1Test >> testDestRange [
 ]
 
 { #category : 'tests' }
+TAvrTwoRegistersOp1Test >> testFromWord [
+
+	| op word |
+	op := self newOp.
+	op dest: 0.
+	op source: 0.
+	word := op operand.
+	op := self newOp.
+	op fromWord: word.
+	self assert: op dest equals: 0.
+	self assert: op source equals: 0.
+	op := self newOp.
+	op dest: 14.
+	op source: 15.
+	word := op operand.
+	op := self newOp.
+	op fromWord: word.
+	self assert: op dest equals: 14.
+	self assert: op source equals: 15.
+	op := self newOp.
+	op dest: 31.
+	op source: 31.
+	word := op operand.
+	op := self newOp.
+	op fromWord: word.
+	self assert: op dest equals: 31.
+	self assert: op source equals: 31
+]
+
+{ #category : 'tests' }
 TAvrTwoRegistersOp1Test >> testOpcodeMask [
 
 	| op mask |

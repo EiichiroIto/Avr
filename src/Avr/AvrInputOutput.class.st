@@ -35,6 +35,13 @@ AvrInputOutput >> bitRange [
 ]
 
 { #category : 'accessing' }
+AvrInputOutput >> fromWord: anInteger [
+
+	self bit: (anInteger bitAnd: 2r111).
+	self io: (anInteger >> 3 bitAnd: 2r11111)
+]
+
+{ #category : 'accessing' }
 AvrInputOutput >> io [
 
 	^ io

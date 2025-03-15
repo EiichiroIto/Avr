@@ -19,6 +19,12 @@ AvrSemiWord >> description [
 ]
 
 { #category : 'accessing' }
+AvrSemiWord >> fromWord: anInteger [
+
+	self immediate: anInteger
+]
+
+{ #category : 'accessing' }
 AvrSemiWord >> immediateRange [
 
 	^ 0 to: 63355
@@ -52,7 +58,7 @@ AvrSemiWord >> operand [
 AvrSemiWord >> operandText [
 
 	immediate ifNil: [ ^ 'nil' ].
-	^ '0x' , immediate printStringHex
+	^ '0x' , (immediate printStringBase: 16 length: 4 padded: true)
 ]
 
 { #category : 'accessing' }

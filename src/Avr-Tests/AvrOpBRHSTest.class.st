@@ -4,8 +4,8 @@ An AvrOpBRCCTest is a test class for testing the behavior of AvrOpBRCC
 Class {
 	#name : 'AvrOpBRHSTest',
 	#superclass : 'TestCase',
-	#traits : 'TAvrRelativeOpTest',
-	#classTraits : 'TAvrRelativeOpTest classTrait',
+	#traits : 'TAvrBranchOpTest',
+	#classTraits : 'TAvrBranchOpTest classTrait',
 	#category : 'Avr-Tests-Instructions',
 	#package : 'Avr-Tests',
 	#tag : 'Instructions'

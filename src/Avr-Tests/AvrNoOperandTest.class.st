@@ -22,6 +22,12 @@ AvrNoOperandTest >> testArguments [
 ]
 
 { #category : 'tests' }
+AvrNoOperandTest >> testFromWord [
+
+	self newOp fromWord: 12345
+]
+
+{ #category : 'tests' }
 AvrNoOperandTest >> testIsValid [
 
 	self assert: self newOp isValid
