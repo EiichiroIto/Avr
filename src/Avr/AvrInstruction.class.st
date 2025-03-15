@@ -93,6 +93,12 @@ AvrInstruction >> opcode [
 ]
 
 { #category : 'accessing' }
+AvrInstruction >> opcodeMask [
+
+	self subclassResponsibility
+]
+
+{ #category : 'accessing' }
 AvrInstruction >> operand [
 
 	self subclassResponsibility

@@ -30,6 +30,12 @@ TAvrAbsoluteOp >> isAbsolute [
 ]
 
 { #category : 'accessing' }
+TAvrAbsoluteOp >> opcodeMask [
+
+	^ 16rFE0E
+]
+
+{ #category : 'accessing' }
 TAvrAbsoluteOp >> operand [
 
 	^ self immediate >> 16 in: [ :high |

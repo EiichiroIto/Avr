@@ -18,6 +18,12 @@ TAvrIORegAndBitOp >> immediateRange [
 ]
 
 { #category : 'accessing' }
+TAvrIORegAndBitOp >> opcodeMask [
+
+	^ 16rFF00
+]
+
+{ #category : 'accessing' }
 TAvrIORegAndBitOp >> operand [
 
 	^ (self register bitAnd: 2r11111) << 3 bitOr:

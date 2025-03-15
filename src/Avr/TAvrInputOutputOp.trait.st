@@ -12,6 +12,12 @@ TAvrInputOutputOp >> immediateRange [
 ]
 
 { #category : 'accessing' }
+TAvrInputOutputOp >> opcodeMask [
+
+	^ 16rF800
+]
+
+{ #category : 'accessing' }
 TAvrInputOutputOp >> operand [
 
 	^ (self register bitAnd: 2r11111) << 4 bitOr:

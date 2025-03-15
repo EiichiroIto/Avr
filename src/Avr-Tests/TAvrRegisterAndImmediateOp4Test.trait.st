@@ -28,6 +28,15 @@ TAvrRegisterAndImmediateOp4Test >> testImmediateRange [
 ]
 
 { #category : 'tests' }
+TAvrRegisterAndImmediateOp4Test >> testOpcodeMask [
+
+	| op mask |
+	op := self newOp.
+	mask := op opcodeMask bitXor: 16rFFFF.
+	self assert: (op opcode bitAnd: mask) equals: 0
+]
+
+{ #category : 'tests' }
 TAvrRegisterAndImmediateOp4Test >> testOperand [
 
 	| obj |

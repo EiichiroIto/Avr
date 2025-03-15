@@ -18,6 +18,12 @@ TAvrRegisterAndImmediateOp5 >> immediateRange [
 ]
 
 { #category : 'accessing' }
+TAvrRegisterAndImmediateOp5 >> opcodeMask [
+
+	^ 16rFC00
+]
+
+{ #category : 'accessing' }
 TAvrRegisterAndImmediateOp5 >> operand [
 
 	^ (self register bitAnd: 2r111) bitOr:

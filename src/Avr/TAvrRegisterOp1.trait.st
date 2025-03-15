@@ -6,6 +6,12 @@ Trait {
 }
 
 { #category : 'accessing' }
+TAvrRegisterOp1 >> opcodeMask [
+
+	^ 16rFE0F
+]
+
+{ #category : 'accessing' }
 TAvrRegisterOp1 >> operand [
 
 	^ (self register bitAnd: 2r11111) << 4

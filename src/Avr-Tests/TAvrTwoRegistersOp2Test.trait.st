@@ -17,14 +17,23 @@ TAvrTwoRegistersOp2Test >> testDescription [
 	self assert: self newOp description isString
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'tests' }
 TAvrTwoRegistersOp2Test >> testDestRange [
 
 	self assert: self newOp destRange first equals: 0.
 	self assert: self newOp destRange last equals: 30
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'tests' }
+TAvrTwoRegistersOp2Test >> testOpcodeMask [
+
+	| op mask |
+	op := self newOp.
+	mask := op opcodeMask bitXor: 16rFFFF.
+	self assert: (op opcode bitAnd: mask) equals: 0
+]
+
+{ #category : 'tests' }
 TAvrTwoRegistersOp2Test >> testOperand [
 
 	| obj |
@@ -43,7 +52,7 @@ TAvrTwoRegistersOp2Test >> testSelector [
 	self assert: self newOp selector isSymbol
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'tests' }
 TAvrTwoRegistersOp2Test >> testSourceRange [
 
 	self assert: self newOp sourceRange first equals: 0.

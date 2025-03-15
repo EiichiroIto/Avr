@@ -17,7 +17,16 @@ TAvrOneRegisterOpTest >> testDescription [
 	self assert: self newOp description isString
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'tests' }
+TAvrOneRegisterOpTest >> testOpcodeMask [
+
+	| op mask |
+	op := self newOp.
+	mask := op opcodeMask bitXor: 16rFFFF.
+	self assert: (op opcode bitAnd: mask) equals: 0
+]
+
+{ #category : 'tests' }
 TAvrOneRegisterOpTest >> testOperand [
 
 	| obj |
@@ -27,7 +36,7 @@ TAvrOneRegisterOpTest >> testOperand [
 		self assert: obj operand equals: each << 4 ]
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'tests' }
 TAvrOneRegisterOpTest >> testRegisterRange [
 
 	self assert: self newOp registerRange isCollection

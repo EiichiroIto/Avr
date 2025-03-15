@@ -17,7 +17,7 @@ TAvrRegisterAndImmediateOp3Test >> testDescription [
 	self assert: self newOp description isString
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'tests' }
 TAvrRegisterAndImmediateOp3Test >> testExtendedCode [
 
 	| obj |
@@ -34,6 +34,15 @@ TAvrRegisterAndImmediateOp3Test >> testImmediateRange [
 	self assert: obj immediateRange first equals: 0.
 	self assert: obj immediateRange last equals: 65535.
 	self assert: obj immediateRange size equals: 65536
+]
+
+{ #category : 'tests' }
+TAvrRegisterAndImmediateOp3Test >> testOpcodeMask [
+
+	| op mask |
+	op := self newOp.
+	mask := op opcodeMask bitXor: 16rFFFF.
+	self assert: (op opcode bitAnd: mask) equals: 0
 ]
 
 { #category : 'tests' }

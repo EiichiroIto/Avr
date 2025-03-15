@@ -37,6 +37,12 @@ AvrSemiWord >> opcode [
 ]
 
 { #category : 'accessing' }
+AvrSemiWord >> opcodeMask [
+
+	^ 16r0000
+]
+
+{ #category : 'accessing' }
 AvrSemiWord >> operand [
 
 	^ immediate bitAnd: 16rFFFF

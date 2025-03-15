@@ -23,13 +23,22 @@ TAvrRelativeOpTest >> testImmediateRange [
 	self assert: self newOp immediateRange isCollection
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'tests' }
 TAvrRelativeOpTest >> testIsRelative [
 
 	self assert: self newOp isRelative
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'tests' }
+TAvrRelativeOpTest >> testOpcodeMask [
+
+	| op mask |
+	op := self newOp.
+	mask := op opcodeMask bitXor: 16rFFFF.
+	self assert: (op opcode bitAnd: mask) equals: 0
+]
+
+{ #category : 'tests' }
 TAvrRelativeOpTest >> testOperand [
 
 	| op |
@@ -40,7 +49,7 @@ TAvrRelativeOpTest >> testOperand [
 	self assert: op operand equals: (2r1111111 bitAnd: -50) << 3
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'tests' }
 TAvrRelativeOpTest >> testOperandText [
 
 	| op |

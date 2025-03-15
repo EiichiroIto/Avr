@@ -25,6 +25,12 @@ AvrNoOperand >> messageText [
 ]
 
 { #category : 'accessing' }
+AvrNoOperand >> opcodeMask [
+
+	^ 16rFFFF
+]
+
+{ #category : 'accessing' }
 AvrNoOperand >> operand [
 
 	^ 0

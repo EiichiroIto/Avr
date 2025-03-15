@@ -12,6 +12,12 @@ TAvrRegisterAndBitOp >> immediateRange [
 ]
 
 { #category : 'accessing' }
+TAvrRegisterAndBitOp >> opcodeMask [
+
+	^ 16rFE08
+]
+
+{ #category : 'accessing' }
 TAvrRegisterAndBitOp >> operand [
 
 	^ (self register bitAnd: 2r11111) << 4 bitOr:

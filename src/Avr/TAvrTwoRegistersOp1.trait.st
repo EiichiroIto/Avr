@@ -12,6 +12,12 @@ TAvrTwoRegistersOp1 >> destRange [
 ]
 
 { #category : 'accessing' }
+TAvrTwoRegistersOp1 >> opcodeMask [
+
+	^ 16rFC00
+]
+
+{ #category : 'accessing' }
 TAvrTwoRegistersOp1 >> operand [
 
 	^ (self source bitAnd: 2r01111) bitOr:

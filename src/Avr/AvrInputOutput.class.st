@@ -61,6 +61,12 @@ AvrInputOutput >> isValid [
 ]
 
 { #category : 'accessing' }
+AvrInputOutput >> opcodeMask [
+
+	^ 16rFF00
+]
+
+{ #category : 'accessing' }
 AvrInputOutput >> operand [
 
 	^ (bit bitAnd: 2r111) bitOr: (io bitAnd: 2r11111) << 3

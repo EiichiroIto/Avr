@@ -18,6 +18,15 @@ TAvrNoOperandOpTest >> testDescription [
 ]
 
 { #category : 'tests' }
+TAvrNoOperandOpTest >> testOpcodeMask [
+
+	| op mask |
+	op := self newOp.
+	mask := op opcodeMask bitXor: 16rFFFF.
+	self assert: (op opcode bitAnd: mask) equals: 0
+]
+
+{ #category : 'tests' }
 TAvrNoOperandOpTest >> testSelector [
 
 	self assert: self newOp selector isSymbol

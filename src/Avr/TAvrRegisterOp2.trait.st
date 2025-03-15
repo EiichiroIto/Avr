@@ -12,6 +12,12 @@ TAvrRegisterOp2 >> category [
 ]
 
 { #category : 'accessing' }
+TAvrRegisterOp2 >> opcodeMask [
+
+	^ 16rFF8F
+]
+
+{ #category : 'accessing' }
 TAvrRegisterOp2 >> operand [
 
 	^ (self register bitAnd: 2r111) << 4

@@ -24,6 +24,12 @@ TAvrRelativeOp >> isRelative [
 ]
 
 { #category : 'accessing' }
+TAvrRelativeOp >> opcodeMask [
+
+	^ 16rF000
+]
+
+{ #category : 'accessing' }
 TAvrRelativeOp >> operand [
 
 	^ self immediate bitAnd: 16r0FFF
