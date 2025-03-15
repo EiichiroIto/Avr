@@ -4,7 +4,8 @@ Class {
 	#instVars : [
 		'codes',
 		'address',
-		'labels'
+		'labeler',
+		'startAddress'
 	],
 	#category : 'Avr-Assembly',
 	#package : 'Avr',
@@ -12,14 +13,18 @@ Class {
 }
 
 { #category : 'adding' }
-AvrProgram >> add: op [
+AvrProgram >> add: anOpcode [
 
-	| code |
-	code := self newItem
-		        address: address;
-		        op: op.
-	codes add: code.
-	address := address + op codeSize
+	codes add: anOpcode.
+	address := address + anOpcode codeSize.
+	self updateLabelUsing: anOpcode
+]
+
+{ #category : 'private' }
+AvrProgram >> addAddress: anInteger [
+
+	(labeler labelAddressAt: anInteger) ifNotNil: [ ^ self ].
+	labeler labelName: labeler nextLabel address: anInteger
 ]
 
 { #category : 'accessing' }
@@ -55,62 +60,44 @@ AvrProgram >> codes: anObject [
 { #category : 'initialization' }
 AvrProgram >> initialize [
 
+	startAddress := 0.
 	address := 0.
 	codes := OrderedCollection new.
-	labels := Dictionary new
+	labeler := self newLabeler
 ]
 
 { #category : 'accessing' }
 AvrProgram >> label: aString [
 
-	labels at: address put: aString
+	labeler labels at: address put: aString
 ]
 
 { #category : 'accessing' }
-AvrProgram >> labelAddressAt: anInteger [
+AvrProgram >> labeler [
 
-	^ labels at: anInteger ifAbsent: nil
+	^ labeler
 ]
 
 { #category : 'accessing' }
-AvrProgram >> labelName: aString address: anInteger [
+AvrProgram >> labeler: anObject [
 
-	labels at: anInteger put: aString
-]
-
-{ #category : 'accessing' }
-AvrProgram >> labelNameAt: aString [
-
-	^ labels keyAtValue: aString ifAbsent: nil
-]
-
-{ #category : 'accessing' }
-AvrProgram >> labels [
-
-	^ labels
-]
-
-{ #category : 'accessing' }
-AvrProgram >> labels: anObject [
-
-	labels := anObject
+	labeler := anObject
 ]
 
 { #category : 'instance creation' }
-AvrProgram >> newItem [
+AvrProgram >> newLabeler [
 
-	^ AvrCode new
+	^ AvrLabeler new
 ]
 
 { #category : 'printing' }
-AvrProgram >> print [
+AvrProgram >> printLabeledOp: anOpcode at: anInteger on: aStream [
 
-	| stream |
-	stream := String new writeStream.
-	codes do: [ :each |
-		each printOn: stream.
-		stream nextPut: Character cr ].
-	^ stream contents
+	anOpcode ifNil: [ ^ self ].
+	aStream nextPutAll: anOpcode mnemonic asLowercase.
+	anOpcode operandText isEmpty ifTrue: [ ^ self ].
+	aStream nextPut: Character tab.
+	self printOperandOf: anOpcode at: anInteger on: aStream
 ]
 
 { #category : 'printing' }
@@ -121,24 +108,82 @@ AvrProgram >> printMethodString [
 	codes do: [ :each |
 		stream
 			nextPutAll: 'self ';
-			nextPutAll: each op messageText;
+			nextPutAll: each messageText;
 			nextPut: $.;
 			nextPut: Character cr ].
 	^ stream contents
 ]
 
 { #category : 'printing' }
+AvrProgram >> printOp: anOpcode at: anInteger on: aStream [
+
+	aStream
+		nextPutAll: (anInteger
+				 ifNil: [ '    ' ]
+				 ifNotNil: [
+					 (anInteger printStringBase: 16 length: 4 padded: false)
+						 asLowercase ]);
+		nextPut: $:;
+		nextPut: Character tab.
+	anOpcode ifNil: [ ^ self ].
+	anOpcode binaryCodes do: [ :each |
+		aStream
+			nextPutAll:
+				(each printStringBase: 16 length: 2 padded: true) asLowercase;
+			nextPut: Character space ].
+	aStream nextPut: Character tab.
+	self printOp: anOpcode on: aStream
+]
+
+{ #category : 'printing' }
+AvrProgram >> printOp: anOpcode on: aStream [
+
+	anOpcode ifNil: [ ^ self ].
+	aStream
+		nextPutAll: anOpcode mnemonic asLowercase;
+		nextPut: Character tab;
+		nextPutAll: anOpcode operandText
+]
+
+{ #category : 'printing' }
+AvrProgram >> printOperandOf: anOpcode at: anInteger on: aStream [
+
+	| labelAddress |
+	labelAddress := nil.
+	anOpcode isAbsolute ifTrue: [
+		anOpcode immediate isString ifTrue: [
+			^ aStream
+				  nextPut: $@;
+				  nextPutAll: anOpcode immediate ].
+		labelAddress := anOpcode immediate * 2 ].
+	anOpcode isRelative ifTrue: [
+		anOpcode immediate isString ifTrue: [
+			^ aStream
+				  nextPut: $@;
+				  nextPutAll: anOpcode immediate ].
+		labelAddress := anInteger + anOpcode codeSize
+		                + (anOpcode immediate * 2) ].
+	(labeler labelAddressAt: labelAddress) ifNotNil: [ :label |
+		^ aStream
+			  nextPut: $@;
+			  nextPutAll: label ].
+	aStream nextPutAll: anOpcode operandText
+]
+
+{ #category : 'printing' }
 AvrProgram >> printWithLabel [
 
-	| stream |
+	| stream addr |
+	addr := startAddress.
 	stream := String new writeStream.
 	codes do: [ :each |
-		(self labelAddressAt: each address) ifNotNil: [ :label |
+		(labeler labelAddressAt: addr) ifNotNil: [ :label |
 			stream
 				nextPutAll: label;
 				nextPut: $:;
 				nextPut: Character cr ].
-		each printOpOn: stream using: labels.
+		self printLabeledOp: each at: addr on: stream.
+		addr := addr + each codeSize.
 		stream nextPut: Character cr ].
 	^ stream contents
 ]
@@ -146,10 +191,33 @@ AvrProgram >> printWithLabel [
 { #category : 'printing' }
 AvrProgram >> printWithoutLabel [
 
-	| stream |
+	| stream addr |
+	addr := startAddress.
 	stream := String new writeStream.
 	codes do: [ :each |
-		each printOpOn: stream.
+		self printOp: each at: addr on: stream.
+		addr := addr + each codeSize.
 		stream nextPut: Character cr ].
 	^ stream contents
+]
+
+{ #category : 'accessing' }
+AvrProgram >> startAddress [
+
+	^ startAddress
+]
+
+{ #category : 'accessing' }
+AvrProgram >> startAddress: anObject [
+
+	startAddress := anObject
+]
+
+{ #category : 'private' }
+AvrProgram >> updateLabelUsing: anOpcode [
+
+	anOpcode isAbsolute ifTrue: [
+		^ self addAddress: anOpcode immediate * 2 ].
+	anOpcode isRelative ifTrue: [
+		^ self addAddress: address + (anOpcode immediate * 2) ]
 ]

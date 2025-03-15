@@ -39,10 +39,10 @@ AvrArduinoTest >> testLabel [
 
 	| obj |
 	obj := self newObj.
-	self assert: obj program labels isEmpty.
+	self assert: obj program labeler labels isEmpty.
 	obj program address: 123.
 	obj label: 'abc'.
-	self assert: (obj program labels at: 123) equals: 'abc'
+	self assert: (obj program labeler labels at: 123) equals: 'abc'
 ]
 
 { #category : 'tests' }

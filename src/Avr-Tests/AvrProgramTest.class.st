@@ -26,15 +26,30 @@ AvrProgramTest >> testAdd [
 	op := AvrOpNOP new.
 	obj add: op.
 	self assert: obj codes size equals: 1.
-	self assert: obj codes first address identicalTo: 0.
-	self assert: obj codes first op identicalTo: op.
+	self assert: obj codes first identicalTo: op.
 	self assert: obj address equals: 2.
 	op := AvrOpJMP new immediate: 10.
 	obj add: op.
 	self assert: obj codes size equals: 2.
-	self assert: obj codes second address identicalTo: 2.
-	self assert: obj codes second op identicalTo: op.
+	self assert: obj codes second identicalTo: op.
 	self assert: obj address equals: 6
+]
+
+{ #category : 'tests' }
+AvrProgramTest >> testAddAddress [
+
+	| obj |
+	obj := self newObj.
+	self assert: obj labeler labels isEmpty.
+	obj addAddress: 123.
+	obj addAddress: 234.
+	obj addAddress: 123.
+	obj addAddress: 234.
+	obj addAddress: 456.
+	self assert: (obj labeler labelAddressAt: 123) equals: 'label1'.
+	self assert: (obj labeler labelAddressAt: 234) equals: 'label2'.
+	self assert: (obj labeler labelAddressAt: 456) equals: 'label3'.
+	self assert: obj labeler labels size equals: 3
 ]
 
 { #category : 'tests' }
@@ -90,53 +105,41 @@ AvrProgramTest >> testLabel [
 	obj label: 'abc'.
 	obj address: 456.
 	obj label: 'def'.
-	self assert: (obj labelAddressAt: 123) equals: 'abc'.
-	self assert: (obj labelAddressAt: 456) equals: 'def'
+	self assert: (obj labeler labelAddressAt: 123) equals: 'abc'.
+	self assert: (obj labeler labelAddressAt: 456) equals: 'def'
 ]
 
 { #category : 'tests' }
-AvrProgramTest >> testLabelAddressAt [
+AvrProgramTest >> testLabeler [
 
-	self testLabelNameAddress
-]
-
-{ #category : 'tests' }
-AvrProgramTest >> testLabelNameAddress [
-
-	| obj |
+	| obj a |
 	obj := self newObj.
-	obj labelName: 'abc' address: 123.
-	obj labelName: 'def' address: 456.
-	self assert: (obj labelAddressAt: 123) equals: 'abc'.
-	self assert: (obj labelAddressAt: 456) equals: 'def'.
-	self assert: (obj labelAddressAt: 789) isNil.
-	self assert: (obj labelNameAt: 'abc') equals: 123.
-	self assert: (obj labelNameAt: 'def') equals: 456.
-	self assert: (obj labelNameAt: 'ghi') isNil
+	self assert: (obj labeler isKindOf: AvrLabeler).
+	a := AvrLabeler new.
+	obj labeler: a.
+	self assert: obj labeler identicalTo: a
 ]
 
 { #category : 'tests' }
-AvrProgramTest >> testLabelNameAt [
+AvrProgramTest >> testNewLabeler [
 
-	self testLabelNameAddress
+	self assert: (self newObj newLabeler isKindOf: AvrLabeler)
 ]
 
 { #category : 'tests' }
-AvrProgramTest >> testLabels [
+AvrProgramTest >> testPrintLabeledOpAtOn [
 
-	| obj d |
+	| obj stream op |
 	obj := self newObj.
-	self assert: obj labels isDictionary.
-	self assert: obj labels isEmpty.
-	d := Dictionary new.
-	obj labels: d.
-	self assert: obj labels identicalTo: d
-]
-
-{ #category : 'tests' }
-AvrProgramTest >> testNewItem [
-
-	self assert: (self newObj newItem isKindOf: AvrCode)
+	stream := String new writeStream.
+	op := AvrOpJMP new immediate: 16r6E.
+	stream := String new writeStream.
+	obj printLabeledOp: op at: 12 on: stream.
+	self assert: stream contents equals: 'jmp	0xdc'.
+	obj labeler labelName: 'label' address: 16rDC.
+	stream := String new writeStream.
+	obj printLabeledOp: op at: 12 on: stream.
+	self assert: stream contents equals: 'jmp	@label'
 ]
 
 { #category : 'tests' }
@@ -155,26 +158,56 @@ self nop.
 ]
 
 { #category : 'tests' }
+AvrProgramTest >> testPrintOpAtOn [
+
+	| obj stream op |
+	obj := self newObj.
+	op := AvrOpJMP new immediate: 16r6E.
+	stream := String new writeStream.
+	obj printOp: op at: 12 on: stream.
+	self assert: stream contents equals: '   c:	0c 94 6e 00 	jmp	0xdc'
+]
+
+{ #category : 'tests' }
+AvrProgramTest >> testPrintOpOn [
+
+	| obj stream op |
+	obj := self newObj.
+	op := AvrOpJMP new immediate: 16r6E.
+	stream := String new writeStream.
+	obj printOp: op on: stream.
+	self assert: stream contents equals: 'jmp	0xdc'
+]
+
+{ #category : 'tests' }
+AvrProgramTest >> testPrintOperandOfAtOn [
+
+	| obj stream op |
+	obj := self newObj.
+	op := AvrOpJMP new immediate: 16r6E.
+	stream := String new writeStream.
+	obj printOperandOf: op at: 12 on: stream.
+	self assert: stream contents equals: '0xdc'.
+	obj labeler labelName: 'label' address: 16rDC.
+	stream := String new writeStream.
+	obj printOperandOf: op at: 12 on: stream.
+	self assert: stream contents equals: '@label'
+]
+
+{ #category : 'tests' }
 AvrProgramTest >> testPrintWithLabel [
 
-	| obj r dict |
+	| obj r |
 	obj := self newObj.
+	obj address: 14.
 	obj add: (AvrOpJMP new immediate: 10).
 	obj add: AvrOpNOP new.
-	obj address: 20.
 	obj add: AvrOpNOP new.
+	obj startAddress: 14.
 	r := obj printWithLabel.
-	self assert: r equals: 'jmp	0x14
+	self assert: r equals: 'jmp	@label1
 nop
-nop
-'.
-	dict := Dictionary new.
-	dict at: 20 put: 'label'.
-	obj labels: dict.
-	r := obj printWithLabel.
-	self assert: r equals: 'jmp	@label
-nop
-label:
+label1:
 nop
 '
 ]
@@ -184,12 +217,37 @@ AvrProgramTest >> testPrintWithoutLabel [
 
 	| obj r |
 	obj := self newObj.
+	obj startAddress: 100.
 	obj add: (AvrOpJMP new immediate: 10).
 	obj add: AvrOpNOP new.
 	obj add: AvrOpNOP new.
-	r := obj printWithLabel.
-	self assert: r equals: 'jmp	0x14
-nop
-nop
+	r := obj printWithoutLabel.
+	self assert: r equals: '  64:	0c 94 0a 00 	jmp	0x14
+  68:	00 00 	nop	
+  6a:	00 00 	nop	
 '
+]
+
+{ #category : 'tests' }
+AvrProgramTest >> testStartAddress [
+
+	| obj |
+	obj := self newObj.
+	self assert: obj startAddress equals: 0.
+	obj startAddress: 123.
+	self assert: obj startAddress equals: 123
+]
+
+{ #category : 'tests' }
+AvrProgramTest >> testUpdateLabelUsing [
+
+	| obj op |
+	obj := self newObj.
+	obj address: 123.
+	op := AvrOpJMP new immediate: 10.
+	obj updateLabelUsing: op.
+	self assert: (obj labeler labelNameAt: 'label1') equals: 20.
+	op := AvrOpRCALL new immediate: 10.
+	obj updateLabelUsing: op.
+	self assert: (obj labeler labelNameAt: 'label2') equals: 123 + 20
 ]

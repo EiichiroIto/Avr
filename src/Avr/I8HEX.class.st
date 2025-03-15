@@ -78,7 +78,7 @@ I8HEX >> readFrom: aStream [
 	[ aStream atEnd ] whileFalse: [
 		line := aStream nextLine.
 		arr := self readString: line.
-		arr first = 1 ifTrue: [ ^ self ].
+		arr first = 1 ifTrue: [ ^ self truncateToBinarySize ].
 		arr first = 0 ifFalse: [ self error: 'Invalid record type' ].
 		self put: arr third address: arr second ].
 	self error: 'Invalid file end'
@@ -107,6 +107,12 @@ I8HEX >> readString: aString [
 		                  16rFF.
 	calcedCheckSum = checkSum ifFalse: [ self error: 'Invalid checksum' ].
 	^ Array with: recordType with: address with: data
+]
+
+{ #category : 'private' }
+I8HEX >> truncateToBinarySize [
+
+	binary := binary truncatedToSize: binarySize
 ]
 
 { #category : 'private' }
