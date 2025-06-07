@@ -36,23 +36,6 @@ AvrProgramTest >> testAdd [
 ]
 
 { #category : 'tests' }
-AvrProgramTest >> testAddAddress [
-
-	| obj |
-	obj := self newObj.
-	self assert: obj labeler labels isEmpty.
-	obj addAddress: 123.
-	obj addAddress: 234.
-	obj addAddress: 123.
-	obj addAddress: 234.
-	obj addAddress: 456.
-	self assert: (obj labeler labelAddressAt: 123) equals: 'label1'.
-	self assert: (obj labeler labelAddressAt: 234) equals: 'label2'.
-	self assert: (obj labeler labelAddressAt: 456) equals: 'label3'.
-	self assert: obj labeler labels size equals: 3
-]
-
-{ #category : 'tests' }
 AvrProgramTest >> testAddress [
 
 	| obj |
@@ -136,7 +119,7 @@ AvrProgramTest >> testPrintLabeledOpAtOn [
 	stream := String new writeStream.
 	obj printLabeledOp: op at: 12 on: stream.
 	self assert: stream contents equals: 'jmp	0xdc'.
-	obj labeler labelName: 'label' address: 16rDC.
+	obj labeler labelNameAt: 'label' put: 16rDC.
 	stream := String new writeStream.
 	obj printLabeledOp: op at: 12 on: stream.
 	self assert: stream contents equals: 'jmp	@label'
@@ -188,7 +171,7 @@ AvrProgramTest >> testPrintOperandOfAtOn [
 	stream := String new writeStream.
 	obj printOperandOf: op at: 12 on: stream.
 	self assert: stream contents equals: '0xdc'.
-	obj labeler labelName: 'label' address: 16rDC.
+	obj labeler labelNameAt: 'label' put: 16rDC.
 	stream := String new writeStream.
 	obj printOperandOf: op at: 12 on: stream.
 	self assert: stream contents equals: '@label'

@@ -24,15 +24,22 @@ AvrLabeler >> labelAddressAt: anInteger [
 ]
 
 { #category : 'accessing' }
-AvrLabeler >> labelName: aString address: anInteger [
+AvrLabeler >> labelAddressPut: anInteger [
 
-	labels at: anInteger put: aString
+	(self labelAddressAt: anInteger) ifNotNil: [ ^ self ].
+	self labelNameAt: self nextLabel put: anInteger
 ]
 
 { #category : 'accessing' }
 AvrLabeler >> labelNameAt: aString [
 
 	^ labels keyAtValue: aString ifAbsent: nil
+]
+
+{ #category : 'accessing' }
+AvrLabeler >> labelNameAt: aString put: anInteger [
+
+	labels at: anInteger put: aString
 ]
 
 { #category : 'accessing' }

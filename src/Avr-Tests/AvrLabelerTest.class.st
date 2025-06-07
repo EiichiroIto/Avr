@@ -26,28 +26,45 @@ AvrLabelerTest >> testInitialize [
 { #category : 'tests' }
 AvrLabelerTest >> testLabelAddressAt [
 
-	self testLabelNameAddress
+	self testLabelNameAtPut
 ]
 
 { #category : 'tests' }
-AvrLabelerTest >> testLabelNameAddress [
+AvrLabelerTest >> testLabelAddressPut [
 
 	| obj |
 	obj := self newObj.
-	obj labelName: 'abc' address: 123.
-	obj labelName: 'def' address: 456.
+	self assert: obj labels isEmpty.
+	obj labelAddressPut: 123.
+	obj labelAddressPut: 234.
+	obj labelAddressPut: 123.
+	obj labelAddressPut: 234.
+	obj labelAddressPut: 456.
+	self assert: (obj labelAddressAt: 123) equals: 'label1'.
+	self assert: (obj labelAddressAt: 234) equals: 'label2'.
+	self assert: (obj labelAddressAt: 456) equals: 'label3'.
+	self assert: obj labels size equals: 3
+]
+
+{ #category : 'tests' }
+AvrLabelerTest >> testLabelNameAt [
+
+	self testLabelNameAtPut
+]
+
+{ #category : 'tests' }
+AvrLabelerTest >> testLabelNameAtPut [
+
+	| obj |
+	obj := self newObj.
+	obj labelNameAt: 'abc' put: 123.
+	obj labelNameAt: 'def' put: 456.
 	self assert: (obj labelAddressAt: 123) equals: 'abc'.
 	self assert: (obj labelAddressAt: 456) equals: 'def'.
 	self assert: (obj labelAddressAt: 789) isNil.
 	self assert: (obj labelNameAt: 'abc') equals: 123.
 	self assert: (obj labelNameAt: 'def') equals: 456.
 	self assert: (obj labelNameAt: 'ghi') isNil
-]
-
-{ #category : 'tests' }
-AvrLabelerTest >> testLabelNameAt [
-
-	self testLabelNameAddress
 ]
 
 { #category : 'tests' }

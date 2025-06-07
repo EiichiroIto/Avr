@@ -20,13 +20,6 @@ AvrProgram >> add: anOpcode [
 	self updateLabelUsing: anOpcode
 ]
 
-{ #category : 'private' }
-AvrProgram >> addAddress: anInteger [
-
-	(labeler labelAddressAt: anInteger) ifNotNil: [ ^ self ].
-	labeler labelName: labeler nextLabel address: anInteger
-]
-
 { #category : 'accessing' }
 AvrProgram >> address [
 
@@ -217,7 +210,7 @@ AvrProgram >> startAddress: anObject [
 AvrProgram >> updateLabelUsing: anOpcode [
 
 	anOpcode isAbsolute ifTrue: [
-		^ self addAddress: anOpcode immediate * 2 ].
+		^ labeler labelAddressPut: anOpcode immediate * 2 ].
 	anOpcode isRelative ifTrue: [
-		^ self addAddress: address + (anOpcode immediate * 2) ]
+		^ labeler labelAddressPut: address + (anOpcode immediate * 2) ]
 ]
