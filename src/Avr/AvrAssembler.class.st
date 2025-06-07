@@ -55,6 +55,12 @@ AvrAssembler >> andiR: register data: immediate [
 			 immediate: immediate)
 ]
 
+{ #category : 'one register' }
+AvrAssembler >> bclr: register [
+
+	self add: (AvrOpBCLR new register: register)
+]
+
 { #category : 'immediate' }
 AvrAssembler >> brcc: anInteger [
 
@@ -85,10 +91,24 @@ AvrAssembler >> brne: anInteger [
 	self add: (AvrOpBRNE new immediate: anInteger)
 ]
 
+{ #category : 'one register' }
+AvrAssembler >> bset: register [
+
+	self add: (AvrOpBSET new register: register)
+]
+
 { #category : 'immediate' }
 AvrAssembler >> call: anInteger [
 
 	self add: (AvrOpCALL new immediate: anInteger)
+]
+
+{ #category : 'register-immediate' }
+AvrAssembler >> cbi: io bit: bit [
+
+	self add: (AvrOpCBI new
+			 io: io;
+			 bit: bit)
 ]
 
 { #category : 'no register' }
@@ -355,6 +375,14 @@ AvrAssembler >> sbciR: register data: immediate [
 	self add: (AvrOpSBCI new
 			 register: register;
 			 immediate: immediate)
+]
+
+{ #category : 'register-immediate' }
+AvrAssembler >> sbi: io bit: bit [
+
+	self add: (AvrOpSBI new
+			 io: io;
+			 bit: bit)
 ]
 
 { #category : 'register-immediate' }

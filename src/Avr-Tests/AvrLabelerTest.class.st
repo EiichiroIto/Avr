@@ -32,14 +32,19 @@ AvrLabelerTest >> testLabelAddressAt [
 { #category : 'tests' }
 AvrLabelerTest >> testLabelAddressPut [
 
-	| obj |
+	| obj r |
 	obj := self newObj.
 	self assert: obj labels isEmpty.
-	obj labelAddressPut: 123.
-	obj labelAddressPut: 234.
-	obj labelAddressPut: 123.
-	obj labelAddressPut: 234.
-	obj labelAddressPut: 456.
+	r := obj labelAddressPut: 123.
+	self assert: r equals: 'label1'.
+	r := obj labelAddressPut: 234.
+	self assert: r equals: 'label2'.
+	r := obj labelAddressPut: 123.
+	self assert: r equals: 'label1'.
+	r := obj labelAddressPut: 234.
+	self assert: r equals: 'label2'.
+	r := obj labelAddressPut: 456.
+	self assert: r equals: 'label3'.
 	self assert: (obj labelAddressAt: 123) equals: 'label1'.
 	self assert: (obj labelAddressAt: 234) equals: 'label2'.
 	self assert: (obj labelAddressAt: 456) equals: 'label3'.

@@ -16,6 +16,12 @@ AvrRegisterWithImmediate >> arguments [
 	^ Array with: register with: immediate
 ]
 
+{ #category : 'testing' }
+AvrRegisterWithImmediate >> hasLabel [
+
+	^ immediate isString
+]
+
 { #category : 'accessing' }
 AvrRegisterWithImmediate >> immediate [
 

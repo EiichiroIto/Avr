@@ -28,12 +28,6 @@ AvrArduino >> initialize [
 	asm program: self newProgram
 ]
 
-{ #category : 'private' }
-AvrArduino >> label: aString [
-
-	asm label: aString
-]
-
 { #category : 'instance creation' }
 AvrArduino >> newAssembler [
 

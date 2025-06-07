@@ -15,6 +15,12 @@ AvrImmediate >> arguments [
 	^ Array with: immediate
 ]
 
+{ #category : 'testing' }
+AvrImmediate >> hasLabel [
+
+	^ immediate isString
+]
+
 { #category : 'accessing' }
 AvrImmediate >> immediate [
 

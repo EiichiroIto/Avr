@@ -61,6 +61,12 @@ AvrInstruction >> fromWord: anInteger withExtended: anInteger2 [
 ]
 
 { #category : 'testing' }
+AvrInstruction >> hasLabel [
+
+	^ false
+]
+
+{ #category : 'testing' }
 AvrInstruction >> isAbsolute [
 
 	^ false

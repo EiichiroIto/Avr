@@ -4,8 +4,7 @@ Class {
 	#instVars : [
 		'codes',
 		'address',
-		'labeler',
-		'startAddress'
+		'labeler'
 	],
 	#category : 'Avr-Assembly',
 	#package : 'Avr',
@@ -15,9 +14,8 @@ Class {
 { #category : 'adding' }
 AvrProgram >> add: anOpcode [
 
-	codes add: anOpcode.
-	address := address + anOpcode codeSize.
-	self updateLabelUsing: anOpcode
+	codes add: (Array with: address with: anOpcode).
+	address := address + anOpcode codeSize
 ]
 
 { #category : 'accessing' }
@@ -53,7 +51,6 @@ AvrProgram >> codes: anObject [
 { #category : 'initialization' }
 AvrProgram >> initialize [
 
-	startAddress := 0.
 	address := 0.
 	codes := OrderedCollection new.
 	labeler := self newLabeler
@@ -101,7 +98,7 @@ AvrProgram >> printMethodString [
 	codes do: [ :each |
 		stream
 			nextPutAll: 'self ';
-			nextPutAll: each messageText;
+			nextPutAll: each second messageText;
 			nextPut: $.;
 			nextPut: Character cr ].
 	^ stream contents
@@ -167,16 +164,15 @@ AvrProgram >> printOperandOf: anOpcode at: anInteger on: aStream [
 AvrProgram >> printWithLabel [
 
 	| stream addr |
-	addr := startAddress.
 	stream := String new writeStream.
 	codes do: [ :each |
+		addr := each first.
 		(labeler labelAddressAt: addr) ifNotNil: [ :label |
 			stream
 				nextPutAll: label;
 				nextPut: $:;
 				nextPut: Character cr ].
-		self printLabeledOp: each at: addr on: stream.
-		addr := addr + each codeSize.
+		self printLabeledOp: each second at: addr on: stream.
 		stream nextPut: Character cr ].
 	^ stream contents
 ]
@@ -185,32 +181,10 @@ AvrProgram >> printWithLabel [
 AvrProgram >> printWithoutLabel [
 
 	| stream addr |
-	addr := startAddress.
 	stream := String new writeStream.
 	codes do: [ :each |
-		self printOp: each at: addr on: stream.
-		addr := addr + each codeSize.
+		addr := each first.
+		self printOp: each second at: addr on: stream.
 		stream nextPut: Character cr ].
 	^ stream contents
-]
-
-{ #category : 'accessing' }
-AvrProgram >> startAddress [
-
-	^ startAddress
-]
-
-{ #category : 'accessing' }
-AvrProgram >> startAddress: anObject [
-
-	startAddress := anObject
-]
-
-{ #category : 'private' }
-AvrProgram >> updateLabelUsing: anOpcode [
-
-	anOpcode isAbsolute ifTrue: [
-		^ labeler labelAddressPut: anOpcode immediate * 2 ].
-	anOpcode isRelative ifTrue: [
-		^ labeler labelAddressPut: address + (anOpcode immediate * 2) ]
 ]

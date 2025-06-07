@@ -23,9 +23,9 @@ AvrAssemblerTest >> testAdcDestSource [
 	| obj |
 	obj := self newObj.
 	obj adcDest: 12 source: 23.
-	self assert: obj program codes first mnemonic equals: #ADC.
-	self assert: obj program codes first dest equals: 12.
-	self assert: obj program codes first source equals: 23
+	self assert: obj program codes first second mnemonic equals: #ADC.
+	self assert: obj program codes first second dest equals: 12.
+	self assert: obj program codes first second source equals: 23
 ]
 
 { #category : 'tests' }
@@ -45,9 +45,9 @@ AvrAssemblerTest >> testAddDestSource [
 	| obj |
 	obj := self newObj.
 	obj addDest: 12 source: 23.
-	self assert: obj program codes first mnemonic equals: #ADD.
-	self assert: obj program codes first dest equals: 12.
-	self assert: obj program codes first source equals: 23
+	self assert: obj program codes first second mnemonic equals: #ADD.
+	self assert: obj program codes first second dest equals: 12.
+	self assert: obj program codes first second source equals: 23
 ]
 
 { #category : 'tests' }
@@ -56,9 +56,9 @@ AvrAssemblerTest >> testAdiwRData [
 	| obj |
 	obj := self newObj.
 	obj adiwR: 12 data: 23.
-	self assert: obj program codes first mnemonic equals: #ADIW.
-	self assert: obj program codes first register equals: 12.
-	self assert: obj program codes first immediate equals: 23
+	self assert: obj program codes first second mnemonic equals: #ADIW.
+	self assert: obj program codes first second register equals: 12.
+	self assert: obj program codes first second immediate equals: 23
 ]
 
 { #category : 'tests' }
@@ -67,9 +67,9 @@ AvrAssemblerTest >> testAndDestSource [
 	| obj |
 	obj := self newObj.
 	obj andDest: 12 source: 23.
-	self assert: obj program codes first mnemonic equals: #AND.
-	self assert: obj program codes first dest equals: 12.
-	self assert: obj program codes first source equals: 23
+	self assert: obj program codes first second mnemonic equals: #AND.
+	self assert: obj program codes first second dest equals: 12.
+	self assert: obj program codes first second source equals: 23
 ]
 
 { #category : 'tests' }
@@ -78,9 +78,20 @@ AvrAssemblerTest >> testAndiRData [
 	| obj |
 	obj := self newObj.
 	obj andiR: 12 data: 23.
-	self assert: obj program codes first mnemonic equals: #ANDI.
-	self assert: obj program codes first register equals: 12.
-	self assert: obj program codes first immediate equals: 23
+	self assert: obj program codes first second mnemonic equals: #ANDI.
+	self assert: obj program codes first second register equals: 12.
+	self assert: obj program codes first second immediate equals: 23
+]
+
+{ #category : 'tests' }
+AvrAssemblerTest >> testBclr [
+
+	| obj r |
+	obj := self newObj.
+	obj bclr: 4.
+	r := obj program codes first second.
+	self assert: r mnemonic equals: #BCLR.
+	self assert: r register equals: 4
 ]
 
 { #category : 'tests' }
@@ -89,8 +100,8 @@ AvrAssemblerTest >> testBrcc [
 	| obj |
 	obj := self newObj.
 	obj brcc: 123.
-	self assert: obj program codes first mnemonic equals: #BRCC.
-	self assert: obj program codes first immediate equals: 123
+	self assert: obj program codes first second mnemonic equals: #BRCC.
+	self assert: obj program codes first second immediate equals: 123
 ]
 
 { #category : 'tests' }
@@ -99,8 +110,8 @@ AvrAssemblerTest >> testBrcs [
 	| obj |
 	obj := self newObj.
 	obj brcs: 123.
-	self assert: obj program codes first mnemonic equals: #BRCS.
-	self assert: obj program codes first immediate equals: 123
+	self assert: obj program codes first second mnemonic equals: #BRCS.
+	self assert: obj program codes first second immediate equals: 123
 ]
 
 { #category : 'tests' }
@@ -109,8 +120,8 @@ AvrAssemblerTest >> testBreq [
 	| obj |
 	obj := self newObj.
 	obj breq: 123.
-	self assert: obj program codes first mnemonic equals: #BREQ.
-	self assert: obj program codes first immediate equals: 123
+	self assert: obj program codes first second mnemonic equals: #BREQ.
+	self assert: obj program codes first second immediate equals: 123
 ]
 
 { #category : 'tests' }
@@ -119,8 +130,8 @@ AvrAssemblerTest >> testBrge [
 	| obj |
 	obj := self newObj.
 	obj brge: 123.
-	self assert: obj program codes first mnemonic equals: #BRGE.
-	self assert: obj program codes first immediate equals: 123
+	self assert: obj program codes first second mnemonic equals: #BRGE.
+	self assert: obj program codes first second immediate equals: 123
 ]
 
 { #category : 'tests' }
@@ -129,8 +140,19 @@ AvrAssemblerTest >> testBrne [
 	| obj |
 	obj := self newObj.
 	obj brne: 123.
-	self assert: obj program codes first mnemonic equals: #BRNE.
-	self assert: obj program codes first immediate equals: 123
+	self assert: obj program codes first second mnemonic equals: #BRNE.
+	self assert: obj program codes first second immediate equals: 123
+]
+
+{ #category : 'tests' }
+AvrAssemblerTest >> testBset [
+
+	| obj r |
+	obj := self newObj.
+	obj bset: 4.
+	r := obj program codes first second.
+	self assert: r mnemonic equals: #BSET.
+	self assert: r register equals: 4
 ]
 
 { #category : 'tests' }
@@ -139,8 +161,20 @@ AvrAssemblerTest >> testCall [
 	| obj |
 	obj := self newObj.
 	obj call: 123.
-	self assert: obj program codes first mnemonic equals: #CALL.
-	self assert: obj program codes first immediate equals: 123
+	self assert: obj program codes first second mnemonic equals: #CALL.
+	self assert: obj program codes first second immediate equals: 123
+]
+
+{ #category : 'tests' }
+AvrAssemblerTest >> testCbiBit [
+
+	| obj r |
+	obj := self newObj.
+	obj cbi: 16r3E bit: 2.
+	r := obj program codes first second.
+	self assert: r mnemonic equals: #CBI.
+	self assert: r io equals: 16r3E.
+	self assert: r bit equals: 2
 ]
 
 { #category : 'tests' }
@@ -149,7 +183,7 @@ AvrAssemblerTest >> testCli [
 	| obj |
 	obj := self newObj.
 	obj cli.
-	self assert: obj program codes first mnemonic equals: #CLI
+	self assert: obj program codes first second mnemonic equals: #CLI
 ]
 
 { #category : 'tests' }
@@ -158,8 +192,8 @@ AvrAssemblerTest >> testCom [
 	| obj |
 	obj := self newObj.
 	obj com: 2.
-	self assert: obj program codes first mnemonic equals: #COM.
-	self assert: obj program codes first register equals: 2
+	self assert: obj program codes first second mnemonic equals: #COM.
+	self assert: obj program codes first second register equals: 2
 ]
 
 { #category : 'tests' }
@@ -168,9 +202,9 @@ AvrAssemblerTest >> testCpDestSource [
 	| obj |
 	obj := self newObj.
 	obj cpDest: 12 source: 23.
-	self assert: obj program codes first mnemonic equals: #CP.
-	self assert: obj program codes first dest equals: 12.
-	self assert: obj program codes first source equals: 23
+	self assert: obj program codes first second mnemonic equals: #CP.
+	self assert: obj program codes first second dest equals: 12.
+	self assert: obj program codes first second source equals: 23
 ]
 
 { #category : 'tests' }
@@ -179,9 +213,9 @@ AvrAssemblerTest >> testCpcDestSource [
 	| obj |
 	obj := self newObj.
 	obj cpcDest: 12 source: 23.
-	self assert: obj program codes first mnemonic equals: #CPC.
-	self assert: obj program codes first dest equals: 12.
-	self assert: obj program codes first source equals: 23
+	self assert: obj program codes first second mnemonic equals: #CPC.
+	self assert: obj program codes first second dest equals: 12.
+	self assert: obj program codes first second source equals: 23
 ]
 
 { #category : 'tests' }
@@ -190,9 +224,9 @@ AvrAssemblerTest >> testCpiRData [
 	| obj |
 	obj := self newObj.
 	obj cpiR: 12 data: 23.
-	self assert: obj program codes first mnemonic equals: #CPI.
-	self assert: obj program codes first register equals: 12.
-	self assert: obj program codes first immediate equals: 23
+	self assert: obj program codes first second mnemonic equals: #CPI.
+	self assert: obj program codes first second register equals: 12.
+	self assert: obj program codes first second immediate equals: 23
 ]
 
 { #category : 'tests' }
@@ -201,9 +235,9 @@ AvrAssemblerTest >> testCpseDestSource [
 	| obj |
 	obj := self newObj.
 	obj cpseDest: 12 source: 23.
-	self assert: obj program codes first mnemonic equals: #CPSE.
-	self assert: obj program codes first dest equals: 12.
-	self assert: obj program codes first source equals: 23
+	self assert: obj program codes first second mnemonic equals: #CPSE.
+	self assert: obj program codes first second dest equals: 12.
+	self assert: obj program codes first second source equals: 23
 ]
 
 { #category : 'tests' }
@@ -212,8 +246,8 @@ AvrAssemblerTest >> testDec [
 	| obj |
 	obj := self newObj.
 	obj dec: 2.
-	self assert: obj program codes first mnemonic equals: #DEC.
-	self assert: obj program codes first register equals: 2
+	self assert: obj program codes first second mnemonic equals: #DEC.
+	self assert: obj program codes first second register equals: 2
 ]
 
 { #category : 'tests' }
@@ -222,9 +256,9 @@ AvrAssemblerTest >> testEorDestSource [
 	| obj |
 	obj := self newObj.
 	obj eorDest: 12 source: 23.
-	self assert: obj program codes first mnemonic equals: #EOR.
-	self assert: obj program codes first dest equals: 12.
-	self assert: obj program codes first source equals: 23
+	self assert: obj program codes first second mnemonic equals: #EOR.
+	self assert: obj program codes first second dest equals: 12.
+	self assert: obj program codes first second source equals: 23
 ]
 
 { #category : 'tests' }
@@ -233,9 +267,9 @@ AvrAssemblerTest >> testInRAddress [
 	| obj |
 	obj := self newObj.
 	obj inR: 12 address: 23.
-	self assert: obj program codes first mnemonic equals: #IN.
-	self assert: obj program codes first register equals: 12.
-	self assert: obj program codes first immediate equals: 23
+	self assert: obj program codes first second mnemonic equals: #IN.
+	self assert: obj program codes first second register equals: 12.
+	self assert: obj program codes first second immediate equals: 23
 ]
 
 { #category : 'tests' }
@@ -244,8 +278,8 @@ AvrAssemblerTest >> testInc [
 	| obj |
 	obj := self newObj.
 	obj inc: 2.
-	self assert: obj program codes first mnemonic equals: #INC.
-	self assert: obj program codes first register equals: 2
+	self assert: obj program codes first second mnemonic equals: #INC.
+	self assert: obj program codes first second register equals: 2
 ]
 
 { #category : 'tests' }
@@ -254,8 +288,8 @@ AvrAssemblerTest >> testJmp [
 	| obj |
 	obj := self newObj.
 	obj jmp: 123.
-	self assert: obj program codes first mnemonic equals: #JMP.
-	self assert: obj program codes first immediate equals: 123
+	self assert: obj program codes first second mnemonic equals: #JMP.
+	self assert: obj program codes first second immediate equals: 123
 ]
 
 { #category : 'tests' }
@@ -274,10 +308,10 @@ AvrAssemblerTest >> testLddRY [
 	| obj |
 	obj := self newObj.
 	obj lddR: 12 y: 23.
-	self assert: (obj program codes first isKindOf: AvrOpLDDY).
-	self assert: obj program codes first mnemonic equals: #LDD.
-	self assert: obj program codes first register equals: 12.
-	self assert: obj program codes first immediate equals: 23
+	self assert: (obj program codes first second isKindOf: AvrOpLDDY).
+	self assert: obj program codes first second mnemonic equals: #LDD.
+	self assert: obj program codes first second register equals: 12.
+	self assert: obj program codes first second immediate equals: 23
 ]
 
 { #category : 'tests' }
@@ -286,10 +320,10 @@ AvrAssemblerTest >> testLddRZ [
 	| obj |
 	obj := self newObj.
 	obj lddR: 12 z: 23.
-	self assert: (obj program codes first isKindOf: AvrOpLDDZ).
-	self assert: obj program codes first mnemonic equals: #LDD.
-	self assert: obj program codes first register equals: 12.
-	self assert: obj program codes first immediate equals: 23
+	self assert: (obj program codes first second isKindOf: AvrOpLDDZ).
+	self assert: obj program codes first second mnemonic equals: #LDD.
+	self assert: obj program codes first second register equals: 12.
+	self assert: obj program codes first second immediate equals: 23
 ]
 
 { #category : 'tests' }
@@ -298,9 +332,9 @@ AvrAssemblerTest >> testLdiRData [
 	| obj |
 	obj := self newObj.
 	obj ldiR: 12 data: 23.
-	self assert: obj program codes first mnemonic equals: #LDI.
-	self assert: obj program codes first register equals: 12.
-	self assert: obj program codes first immediate equals: 23
+	self assert: obj program codes first second mnemonic equals: #LDI.
+	self assert: obj program codes first second register equals: 12.
+	self assert: obj program codes first second immediate equals: 23
 ]
 
 { #category : 'tests' }
@@ -309,9 +343,9 @@ AvrAssemblerTest >> testLdsRAddress [
 	| obj |
 	obj := self newObj.
 	obj ldsR: 12 address: 23.
-	self assert: obj program codes first mnemonic equals: #LDS.
-	self assert: obj program codes first register equals: 12.
-	self assert: obj program codes first immediate equals: 23
+	self assert: obj program codes first second mnemonic equals: #LDS.
+	self assert: obj program codes first second register equals: 12.
+	self assert: obj program codes first second immediate equals: 23
 ]
 
 { #category : 'tests' }
@@ -320,20 +354,21 @@ AvrAssemblerTest >> testLdx [
 	| obj |
 	obj := self newObj.
 	obj ldx: 2.
-	self assert: (obj program codes first isKindOf: AvrOpLDX1).
-	self assert: obj program codes first mnemonic equals: #LD.
-	self assert: obj program codes first register equals: 2
+	self assert: (obj program codes first second isKindOf: AvrOpLDX1).
+	self assert: obj program codes first second mnemonic equals: #LD.
+	self assert: obj program codes first second register equals: 2
 ]
 
 { #category : 'tests' }
 AvrAssemblerTest >> testLdz [
 
-	| obj |
+	| obj r |
 	obj := self newObj.
 	obj ldz: 2.
-	self assert: (obj program codes first isKindOf: AvrOpLDZ1).
-	self assert: obj program codes first mnemonic equals: #LD.
-	self assert: obj program codes first register equals: 2
+	r := obj program codes first second.
+	self assert: (r isKindOf: AvrOpLDZ1).
+	self assert: r mnemonic equals: #LD.
+	self assert: r register equals: 2
 ]
 
 { #category : 'tests' }
@@ -342,9 +377,9 @@ AvrAssemblerTest >> testLpmz [
 	| obj |
 	obj := self newObj.
 	obj lpmz: 2.
-	self assert: (obj program codes first isKindOf: AvrOpLPM2).
-	self assert: obj program codes first mnemonic equals: #LPM.
-	self assert: obj program codes first register equals: 2
+	self assert: (obj program codes first second isKindOf: AvrOpLPM2).
+	self assert: obj program codes first second mnemonic equals: #LPM.
+	self assert: obj program codes first second register equals: 2
 ]
 
 { #category : 'tests' }
@@ -353,9 +388,9 @@ AvrAssemblerTest >> testLpmzInc [
 	| obj |
 	obj := self newObj.
 	obj lpmzInc: 2.
-	self assert: (obj program codes first isKindOf: AvrOpLPM3).
-	self assert: obj program codes first mnemonic equals: #LPM.
-	self assert: obj program codes first register equals: 2
+	self assert: (obj program codes first second isKindOf: AvrOpLPM3).
+	self assert: obj program codes first second mnemonic equals: #LPM.
+	self assert: obj program codes first second register equals: 2
 ]
 
 { #category : 'tests' }
@@ -364,9 +399,9 @@ AvrAssemblerTest >> testMovDestSource [
 	| obj |
 	obj := self newObj.
 	obj movDest: 12 source: 23.
-	self assert: obj program codes first mnemonic equals: #MOV.
-	self assert: obj program codes first dest equals: 12.
-	self assert: obj program codes first source equals: 23
+	self assert: obj program codes first second mnemonic equals: #MOV.
+	self assert: obj program codes first second dest equals: 12.
+	self assert: obj program codes first second source equals: 23
 ]
 
 { #category : 'tests' }
@@ -375,9 +410,9 @@ AvrAssemblerTest >> testMovwDestSource [
 	| obj |
 	obj := self newObj.
 	obj movwDest: 12 source: 23.
-	self assert: obj program codes first mnemonic equals: #MOVW.
-	self assert: obj program codes first dest equals: 12.
-	self assert: obj program codes first source equals: 23
+	self assert: obj program codes first second mnemonic equals: #MOVW.
+	self assert: obj program codes first second dest equals: 12.
+	self assert: obj program codes first second source equals: 23
 ]
 
 { #category : 'tests' }
@@ -386,9 +421,9 @@ AvrAssemblerTest >> testMulsDestSource [
 	| obj |
 	obj := self newObj.
 	obj mulsDest: 12 source: 23.
-	self assert: obj program codes first mnemonic equals: #MULS.
-	self assert: obj program codes first dest equals: 12.
-	self assert: obj program codes first source equals: 23
+	self assert: obj program codes first second mnemonic equals: #MULS.
+	self assert: obj program codes first second dest equals: 12.
+	self assert: obj program codes first second source equals: 23
 ]
 
 { #category : 'tests' }
@@ -397,9 +432,9 @@ AvrAssemblerTest >> testMulsuDestSource [
 	| obj |
 	obj := self newObj.
 	obj mulsuDest: 12 source: 23.
-	self assert: obj program codes first mnemonic equals: #MULSU.
-	self assert: obj program codes first dest equals: 12.
-	self assert: obj program codes first source equals: 23
+	self assert: obj program codes first second mnemonic equals: #MULSU.
+	self assert: obj program codes first second dest equals: 12.
+	self assert: obj program codes first second source equals: 23
 ]
 
 { #category : 'tests' }
@@ -408,7 +443,7 @@ AvrAssemblerTest >> testNop [
 	| obj |
 	obj := self newObj.
 	obj nop.
-	self assert: obj program codes first selector equals: #nop
+	self assert: obj program codes first second selector equals: #nop
 ]
 
 { #category : 'tests' }
@@ -417,9 +452,9 @@ AvrAssemblerTest >> testOrDestSource [
 	| obj |
 	obj := self newObj.
 	obj orDest: 12 source: 23.
-	self assert: obj program codes first mnemonic equals: #OR.
-	self assert: obj program codes first dest equals: 12.
-	self assert: obj program codes first source equals: 23
+	self assert: obj program codes first second mnemonic equals: #OR.
+	self assert: obj program codes first second dest equals: 12.
+	self assert: obj program codes first second source equals: 23
 ]
 
 { #category : 'tests' }
@@ -428,30 +463,32 @@ AvrAssemblerTest >> testOriRData [
 	| obj |
 	obj := self newObj.
 	obj oriR: 12 data: 23.
-	self assert: obj program codes first mnemonic equals: #ORI.
-	self assert: obj program codes first register equals: 12.
-	self assert: obj program codes first immediate equals: 23
+	self assert: obj program codes first second mnemonic equals: #ORI.
+	self assert: obj program codes first second register equals: 12.
+	self assert: obj program codes first second immediate equals: 23
 ]
 
 { #category : 'tests' }
 AvrAssemblerTest >> testOutR [
 
-	| obj |
+	| obj r |
 	obj := self newObj.
 	obj out: 12 r: 23.
-	self assert: obj program codes first selector equals: #out:r:.
-	self assert: obj program codes first immediate equals: 12.
-	self assert: obj program codes first register equals: 23
+	r := obj program codes first second.
+	self assert: r selector equals: #out:r:.
+	self assert: r immediate equals: 12.
+	self assert: r register equals: 23
 ]
 
 { #category : 'tests' }
 AvrAssemblerTest >> testPop [
 
-	| obj |
+	| obj r |
 	obj := self newObj.
 	obj pop: 2.
-	self assert: obj program codes first mnemonic equals: #POP.
-	self assert: obj program codes first register equals: 2
+	r := obj program codes first second.
+	self assert: r mnemonic equals: #POP.
+	self assert: r register equals: 2
 ]
 
 { #category : 'tests' }
@@ -468,214 +505,246 @@ AvrAssemblerTest >> testProgram [
 { #category : 'tests' }
 AvrAssemblerTest >> testPush [
 
-	| obj |
+	| obj r |
 	obj := self newObj.
 	obj push: 2.
-	self assert: obj program codes first mnemonic equals: #PUSH.
-	self assert: obj program codes first register equals: 2
+	r := obj program codes first second.
+	self assert: r mnemonic equals: #PUSH.
+	self assert: r register equals: 2
 ]
 
 { #category : 'tests' }
 AvrAssemblerTest >> testRcall [
 
-	| obj |
+	| obj r |
 	obj := self newObj.
 	obj rcall: 123.
-	self assert: obj program codes first mnemonic equals: #RCALL.
-	self assert: obj program codes first immediate equals: 123
+	r := obj program codes first second.
+	self assert: r mnemonic equals: #RCALL.
+	self assert: r immediate equals: 123
 ]
 
 { #category : 'tests' }
 AvrAssemblerTest >> testRet [
 
-	| obj |
+	| obj r |
 	obj := self newObj.
 	obj ret.
-	self assert: obj program codes first mnemonic equals: #RET
+	r := obj program codes first second.
+	self assert: r mnemonic equals: #RET
 ]
 
 { #category : 'tests' }
 AvrAssemblerTest >> testReti [
 
-	| obj |
+	| obj r |
 	obj := self newObj.
 	obj reti.
-	self assert: obj program codes first mnemonic equals: #RETI
+	r := obj program codes first second.
+	self assert: r mnemonic equals: #RETI
 ]
 
 { #category : 'tests' }
 AvrAssemblerTest >> testRjmp [
 
-	| obj |
+	| obj r |
 	obj := self newObj.
 	obj rjmp: 123.
-	self assert: obj program codes first mnemonic equals: #RJMP.
-	self assert: obj program codes first immediate equals: 123
+	r := obj program codes first second.
+	self assert: r mnemonic equals: #RJMP.
+	self assert: r immediate equals: 123
 ]
 
 { #category : 'tests' }
 AvrAssemblerTest >> testSbcDestSource [
 
-	| obj |
+	| obj r |
 	obj := self newObj.
 	obj sbcDest: 12 source: 23.
-	self assert: obj program codes first mnemonic equals: #SBC.
-	self assert: obj program codes first dest equals: 12.
-	self assert: obj program codes first source equals: 23
+	r := obj program codes first second.
+	self assert: r mnemonic equals: #SBC.
+	self assert: r dest equals: 12.
+	self assert: r source equals: 23
 ]
 
 { #category : 'tests' }
 AvrAssemblerTest >> testSbciRData [
 
-	| obj |
+	| obj r |
 	obj := self newObj.
 	obj sbciR: 12 data: 23.
-	self assert: obj program codes first mnemonic equals: #SBCI.
-	self assert: obj program codes first register equals: 12.
-	self assert: obj program codes first immediate equals: 23
+	r := obj program codes first second.
+	self assert: r mnemonic equals: #SBCI.
+	self assert: r register equals: 12.
+	self assert: r immediate equals: 23
+]
+
+{ #category : 'tests' }
+AvrAssemblerTest >> testSbiBit [
+
+	| obj r |
+	obj := self newObj.
+	obj sbi: 16r3E bit: 7.
+	r := obj program codes first second.
+	self assert: r mnemonic equals: #SBI.
+	self assert: r io equals: 16r3E.
+	self assert: r bit equals: 7
 ]
 
 { #category : 'tests' }
 AvrAssemblerTest >> testSbisRData [
 
-	| obj |
+	| obj r |
 	obj := self newObj.
 	obj sbisR: 12 data: 23.
-	self assert: obj program codes first mnemonic equals: #SBIS.
-	self assert: obj program codes first register equals: 12.
-	self assert: obj program codes first immediate equals: 23
+	r := obj program codes first second.
+	self assert: r mnemonic equals: #SBIS.
+	self assert: r register equals: 12.
+	self assert: r immediate equals: 23
 ]
 
 { #category : 'tests' }
 AvrAssemblerTest >> testSbiwRData [
 
-	| obj |
+	| obj r |
 	obj := self newObj.
 	obj sbiwR: 12 data: 23.
-	self assert: obj program codes first mnemonic equals: #SBIW.
-	self assert: obj program codes first register equals: 12.
-	self assert: obj program codes first immediate equals: 23
+	r := obj program codes first second.
+	self assert: r mnemonic equals: #SBIW.
+	self assert: r register equals: 12.
+	self assert: r immediate equals: 23
 ]
 
 { #category : 'tests' }
 AvrAssemblerTest >> testSei [
 
-	| obj |
+	| obj r |
 	obj := self newObj.
 	obj sei.
-	self assert: obj program codes first mnemonic equals: #SEI
+	r := obj program codes first second.
+	self assert: r mnemonic equals: #SEI
 ]
 
 { #category : 'tests' }
 AvrAssemblerTest >> testStdYR [
 
-	| obj |
+	| obj r |
 	obj := self newObj.
 	obj stdY: 12 r: 23.
-	self assert: (obj program codes first isKindOf: AvrOpSTDY).
-	self assert: obj program codes first mnemonic equals: #STD.
-	self assert: obj program codes first register equals: 23.
-	self assert: obj program codes first immediate equals: 12
+	r := obj program codes first second.
+	self assert: (r isKindOf: AvrOpSTDY).
+	self assert: r mnemonic equals: #STD.
+	self assert: r register equals: 23.
+	self assert: r immediate equals: 12
 ]
 
 { #category : 'tests' }
 AvrAssemblerTest >> testStdZR [
 
-	| obj |
+	| obj r |
 	obj := self newObj.
 	obj stdZ: 12 r: 23.
-	self assert: (obj program codes first isKindOf: AvrOpSTDZ).
-	self assert: obj program codes first mnemonic equals: #STD.
-	self assert: obj program codes first register equals: 23.
-	self assert: obj program codes first immediate equals: 12
+	r := obj program codes first second.
+	self assert: (r isKindOf: AvrOpSTDZ).
+	self assert: r mnemonic equals: #STD.
+	self assert: r register equals: 23.
+	self assert: r immediate equals: 12
 ]
 
 { #category : 'tests' }
 AvrAssemblerTest >> testStsRData [
 
-	| obj |
+	| obj r |
 	obj := self newObj.
 	obj stsR: 12 data: 23.
-	self assert: obj program codes first mnemonic equals: #STS.
-	self assert: obj program codes first register equals: 12.
-	self assert: obj program codes first immediate equals: 23
+	r := obj program codes first second.
+	self assert: r mnemonic equals: #STS.
+	self assert: r register equals: 12.
+	self assert: r immediate equals: 23
 ]
 
 { #category : 'tests' }
 AvrAssemblerTest >> testStx [
 
-	| obj |
+	| obj r |
 	obj := self newObj.
 	obj stx: 2.
-	self assert: (obj program codes first isKindOf: AvrOpSTX1).
-	self assert: obj program codes first mnemonic equals: #ST.
-	self assert: obj program codes first register equals: 2
+	r := obj program codes first second.
+	self assert: (r isKindOf: AvrOpSTX1).
+	self assert: r mnemonic equals: #ST.
+	self assert: r register equals: 2
 ]
 
 { #category : 'tests' }
 AvrAssemblerTest >> testStxInc [
 
-	| obj |
+	| obj r |
 	obj := self newObj.
 	obj stxInc: 2.
-	self assert: (obj program codes first isKindOf: AvrOpSTX2).
-	self assert: obj program codes first mnemonic equals: #ST.
-	self assert: obj program codes first register equals: 2
+	r := obj program codes first second.
+	self assert: (r isKindOf: AvrOpSTX2).
+	self assert: r mnemonic equals: #ST.
+	self assert: r register equals: 2
 ]
 
 { #category : 'tests' }
 AvrAssemblerTest >> testSty [
 
-	| obj |
+	| obj r |
 	obj := self newObj.
 	obj sty: 2.
-	self assert: (obj program codes first isKindOf: AvrOpSTY1).
-	self assert: obj program codes first mnemonic equals: #ST.
-	self assert: obj program codes first register equals: 2
+	r := obj program codes first second.
+	self assert: (r isKindOf: AvrOpSTY1).
+	self assert: r mnemonic equals: #ST.
+	self assert: r register equals: 2
 ]
 
 { #category : 'tests' }
 AvrAssemblerTest >> testStyInc [
 
-	| obj |
+	| obj r |
 	obj := self newObj.
 	obj styInc: 2.
-	self assert: (obj program codes first isKindOf: AvrOpSTY2).
-	self assert: obj program codes first mnemonic equals: #ST.
-	self assert: obj program codes first register equals: 2
+	r := obj program codes first second.
+	self assert: (r isKindOf: AvrOpSTY2).
+	self assert: r mnemonic equals: #ST.
+	self assert: r register equals: 2
 ]
 
 { #category : 'tests' }
 AvrAssemblerTest >> testStz [
 
-	| obj |
+	| obj r |
 	obj := self newObj.
 	obj stz: 2.
-	self assert: (obj program codes first isKindOf: AvrOpSTZ1).
-	self assert: obj program codes first mnemonic equals: #ST.
-	self assert: obj program codes first register equals: 2
+	r := obj program codes first second.
+	self assert: (r isKindOf: AvrOpSTZ1).
+	self assert: r mnemonic equals: #ST.
+	self assert: r register equals: 2
 ]
 
 { #category : 'tests' }
 AvrAssemblerTest >> testStzInc [
 
-	| obj |
+	| obj r |
 	obj := self newObj.
 	obj stzInc: 2.
-	self assert: (obj program codes first isKindOf: AvrOpSTZ2).
-	self assert: obj program codes first mnemonic equals: #ST.
-	self assert: obj program codes first register equals: 2
+	r := obj program codes first second.
+	self assert: (r isKindOf: AvrOpSTZ2).
+	self assert: r mnemonic equals: #ST.
+	self assert: r register equals: 2
 ]
 
 { #category : 'tests' }
 AvrAssemblerTest >> testSubDestSource [
 
-	| obj |
+	| obj r |
 	obj := self newObj.
 	obj subDest: 12 source: 23.
-	self assert: obj program codes first mnemonic equals: #SUB.
-	self assert: obj program codes first dest equals: 12.
-	self assert: obj program codes first source equals: 23
+	r := obj program codes first second.
+	self assert: r mnemonic equals: #SUB.
+	self assert: r dest equals: 12.
+	self assert: r source equals: 23
 ]
 
 { #category : 'tests' }
@@ -684,9 +753,9 @@ AvrAssemblerTest >> testSubiRData [
 	| obj |
 	obj := self newObj.
 	obj subiR: 12 data: 23.
-	self assert: obj program codes first mnemonic equals: #SUBI.
-	self assert: obj program codes first register equals: 12.
-	self assert: obj program codes first immediate equals: 23
+	self assert: obj program codes first second mnemonic equals: #SUBI.
+	self assert: obj program codes first second register equals: 12.
+	self assert: obj program codes first second immediate equals: 23
 ]
 
 { #category : 'tests' }
@@ -695,6 +764,6 @@ AvrAssemblerTest >> testWord [
 	| obj |
 	obj := self newObj.
 	obj word: 123.
-	self assert: obj program codes first selector equals: #word:.
-	self assert: obj program codes first immediate equals: 123
+	self assert: obj program codes first second selector equals: #word:.
+	self assert: obj program codes first second immediate equals: 123
 ]

@@ -26,8 +26,11 @@ AvrLabeler >> labelAddressAt: anInteger [
 { #category : 'accessing' }
 AvrLabeler >> labelAddressPut: anInteger [
 
-	(self labelAddressAt: anInteger) ifNotNil: [ ^ self ].
-	self labelNameAt: self nextLabel put: anInteger
+	| label1 |
+	(self labelAddressAt: anInteger) ifNotNil: [ :label2 | ^ label2 ].
+	label1 := self nextLabel.
+	self labelNameAt: label1 put: anInteger.
+	^ label1
 ]
 
 { #category : 'accessing' }

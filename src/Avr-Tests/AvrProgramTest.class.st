@@ -26,12 +26,12 @@ AvrProgramTest >> testAdd [
 	op := AvrOpNOP new.
 	obj add: op.
 	self assert: obj codes size equals: 1.
-	self assert: obj codes first identicalTo: op.
+	self assert: obj codes first second identicalTo: op.
 	self assert: obj address equals: 2.
 	op := AvrOpJMP new immediate: 10.
 	obj add: op.
 	self assert: obj codes size equals: 2.
-	self assert: obj codes second identicalTo: op.
+	self assert: obj codes second second identicalTo: op.
 	self assert: obj address equals: 6
 ]
 
@@ -183,10 +183,11 @@ AvrProgramTest >> testPrintWithLabel [
 	| obj r |
 	obj := self newObj.
 	obj address: 14.
-	obj add: (AvrOpJMP new immediate: 10).
+	obj add: (AvrOpJMP new immediate: #label1).
 	obj add: AvrOpNOP new.
+	obj label: #label1.
 	obj add: AvrOpNOP new.
-	obj startAddress: 14.
+	obj address: 14.
 	r := obj printWithLabel.
 	self assert: r equals: 'jmp	@label1
 nop
@@ -200,7 +201,7 @@ AvrProgramTest >> testPrintWithoutLabel [
 
 	| obj r |
 	obj := self newObj.
-	obj startAddress: 100.
+	obj address: 100.
 	obj add: (AvrOpJMP new immediate: 10).
 	obj add: AvrOpNOP new.
 	obj add: AvrOpNOP new.
@@ -209,28 +210,4 @@ AvrProgramTest >> testPrintWithoutLabel [
   68:	00 00 	nop	
   6a:	00 00 	nop	
 '
-]
-
-{ #category : 'tests' }
-AvrProgramTest >> testStartAddress [
-
-	| obj |
-	obj := self newObj.
-	self assert: obj startAddress equals: 0.
-	obj startAddress: 123.
-	self assert: obj startAddress equals: 123
-]
-
-{ #category : 'tests' }
-AvrProgramTest >> testUpdateLabelUsing [
-
-	| obj op |
-	obj := self newObj.
-	obj address: 123.
-	op := AvrOpJMP new immediate: 10.
-	obj updateLabelUsing: op.
-	self assert: (obj labeler labelNameAt: 'label1') equals: 20.
-	op := AvrOpRCALL new immediate: 10.
-	obj updateLabelUsing: op.
-	self assert: (obj labeler labelNameAt: 'label2') equals: 123 + 20
 ]

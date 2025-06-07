@@ -90,9 +90,9 @@ AvrDisAssemblerTest >> testReadFrom [
 		          #[ 16r0C 16r94 16r46 16r00 16r11 16r24 16r1F 16rBE ].
 	obj readFrom: stream.
 	self assert: obj program codeCount equals: 3.
-	self assert: (obj program codes first isKindOf: AvrOpJMP).
-	self assert: (obj program codes second isKindOf: AvrOpEOR).
-	self assert: (obj program codes third isKindOf: AvrOpOUT)
+	self assert: (obj program codes first second isKindOf: AvrOpJMP).
+	self assert: (obj program codes second second isKindOf: AvrOpEOR).
+	self assert: (obj program codes third second isKindOf: AvrOpOUT)
 ]
 
 { #category : 'tests' }
