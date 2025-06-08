@@ -63,6 +63,12 @@ AvrProgram >> label: aString [
 ]
 
 { #category : 'accessing' }
+AvrProgram >> labelAddressPut: anInteger [
+
+	labeler labelAddressPut: anInteger
+]
+
+{ #category : 'accessing' }
 AvrProgram >> labeler [
 
 	^ labeler
@@ -139,24 +145,17 @@ AvrProgram >> printOp: anOpcode on: aStream [
 AvrProgram >> printOperandOf: anOpcode at: anInteger on: aStream [
 
 	| labelAddress |
-	labelAddress := nil.
-	anOpcode isAbsolute ifTrue: [
+	anOpcode hasImmediate ifTrue: [
 		anOpcode immediate isString ifTrue: [
 			^ aStream
 				  nextPut: $@;
-				  nextPutAll: anOpcode immediate ].
-		labelAddress := anOpcode immediate * 2 ].
-	anOpcode isRelative ifTrue: [
-		anOpcode immediate isString ifTrue: [
+				  nextPutAll: anOpcode immediate ] ].
+	anOpcode hasAddress ifTrue: [
+		labelAddress := anOpcode realAddressFor: anInteger.
+		(labeler labelAddressAt: labelAddress) ifNotNil: [ :label |
 			^ aStream
 				  nextPut: $@;
-				  nextPutAll: anOpcode immediate ].
-		labelAddress := anInteger + anOpcode codeSize
-		                + (anOpcode immediate * 2) ].
-	(labeler labelAddressAt: labelAddress) ifNotNil: [ :label |
-		^ aStream
-			  nextPut: $@;
-			  nextPutAll: label ].
+				  nextPutAll: label ] ].
 	aStream nextPutAll: anOpcode operandText
 ]
 

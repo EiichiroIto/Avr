@@ -27,6 +27,24 @@ AvrImmediateTest >> testArguments [
 ]
 
 { #category : 'tests' }
+AvrImmediateTest >> testHasImmediate [
+
+	self assert: self newOp hasImmediate
+]
+
+{ #category : 'tests' }
+AvrImmediateTest >> testHasLabel [
+
+	| op |
+	op := self newOp.
+	self deny: op hasLabel.
+	op immediate: 'abc'.
+	self assert: op hasLabel.
+	op immediate: 123.
+	self deny: op hasLabel
+]
+
+{ #category : 'tests' }
 AvrImmediateTest >> testImmediate [
 
 	| obj |

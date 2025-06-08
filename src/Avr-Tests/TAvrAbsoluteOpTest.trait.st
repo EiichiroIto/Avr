@@ -61,15 +61,15 @@ TAvrAbsoluteOpTest >> testFromWordWithExtended [
 ]
 
 { #category : 'tests' }
-TAvrAbsoluteOpTest >> testImmediateRange [
+TAvrAbsoluteOpTest >> testHasAddress [
 
-	self assert: self newOp immediateRange isCollection
+	self assert: self newOp hasAddress
 ]
 
 { #category : 'tests' }
-TAvrAbsoluteOpTest >> testIsAbsolute [
+TAvrAbsoluteOpTest >> testImmediateRange [
 
-	self assert: self newOp isAbsolute
+	self assert: self newOp immediateRange isCollection
 ]
 
 { #category : 'tests' }
@@ -118,6 +118,15 @@ TAvrAbsoluteOpTest >> testOperandText [
 	self assert: op operandText equals: 'nil'.
 	op immediate: 16r123.
 	self assert: op operandText equals: '0x246'
+]
+
+{ #category : 'tests' }
+TAvrAbsoluteOpTest >> testRealAddressFor [
+
+	| op |
+	op := self newOp.
+	op immediate: 10.
+	self assert: (op realAddressFor: 123) equals: 20
 ]
 
 { #category : 'tests' }

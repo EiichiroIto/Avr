@@ -17,6 +17,12 @@ TAvrRelativeOp >> fromWord: anInteger [
 	self immediate: (anInteger expandSignWith: 16r0FFF)
 ]
 
+{ #category : 'testing' }
+TAvrRelativeOp >> hasAddress [
+
+	^ true
+]
+
 { #category : 'accessing' }
 TAvrRelativeOp >> immediateRange [
 
@@ -45,4 +51,10 @@ TAvrRelativeOp >> operand [
 TAvrRelativeOp >> operandText [
 
 	^ self printRelativeAddress: self immediate
+]
+
+{ #category : 'accessing' }
+TAvrRelativeOp >> realAddressFor: anInteger [
+
+	^ anInteger + self codeSize + (self immediate * 2)
 ]

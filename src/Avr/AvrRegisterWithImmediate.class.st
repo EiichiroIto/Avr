@@ -17,6 +17,12 @@ AvrRegisterWithImmediate >> arguments [
 ]
 
 { #category : 'testing' }
+AvrRegisterWithImmediate >> hasImmediate [
+
+	^ true
+]
+
+{ #category : 'testing' }
 AvrRegisterWithImmediate >> hasLabel [
 
 	^ immediate isString
@@ -38,6 +44,12 @@ AvrRegisterWithImmediate >> immediate: anObject [
 AvrRegisterWithImmediate >> immediateRange [
 
 	self subclassResponsibility
+]
+
+{ #category : 'testing' }
+AvrRegisterWithImmediate >> isRelative [
+
+	^ false
 ]
 
 { #category : 'testing' }

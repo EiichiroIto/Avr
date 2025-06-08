@@ -37,6 +37,12 @@ TAvrAbsoluteOp >> fromWord: anInteger withExtended: anInteger2 [
 		 << 16 bitOr: (anInteger2 bitAnd: 16rFFFF))
 ]
 
+{ #category : 'testing' }
+TAvrAbsoluteOp >> hasAddress [
+
+	^ true
+]
+
 { #category : 'accessing' }
 TAvrAbsoluteOp >> immediateRange [
 
@@ -44,9 +50,9 @@ TAvrAbsoluteOp >> immediateRange [
 ]
 
 { #category : 'testing' }
-TAvrAbsoluteOp >> isAbsolute [
+TAvrAbsoluteOp >> isRelative [
 
-	^ true
+	^ false
 ]
 
 { #category : 'accessing' }
@@ -66,4 +72,10 @@ TAvrAbsoluteOp >> operand [
 TAvrAbsoluteOp >> operandText [
 
 	^ self printAbsoluteAddress: self immediate
+]
+
+{ #category : 'accessing' }
+TAvrAbsoluteOp >> realAddressFor: anInteger [
+
+	^ self immediate * 2
 ]

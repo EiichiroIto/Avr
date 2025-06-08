@@ -42,6 +42,12 @@ TAvrRelativeOpTest >> testFromWord [
 ]
 
 { #category : 'tests' }
+TAvrRelativeOpTest >> testHasAddress [
+
+	self assert: self newOp hasAddress
+]
+
+{ #category : 'tests' }
 TAvrRelativeOpTest >> testImmediateRange [
 
 	self assert: self newOp immediateRange isCollection
@@ -83,6 +89,15 @@ TAvrRelativeOpTest >> testOperandText [
 	self assert: op operandText equals: '.+100'.
 	op immediate: -50.
 	self assert: op operandText equals: '.-100'
+]
+
+{ #category : 'tests' }
+TAvrRelativeOpTest >> testRealAddressFor [
+
+	| op |
+	op := self newOp.
+	op immediate: 10.
+	self assert: (op realAddressFor: 123) equals: 123 + op codeSize + 20
 ]
 
 { #category : 'tests' }

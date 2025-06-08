@@ -29,6 +29,24 @@ AvrRegisterWithImmediateTest >> testArguments [
 ]
 
 { #category : 'tests' }
+AvrRegisterWithImmediateTest >> testHasImmediate [
+
+	self assert: self newOp hasImmediate
+]
+
+{ #category : 'tests' }
+AvrRegisterWithImmediateTest >> testHasLabel [
+
+	| op |
+	op := self newOp.
+	self deny: op hasLabel.
+	op immediate: 'abc'.
+	self assert: op hasLabel.
+	op immediate: 123.
+	self deny: op hasLabel
+]
+
+{ #category : 'tests' }
 AvrRegisterWithImmediateTest >> testImmediate [
 
 	| obj |
@@ -36,6 +54,12 @@ AvrRegisterWithImmediateTest >> testImmediate [
 	self assert: obj immediate isNil.
 	obj immediate: 123.
 	self assert: obj immediate equals: 123
+]
+
+{ #category : 'tests' }
+AvrRegisterWithImmediateTest >> testIsRelative [
+
+	self deny: self newOp isRelative
 ]
 
 { #category : 'tests' }

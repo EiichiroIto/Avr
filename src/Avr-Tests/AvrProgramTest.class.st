@@ -93,6 +93,21 @@ AvrProgramTest >> testLabel [
 ]
 
 { #category : 'tests' }
+AvrProgramTest >> testLabelAddressPut [
+
+	| obj |
+	obj := self newObj.
+	obj address: 123.
+	obj label: 'abc'.
+	obj address: 456.
+	obj label: 'def'.
+	self assert: (obj labeler labelAddressPut: 123) equals: 'abc'.
+	self assert: (obj labeler labelAddressPut: 456) equals: 'def'.
+	self assert: (obj labeler labelAddressPut: 789) equals: 'label1'.
+	self assert: (obj labeler labelAddressAt: 789) equals: 'label1'
+]
+
+{ #category : 'tests' }
 AvrProgramTest >> testLabeler [
 
 	| obj a |

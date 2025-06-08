@@ -42,6 +42,12 @@ TAvrBranchOpTest >> testFromWord [
 ]
 
 { #category : 'tests' }
+TAvrBranchOpTest >> testHasAddress [
+
+	self assert: self newOp hasAddress
+]
+
+{ #category : 'tests' }
 TAvrBranchOpTest >> testImmediateRange [
 
 	self assert: self newOp immediateRange isCollection
@@ -83,6 +89,15 @@ TAvrBranchOpTest >> testOperandText [
 	self assert: op operandText equals: '.+100'.
 	op immediate: -50.
 	self assert: op operandText equals: '.-100'
+]
+
+{ #category : 'tests' }
+TAvrBranchOpTest >> testRealAddressFor [
+
+	| op |
+	op := self newOp.
+	op immediate: 10.
+	self assert: (op realAddressFor: 123) equals: 123 + op codeSize + 20
 ]
 
 { #category : 'tests' }

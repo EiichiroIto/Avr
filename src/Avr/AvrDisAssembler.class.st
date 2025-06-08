@@ -71,6 +71,8 @@ AvrDisAssembler >> readFrom: aStream [
 	| code |
 	[ aStream atEnd ] whileFalse: [
 		code := self readCodeFrom: aStream.
+		code hasAddress ifTrue: [
+			program labelAddressPut: (code realAddressFor: program address) ].
 		program add: code ]
 ]
 

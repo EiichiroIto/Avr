@@ -34,15 +34,21 @@ AvrInstructionTest >> testFromWordWithExtended [
 ]
 
 { #category : 'tests' }
-AvrInstructionTest >> testIsAbsolute [
+AvrInstructionTest >> testHasAddress [
 
-	self deny: self newOp isAbsolute
+	self deny: self newOp hasAddress
 ]
 
 { #category : 'tests' }
-AvrInstructionTest >> testIsRelative [
+AvrInstructionTest >> testHasImmediate [
 
-	self deny: self newOp isRelative
+	self deny: self newOp hasImmediate
+]
+
+{ #category : 'tests' }
+AvrInstructionTest >> testHasLabel [
+
+	self deny: self newOp hasLabel
 ]
 
 { #category : 'tests' }

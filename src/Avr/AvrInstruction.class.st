@@ -36,6 +36,12 @@ AvrInstruction >> codeSize [
 	^ 2
 ]
 
+{ #category : 'copying' }
+AvrInstruction >> copyUsingLabeler: aLabeler address: anInteger [
+
+	^ self copy
+]
+
 { #category : 'accessing' }
 AvrInstruction >> description [
 
@@ -61,19 +67,19 @@ AvrInstruction >> fromWord: anInteger withExtended: anInteger2 [
 ]
 
 { #category : 'testing' }
+AvrInstruction >> hasAddress [
+
+	^ false
+]
+
+{ #category : 'testing' }
+AvrInstruction >> hasImmediate [
+
+	^ false
+]
+
+{ #category : 'testing' }
 AvrInstruction >> hasLabel [
-
-	^ false
-]
-
-{ #category : 'testing' }
-AvrInstruction >> isAbsolute [
-
-	^ false
-]
-
-{ #category : 'testing' }
-AvrInstruction >> isRelative [
 
 	^ false
 ]
