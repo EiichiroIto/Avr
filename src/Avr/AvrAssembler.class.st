@@ -392,7 +392,15 @@ AvrAssembler >> sbi: io bit: bit [
 ]
 
 { #category : 'register-immediate' }
-AvrAssembler >> sbisR: register data: immediate [
+AvrAssembler >> sbic: register bit: immediate [
+
+	self add: (AvrOpSBIC new
+			 register: register;
+			 immediate: immediate)
+]
+
+{ #category : 'register-immediate' }
+AvrAssembler >> sbis: register bit: immediate [
 
 	self add: (AvrOpSBIS new
 			 register: register;
@@ -403,6 +411,22 @@ AvrAssembler >> sbisR: register data: immediate [
 AvrAssembler >> sbiwR: register data: immediate [
 
 	self add: (AvrOpSBIW new
+			 register: register;
+			 immediate: immediate)
+]
+
+{ #category : 'register-immediate' }
+AvrAssembler >> sbrc: register bit: immediate [
+
+	self add: (AvrOpSBRC new
+			 register: register;
+			 immediate: immediate)
+]
+
+{ #category : 'register-immediate' }
+AvrAssembler >> sbrs: register bit: immediate [
+
+	self add: (AvrOpSBRS new
 			 register: register;
 			 immediate: immediate)
 ]
@@ -430,7 +454,7 @@ AvrAssembler >> stdZ: immediate r: register [
 ]
 
 { #category : 'register-immediate' }
-AvrAssembler >> stsR: register data: immediate [
+AvrAssembler >> stsAddress: immediate r: register [
 
 	self add: (AvrOpSTS new
 			 register: register;

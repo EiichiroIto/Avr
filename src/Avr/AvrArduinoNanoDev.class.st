@@ -96,11 +96,11 @@ AvrArduinoNanoDev >> sample1 [
 	asm adiwR: 24 data: 1.
 	asm adcDest: 26 source: 1.
 	asm adcDest: 27 source: 1.
-	asm stsR: 18 data: 260.
-	asm stsR: 24 data: 261.
-	asm stsR: 25 data: 262.
-	asm stsR: 26 data: 263.
-	asm stsR: 27 data: 264.
+	asm stsAddress: 260 r: 18.
+	asm stsAddress: 261 r: 24.
+	asm stsAddress: 262 r: 25.
+	asm stsAddress: 263 r: 26.
+	asm stsAddress: 264 r: 27.
 	asm ldsR: 24 address: 256.
 	asm ldsR: 25 address: 257.
 	asm ldsR: 26 address: 258.
@@ -108,10 +108,10 @@ AvrArduinoNanoDev >> sample1 [
 	asm adiwR: 24 data: 1.
 	asm adcDest: 26 source: 1.
 	asm adcDest: 27 source: 1.
-	asm stsR: 24 data: 256.
-	asm stsR: 25 data: 257.
-	asm stsR: 26 data: 258.
-	asm stsR: 27 data: 259.
+	asm stsAddress: 256 r: 24.
+	asm stsAddress: 257 r: 25.
+	asm stsAddress: 258 r: 26.
+	asm stsAddress: 259 r: 27.
 	asm pop: 27.
 	asm pop: 26.
 	asm pop: 25.
@@ -144,36 +144,36 @@ AvrArduinoNanoDev >> sample1 [
 	asm out: 37 r: 24.
 	asm ldsR: 24 address: 110.
 	asm oriR: 24 data: 1.
-	asm stsR: 24 data: 110.
-	asm stsR: 1 data: 129.
+	asm stsAddress: 110 r: 24.
+	asm stsAddress: 129 r: 1.
 	asm ldsR: 24 address: 129.
 	asm oriR: 24 data: 2.
-	asm stsR: 24 data: 129.
+	asm stsAddress: 129 r: 24.
 	asm ldsR: 24 address: 129.
 	asm oriR: 24 data: 1.
-	asm stsR: 24 data: 129.
+	asm stsAddress: 129 r: 24.
 	asm ldsR: 24 address: 128.
 	asm oriR: 24 data: 1.
-	asm stsR: 24 data: 128.
+	asm stsAddress: 128 r: 24.
 	asm ldsR: 24 address: 177.
 	asm oriR: 24 data: 4.
-	asm stsR: 24 data: 177.
+	asm stsAddress: 177 r: 24.
 	asm ldsR: 24 address: 176.
 	asm oriR: 24 data: 1.
-	asm stsR: 24 data: 176.
+	asm stsAddress: 176 r: 24.
 	asm ldsR: 24 address: 122.
 	asm oriR: 24 data: 4.
-	asm stsR: 24 data: 122.
+	asm stsAddress: 122 r: 24.
 	asm ldsR: 24 address: 122.
 	asm oriR: 24 data: 2.
-	asm stsR: 24 data: 122.
+	asm stsAddress: 122 r: 24.
 	asm ldsR: 24 address: 122.
 	asm oriR: 24 data: 1.
-	asm stsR: 24 data: 122.
+	asm stsAddress: 122 r: 24.
 	asm ldsR: 24 address: 122.
 	asm oriR: 24 data: 128.
-	asm stsR: 24 data: 122.
-	asm stsR: 1 data: 193.
+	asm stsAddress: 122 r: 24.
+	asm stsAddress: 193 r: 1.
 	asm ldiR: 28 data: 0.
 	asm ldiR: 29 data: 0.
 	asm sbiwR: 28 data: 0.
@@ -237,7 +237,7 @@ AvrArduinoNanoDev >> sample2 [
 	asm ldsR: 26 address: 263.
 	asm ldsR: 27 address: 264.
 	asm inR: 18 address: 38.
-	asm sbisR: 21 data: 0.
+	asm sbis: 21 bit: 0.
 	asm rjmp: 5.
 	asm cpiR: 18 data: 255.
 	asm breq: 3.
@@ -334,11 +334,11 @@ AvrArduinoNanoDev >> sample2 [
 	asm adiwR: 24 data: 1.
 	asm adcDest: 26 source: 1.
 	asm adcDest: 27 source: 1.
-	asm stsR: 18 data: 256.
-	asm stsR: 24 data: 257.
-	asm stsR: 25 data: 258.
-	asm stsR: 26 data: 259.
-	asm stsR: 27 data: 260.
+	asm stsAddress: 256 r: 18.
+	asm stsAddress: 257 r: 24.
+	asm stsAddress: 258 r: 25.
+	asm stsAddress: 259 r: 26.
+	asm stsAddress: 260 r: 27.
 	asm ldsR: 24 address: 261.
 	asm ldsR: 25 address: 262.
 	asm ldsR: 26 address: 263.
@@ -346,10 +346,10 @@ AvrArduinoNanoDev >> sample2 [
 	asm adiwR: 24 data: 1.
 	asm adcDest: 26 source: 1.
 	asm adcDest: 27 source: 1.
-	asm stsR: 24 data: 261.
-	asm stsR: 25 data: 262.
-	asm stsR: 26 data: 263.
-	asm stsR: 27 data: 264.
+	asm stsAddress: 261 r: 24.
+	asm stsAddress: 262 r: 25.
+	asm stsAddress: 263 r: 26.
+	asm stsAddress: 264 r: 27.
 	asm pop: 27.
 	asm pop: 26.
 	asm pop: 25.
@@ -382,36 +382,36 @@ AvrArduinoNanoDev >> sample2 [
 	asm out: 37 r: 24.
 	asm ldsR: 24 address: 110.
 	asm oriR: 24 data: 1.
-	asm stsR: 24 data: 110.
-	asm stsR: 1 data: 129.
+	asm stsAddress: 110 r: 24.
+	asm stsAddress: 129 r: 1.
 	asm ldsR: 24 address: 129.
 	asm oriR: 24 data: 2.
-	asm stsR: 24 data: 129.
+	asm stsAddress: 129 r: 24.
 	asm ldsR: 24 address: 129.
 	asm oriR: 24 data: 1.
-	asm stsR: 24 data: 129.
+	asm stsAddress: 129 r: 24.
 	asm ldsR: 24 address: 128.
 	asm oriR: 24 data: 1.
-	asm stsR: 24 data: 128.
+	asm stsAddress: 128 r: 24.
 	asm ldsR: 24 address: 177.
 	asm oriR: 24 data: 4.
-	asm stsR: 24 data: 177.
+	asm stsAddress: 177 r: 24.
 	asm ldsR: 24 address: 176.
 	asm oriR: 24 data: 1.
-	asm stsR: 24 data: 176.
+	asm stsAddress: 176 r: 24.
 	asm ldsR: 24 address: 122.
 	asm oriR: 24 data: 4.
-	asm stsR: 24 data: 122.
+	asm stsAddress: 122 r: 24.
 	asm ldsR: 24 address: 122.
 	asm oriR: 24 data: 2.
-	asm stsR: 24 data: 122.
+	asm stsAddress: 122 r: 24.
 	asm ldsR: 24 address: 122.
 	asm oriR: 24 data: 1.
-	asm stsR: 24 data: 122.
+	asm stsAddress: 122 r: 24.
 	asm ldsR: 24 address: 122.
 	asm oriR: 24 data: 128.
-	asm stsR: 24 data: 122.
-	asm stsR: 1 data: 193.
+	asm stsAddress: 122 r: 24.
+	asm stsAddress: 193 r: 1.
 	asm ldiR: 22 data: 123.
 	asm ldiR: 23 data: 0.
 	asm ldiR: 24 data: 0.
@@ -566,7 +566,7 @@ AvrArduinoNanoDev >> sample3 [
 	asm rjmp: 3.
 	asm ldsR: 18 address: 128.
 	asm andiR: 18 data: 127.
-	asm stsR: 18 data: 128.
+	asm stsAddress: 128 r: 18.
 	asm rjmp: -33.
 	asm inR: 18 address: 36.
 	asm andiR: 18 data: 127.
@@ -577,7 +577,7 @@ AvrArduinoNanoDev >> sample3 [
 	asm rjmp: -5.
 	asm ldsR: 18 address: 176.
 	asm andiR: 18 data: 127.
-	asm stsR: 18 data: 176.
+	asm stsAddress: 176 r: 18.
 	asm rjmp: -46.
 	asm ldsR: 18 address: 176.
 	asm andiR: 18 data: 223.
@@ -591,7 +591,7 @@ AvrArduinoNanoDev >> sample3 [
 	asm ldsR: 26 address: 263.
 	asm ldsR: 27 address: 264.
 	asm inR: 18 address: 38.
-	asm sbisR: 21 data: 0.
+	asm sbis: 21 bit: 0.
 	asm rjmp: 5.
 	asm cpiR: 18 data: 255.
 	asm breq: 3.
@@ -692,11 +692,11 @@ AvrArduinoNanoDev >> sample3 [
 	asm adiwR: 24 data: 1.
 	asm adcDest: 26 source: 1.
 	asm adcDest: 27 source: 1.
-	asm stsR: 18 data: 256.
-	asm stsR: 24 data: 257.
-	asm stsR: 25 data: 258.
-	asm stsR: 26 data: 259.
-	asm stsR: 27 data: 260.
+	asm stsAddress: 256 r: 18.
+	asm stsAddress: 257 r: 24.
+	asm stsAddress: 258 r: 25.
+	asm stsAddress: 259 r: 26.
+	asm stsAddress: 260 r: 27.
 	asm ldsR: 24 address: 261.
 	asm ldsR: 25 address: 262.
 	asm ldsR: 26 address: 263.
@@ -704,10 +704,10 @@ AvrArduinoNanoDev >> sample3 [
 	asm adiwR: 24 data: 1.
 	asm adcDest: 26 source: 1.
 	asm adcDest: 27 source: 1.
-	asm stsR: 24 data: 261.
-	asm stsR: 25 data: 262.
-	asm stsR: 26 data: 263.
-	asm stsR: 27 data: 264.
+	asm stsAddress: 261 r: 24.
+	asm stsAddress: 262 r: 25.
+	asm stsAddress: 263 r: 26.
+	asm stsAddress: 264 r: 27.
 	asm pop: 27.
 	asm pop: 26.
 	asm pop: 25.
@@ -740,36 +740,36 @@ AvrArduinoNanoDev >> sample3 [
 	asm out: 37 r: 24.
 	asm ldsR: 24 address: 110.
 	asm oriR: 24 data: 1.
-	asm stsR: 24 data: 110.
-	asm stsR: 1 data: 129.
+	asm stsAddress: 110 r: 24.
+	asm stsAddress: 129 r: 1.
 	asm ldsR: 24 address: 129.
 	asm oriR: 24 data: 2.
-	asm stsR: 24 data: 129.
+	asm stsAddress: 129 r: 24.
 	asm ldsR: 24 address: 129.
 	asm oriR: 24 data: 1.
-	asm stsR: 24 data: 129.
+	asm stsAddress: 129 r: 24.
 	asm ldsR: 24 address: 128.
 	asm oriR: 24 data: 1.
-	asm stsR: 24 data: 128.
+	asm stsAddress: 128 r: 24.
 	asm ldsR: 24 address: 177.
 	asm oriR: 24 data: 4.
-	asm stsR: 24 data: 177.
+	asm stsAddress: 177 r: 24.
 	asm ldsR: 24 address: 176.
 	asm oriR: 24 data: 1.
-	asm stsR: 24 data: 176.
+	asm stsAddress: 176 r: 24.
 	asm ldsR: 24 address: 122.
 	asm oriR: 24 data: 4.
-	asm stsR: 24 data: 122.
+	asm stsAddress: 122 r: 24.
 	asm ldsR: 24 address: 122.
 	asm oriR: 24 data: 2.
-	asm stsR: 24 data: 122.
+	asm stsAddress: 122 r: 24.
 	asm ldsR: 24 address: 122.
 	asm oriR: 24 data: 1.
-	asm stsR: 24 data: 122.
+	asm stsAddress: 122 r: 24.
 	asm ldsR: 24 address: 122.
 	asm oriR: 24 data: 128.
-	asm stsR: 24 data: 122.
-	asm stsR: 1 data: 193.
+	asm stsAddress: 122 r: 24.
+	asm stsAddress: 193 r: 1.
 	asm ldiR: 30 data: 157.
 	asm ldiR: 31 data: 0.
 	asm lpmz: 18.
@@ -1922,15 +1922,15 @@ AvrArduinoNanoDev >> sample4 [
 	asm stdY: 3 r: 26.
 	asm stdY: 4 r: 27.
 	asm lddR: 24 y: 5.
-	asm stsR: 24 data: 256.
+	asm stsAddress: 256 r: 24.
 	asm lddR: 24 y: 1.
 	asm lddR: 25 y: 2.
 	asm lddR: 26 y: 3.
 	asm lddR: 27 y: 4.
-	asm stsR: 24 data: 257.
-	asm stsR: 25 data: 258.
-	asm stsR: 26 data: 259.
-	asm stsR: 27 data: 260.
+	asm stsAddress: 257 r: 24.
+	asm stsAddress: 258 r: 25.
+	asm stsAddress: 259 r: 26.
+	asm stsAddress: 260 r: 27.
 	asm ldsR: 24 address: 261.
 	asm ldsR: 25 address: 262.
 	asm ldsR: 26 address: 263.
@@ -1938,10 +1938,10 @@ AvrArduinoNanoDev >> sample4 [
 	asm adiwR: 24 data: 1.
 	asm adcDest: 26 source: 1.
 	asm adcDest: 27 source: 1.
-	asm stsR: 24 data: 261.
-	asm stsR: 25 data: 262.
-	asm stsR: 26 data: 263.
-	asm stsR: 27 data: 264.
+	asm stsAddress: 261 r: 24.
+	asm stsAddress: 262 r: 25.
+	asm stsAddress: 263 r: 26.
+	asm stsAddress: 264 r: 27.
 	asm pop: 0.
 	asm pop: 0.
 	asm pop: 0.
@@ -2047,11 +2047,11 @@ AvrArduinoNanoDev >> timer1Int [
 	asm adcDest: 26 source: 1.
 	asm adcDest: 27 source: 1.
 	asm label: 'timer1IntLabel1'.
-	asm stsR: 18 data: 260.
-	asm stsR: 24 data: 261.
-	asm stsR: 25 data: 262.
-	asm stsR: 26 data: 263.
-	asm stsR: 27 data: 264.
+	asm stsAddress: 260 r: 18.
+	asm stsAddress: 261 r: 24.
+	asm stsAddress: 262 r: 25.
+	asm stsAddress: 263 r: 26.
+	asm stsAddress: 264 r: 27.
 	asm ldsR: 24 address: 256.
 	asm ldsR: 25 address: 257.
 	asm ldsR: 26 address: 258.
@@ -2059,10 +2059,10 @@ AvrArduinoNanoDev >> timer1Int [
 	asm adiwR: 24 data: 1.
 	asm adcDest: 26 source: 1.
 	asm adcDest: 27 source: 1.
-	asm stsR: 24 data: 256.
-	asm stsR: 25 data: 257.
-	asm stsR: 26 data: 258.
-	asm stsR: 27 data: 259.
+	asm stsAddress: 256 r: 24.
+	asm stsAddress: 257 r: 25.
+	asm stsAddress: 258 r: 26.
+	asm stsAddress: 259 r: 27.
 	asm pop: 27.
 	asm pop: 26.
 	asm pop: 25.

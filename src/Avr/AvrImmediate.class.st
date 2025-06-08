@@ -62,7 +62,7 @@ AvrImmediate >> immediateRange [
 { #category : 'testing' }
 AvrImmediate >> isRelative [
 
-	self subclassResponsibility
+	^ true
 ]
 
 { #category : 'testing' }

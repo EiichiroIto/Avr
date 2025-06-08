@@ -39,6 +39,14 @@ AvrArduino >> initialize [
 	asm program: self newProgram
 ]
 
+{ #category : 'programs' }
+AvrArduino >> intHandler: aBlock named: aString [
+
+	asm label: aString.
+	aBlock value.
+	asm reti
+]
+
 { #category : 'instance creation' }
 AvrArduino >> newAssembler [
 
@@ -61,4 +69,12 @@ AvrArduino >> program [
 AvrArduino >> program: anObject [
 
 	asm program: anObject
+]
+
+{ #category : 'programs' }
+AvrArduino >> subroutine: aBlock named: aString [
+
+	asm label: aString.
+	aBlock value.
+	asm ret
 ]

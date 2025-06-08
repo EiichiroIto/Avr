@@ -29,12 +29,6 @@ TAvrBranchOp >> immediateRange [
 	^ -64 to: 63
 ]
 
-{ #category : 'testing' }
-TAvrBranchOp >> isRelative [
-
-	^ true
-]
-
 { #category : 'accessing' }
 TAvrBranchOp >> opcodeMask [
 

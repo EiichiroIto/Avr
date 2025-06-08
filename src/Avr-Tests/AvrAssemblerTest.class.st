@@ -600,11 +600,23 @@ AvrAssemblerTest >> testSbiBit [
 ]
 
 { #category : 'tests' }
-AvrAssemblerTest >> testSbisRData [
+AvrAssemblerTest >> testSbicBit [
 
 	| obj r |
 	obj := self newObj.
-	obj sbisR: 12 data: 23.
+	obj sbic: 24 bit: 6.
+	r := obj program codes first second.
+	self assert: r mnemonic equals: #SBIC.
+	self assert: r register equals: 24.
+	self assert: r immediate equals: 6
+]
+
+{ #category : 'tests' }
+AvrAssemblerTest >> testSbisBit [
+
+	| obj r |
+	obj := self newObj.
+	obj sbis: 12 bit: 23.
 	r := obj program codes first second.
 	self assert: r mnemonic equals: #SBIS.
 	self assert: r register equals: 12.
@@ -621,6 +633,30 @@ AvrAssemblerTest >> testSbiwRData [
 	self assert: r mnemonic equals: #SBIW.
 	self assert: r register equals: 12.
 	self assert: r immediate equals: 23
+]
+
+{ #category : 'tests' }
+AvrAssemblerTest >> testSbrcBit [
+
+	| obj r |
+	obj := self newObj.
+	obj sbrc: 24 bit: 6.
+	r := obj program codes first second.
+	self assert: r mnemonic equals: #SBRC.
+	self assert: r register equals: 24.
+	self assert: r immediate equals: 6
+]
+
+{ #category : 'tests' }
+AvrAssemblerTest >> testSbrsBit [
+
+	| obj r |
+	obj := self newObj.
+	obj sbrs: 24 bit: 6.
+	r := obj program codes first second.
+	self assert: r mnemonic equals: #SBRS.
+	self assert: r register equals: 24.
+	self assert: r immediate equals: 6
 ]
 
 { #category : 'tests' }
@@ -660,11 +696,11 @@ AvrAssemblerTest >> testStdZR [
 ]
 
 { #category : 'tests' }
-AvrAssemblerTest >> testStsRData [
+AvrAssemblerTest >> testStsAddressR [
 
 	| obj r |
 	obj := self newObj.
-	obj stsR: 12 data: 23.
+	obj stsAddress: 23 r: 12.
 	r := obj program codes first second.
 	self assert: r mnemonic equals: #STS.
 	self assert: r register equals: 12.

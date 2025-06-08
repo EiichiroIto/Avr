@@ -9,10 +9,68 @@ Class {
 	#tag : 'Arduino'
 }
 
-{ #category : 'api' }
+{ #category : 'constants' }
+AvrArduinoNano >> adch [
+
+	^ 16r79
+]
+
+{ #category : 'constants' }
+AvrArduinoNano >> adcl [
+
+	^ 16r78
+]
+
+{ #category : 'constants' }
+AvrArduinoNano >> adcsra [
+
+	^ 16r7A
+]
+
+{ #category : 'constants' }
+AvrArduinoNano >> admux [
+
+	^ 16r7C
+]
+
+{ #category : 'constants' }
+AvrArduinoNano >> admuxHigh [
+
+	^ 16r40
+]
+
+{ #category : 'constants' }
+AvrArduinoNano >> admuxMask [
+
+	^ 16r0F
+]
+
+{ #category : 'programs' }
 AvrArduinoNano >> all [
 
 	self subclassResponsibility
+]
+
+{ #category : 'macros' }
+AvrArduinoNano >> analogRead: anInteger register: anInteger2 [
+
+	| label |
+	asm ldiR: anInteger2 data: anInteger.
+	asm andiR: anInteger2 data: self admuxMask.
+	asm oriR: anInteger2 data: self admuxHigh.
+	asm stsAddress: self admux r: anInteger2.
+	asm ldiR: self zl data: self adcsra.
+	asm ldiR: self zh data: 0.
+	asm ldz: anInteger2.
+	asm oriR: anInteger2 data: 1 << 6.
+	asm stz: anInteger2.
+	label := self nextLabel.
+	asm label: label.
+	asm ldz: anInteger2.
+	asm sbrc: anInteger2 bit: 6.
+	asm rjmp: label.
+	asm ldsR: anInteger2 address: self adcl.
+	asm ldsR: anInteger2 + 1 address: self adch
 ]
 
 { #category : 'programs' }
@@ -184,6 +242,24 @@ AvrArduinoNano >> portC [
 AvrArduinoNano >> portD [
 
 	^ 16r0B
+]
+
+{ #category : 'constants' }
+AvrArduinoNano >> ramEnd [
+
+	^ 16r8FF
+]
+
+{ #category : 'constants' }
+AvrArduinoNano >> ramEndHigh [
+
+	^ self ramEnd >> 8
+]
+
+{ #category : 'constants' }
+AvrArduinoNano >> ramEndLow [
+
+	^ self ramEnd bitAnd: 16rFF
 ]
 
 { #category : 'programs' }

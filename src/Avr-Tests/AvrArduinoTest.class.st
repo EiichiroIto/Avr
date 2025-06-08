@@ -35,6 +35,24 @@ AvrArduinoTest >> testInitialize [
 ]
 
 { #category : 'tests' }
+AvrArduinoTest >> testIntHandlerNamed [
+
+	| obj program code |
+	obj := self newObj.
+	program := obj program.
+	obj intHandler: [ obj asm inc: 10 ] named: 'test1'.
+	self assert: program codes size equals: 2.
+	code := program codes first.
+	self assert: code first equals: 0.
+	self assert: code second mnemonic equals: #INC.
+	self assert: code second register equals: 10.
+	code := program codes second.
+	self assert: code first equals: 2.
+	self assert: code second mnemonic equals: #RETI.
+	self assert: (program labeler labelNameAt: 'test1') equals: 0
+]
+
+{ #category : 'tests' }
 AvrArduinoTest >> testLabel [
 
 	| obj |
@@ -67,4 +85,22 @@ AvrArduinoTest >> testProgram [
 	a := AvrProgram new.
 	obj program: a.
 	self assert: obj program identicalTo: a
+]
+
+{ #category : 'tests' }
+AvrArduinoTest >> testSubroutineNamed [
+
+	| obj program code |
+	obj := self newObj.
+	program := obj program.
+	obj subroutine: [ obj asm inc: 10 ] named: 'test1'.
+	self assert: program codes size equals: 2.
+	code := program codes first.
+	self assert: code first equals: 0.
+	self assert: code second mnemonic equals: #INC.
+	self assert: code second register equals: 10.
+	code := program codes second.
+	self assert: code first equals: 2.
+	self assert: code second mnemonic equals: #RET.
+	self assert: (program labeler labelNameAt: 'test1') equals: 0
 ]

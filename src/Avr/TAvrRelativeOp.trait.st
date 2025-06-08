@@ -29,12 +29,6 @@ TAvrRelativeOp >> immediateRange [
 	^ -2048 to: 2047
 ]
 
-{ #category : 'testing' }
-TAvrRelativeOp >> isRelative [
-
-	^ true
-]
-
 { #category : 'accessing' }
 TAvrRelativeOp >> opcodeMask [
 

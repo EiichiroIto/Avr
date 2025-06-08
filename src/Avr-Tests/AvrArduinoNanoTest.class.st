@@ -16,6 +16,44 @@ AvrArduinoNanoTest >> newObj [
 ]
 
 { #category : 'tests' }
+AvrArduinoNanoTest >> testAdch [
+
+	| obj |
+	obj := self newObj.
+	self assert: obj adch equals: obj adcl + 1
+]
+
+{ #category : 'tests' }
+AvrArduinoNanoTest >> testAdcl [
+
+	self assert: self newObj adcl equals: 16r78
+]
+
+{ #category : 'tests' }
+AvrArduinoNanoTest >> testAdcsra [
+
+	self assert: self newObj adcsra equals: 16r7A
+]
+
+{ #category : 'tests' }
+AvrArduinoNanoTest >> testAdmux [
+
+	self assert: self newObj admux equals: 16r7C
+]
+
+{ #category : 'tests' }
+AvrArduinoNanoTest >> testAdmuxHigh [
+
+	self assert: self newObj admuxHigh equals: 16r40
+]
+
+{ #category : 'tests' }
+AvrArduinoNanoTest >> testAdmuxMask [
+
+	self assert: self newObj admuxMask equals: 16r0F
+]
+
+{ #category : 'tests' }
 AvrArduinoNanoTest >> testDdrB [
 
 	| obj |
@@ -276,6 +314,24 @@ AvrArduinoNanoTest >> testPortD [
 	| obj |
 	obj := self newObj.
 	self assert: obj portD equals: obj pinD + 2
+]
+
+{ #category : 'tests' }
+AvrArduinoNanoTest >> testRamEnd [
+
+	self assert: self newObj ramEnd equals: 16r8FF
+]
+
+{ #category : 'tests' }
+AvrArduinoNanoTest >> testRamEndHigh [
+
+	self assert: self newObj ramEndHigh equals: 16r08
+]
+
+{ #category : 'tests' }
+AvrArduinoNanoTest >> testRamEndLow [
+
+	self assert: self newObj ramEndLow equals: 16rFF
 ]
 
 { #category : 'tests' }

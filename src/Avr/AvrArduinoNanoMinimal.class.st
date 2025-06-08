@@ -6,7 +6,7 @@ Class {
 	#tag : 'Arduino'
 }
 
-{ #category : 'api' }
+{ #category : 'programs' }
 AvrArduinoNanoMinimal >> all [
 
 	self
@@ -24,25 +24,25 @@ AvrArduinoNanoMinimal >> all [
 	asm rjmp: #loop
 ]
 
-{ #category : 'private' }
+{ #category : 'programs' }
 AvrArduinoNanoMinimal >> boot [
 
 	asm eorDest: 1 source: 1.
 	asm out: self sreg r: 1.
-	asm ldiR: self yl data: 16rFF.
-	asm ldiR: self yh data: 16r8.
+	asm ldiR: self yl data: self ramEndLow.
+	asm ldiR: self yh data: self ramEndHigh.
 	asm out: self sph r: self yh.
 	asm out: self spl r: self yl
 ]
 
-{ #category : 'private' }
+{ #category : 'programs' }
 AvrArduinoNanoMinimal >> loop [
 
 	self digitalWrite: 7 boolean: true.
 	self digitalWrite: 11 boolean: true
 ]
 
-{ #category : 'private' }
+{ #category : 'programs' }
 AvrArduinoNanoMinimal >> setVectors [
 
 	asm jmp: #boot.
@@ -73,7 +73,7 @@ AvrArduinoNanoMinimal >> setVectors [
 	asm jmp: #softReset
 ]
 
-{ #category : 'private' }
+{ #category : 'programs' }
 AvrArduinoNanoMinimal >> setup [
 
 	self digitalPin: 7 mode: 1.
