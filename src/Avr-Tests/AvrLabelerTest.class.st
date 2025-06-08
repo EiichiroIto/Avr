@@ -103,3 +103,14 @@ AvrLabelerTest >> testNextLabel [
 	self assert: obj nextLabel equals: 'label2'.
 	self assert: obj nextLabel equals: 'label3'
 ]
+
+{ #category : 'tests' }
+AvrLabelerTest >> testPeekLabel [
+
+	| obj |
+	obj := self newObj.
+	self assert: obj peekLabel equals: 'label1'.
+	self assert: obj peekLabel equals: 'label1'.
+	obj nextLabel.
+	self assert: obj peekLabel equals: 'label2'
+]

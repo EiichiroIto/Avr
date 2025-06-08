@@ -195,6 +195,12 @@ AvrAssembler >> label: aString [
 	program label: aString
 ]
 
+{ #category : 'accessing' }
+AvrAssembler >> labeler [
+
+	^ program labeler
+]
+
 { #category : 'register-immediate' }
 AvrAssembler >> lddR: register y: immediate [
 

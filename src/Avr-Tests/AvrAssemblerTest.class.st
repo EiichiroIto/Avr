@@ -303,6 +303,14 @@ AvrAssemblerTest >> testLabel [
 ]
 
 { #category : 'tests' }
+AvrAssemblerTest >> testLabeler [
+
+	| obj |
+	obj := self newObj.
+	self assert: (obj labeler isKindOf: AvrLabeler)
+]
+
+{ #category : 'tests' }
 AvrAssemblerTest >> testLddRY [
 
 	| obj |

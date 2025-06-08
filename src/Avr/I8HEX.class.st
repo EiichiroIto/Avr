@@ -11,6 +11,15 @@ Class {
 }
 
 { #category : 'instance creation' }
+I8HEX class >> fromByteArray: aByteArray [
+
+	^ self new
+		  binary: aByteArray;
+		  binarySize: aByteArray size;
+		  yourself
+]
+
+{ #category : 'instance creation' }
 I8HEX class >> fromFileNamed: aString [
 
 	^ self new readFrom: aString asFileReference readStream

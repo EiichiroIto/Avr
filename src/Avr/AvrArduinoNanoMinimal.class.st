@@ -38,8 +38,8 @@ AvrArduinoNanoMinimal >> boot [
 { #category : 'private' }
 AvrArduinoNanoMinimal >> loop [
 
-	self digitalWrite: 7 to: true.
-	self digitalWrite: 11 to: true
+	self digitalWrite: 7 boolean: true.
+	self digitalWrite: 11 boolean: true
 ]
 
 { #category : 'private' }

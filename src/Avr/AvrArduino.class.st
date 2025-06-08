@@ -9,6 +9,17 @@ Class {
 	#tag : 'Arduino'
 }
 
+{ #category : 'examples' }
+AvrArduino class >> example1 [
+
+	| obj program binary |
+	obj := self new.
+	program := obj all program.
+	binary := AvrCodeGenerator new generateProgram: program.
+	(I8HEX fromByteArray: binary) writeTo:
+		(self name , '.hex') asFileReference writeStream
+]
+
 { #category : 'accessing' }
 AvrArduino >> asm [
 

@@ -27,13 +27,6 @@ AvrArduinoNanoDev >> boot [
 	asm jmp: #endlessLoop
 ]
 
-{ #category : 'programs' }
-AvrArduinoNanoDev >> endlessLoop [
-
-	asm cli.
-	asm rjmp: -1
-]
-
 { #category : 'as yet unclassified' }
 AvrArduinoNanoDev >> sample1 [
 

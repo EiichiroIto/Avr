@@ -71,7 +71,18 @@ AvrArduinoNano >> digitalPins: anObject [
 ]
 
 { #category : 'macros' }
-AvrArduinoNano >> digitalWrite: anInteger to: aBoolean [
+AvrArduinoNano >> digitalRead: anInteger register: anInteger2 [
+
+	| pair pin bit |
+	pair := digitalPins at: anInteger + 1.
+	pin := pair first.
+	bit := pair second.
+	asm inR: anInteger2 address: pin.
+	asm andiR: anInteger2 data: 1 << bit
+]
+
+{ #category : 'macros' }
+AvrArduinoNano >> digitalWrite: anInteger boolean: aBoolean [
 
 	| pair pin bit |
 	pair := digitalPins at: anInteger + 1.
@@ -83,7 +94,25 @@ AvrArduinoNano >> digitalWrite: anInteger to: aBoolean [
 	asm cbi: pin + 2 bit: bit
 ]
 
-{ #category : 'programs' }
+{ #category : 'macros' }
+AvrArduinoNano >> digitalWrite: anInteger register: anInteger2 [
+
+	| pair pin bit label1 label2 |
+	pair := digitalPins at: anInteger + 1.
+	pin := pair first.
+	bit := pair second.
+	asm andDest: anInteger2 source: anInteger2.
+	label1 := self nextLabel.
+	asm breq: label1.
+	asm sbi: pin + 2 bit: bit.
+	label2 := self nextLabel.
+	asm rjmp: label2.
+	asm label: label1.
+	asm cbi: pin + 2 bit: bit.
+	asm label: label2
+]
+
+{ #category : 'macros' }
 AvrArduinoNano >> endlessLoop [
 
 	asm cli.
@@ -113,6 +142,12 @@ AvrArduinoNano >> loop [
 AvrArduinoNano >> mcucr [
 
 	^ 16r35
+]
+
+{ #category : 'accessing' }
+AvrArduinoNano >> nextLabel [
+
+	^ asm labeler nextLabel
 ]
 
 { #category : 'constants' }
@@ -183,7 +218,7 @@ AvrArduinoNano >> setupDigitalPins [
 	digitalPins at: 14 put: (Array with: self pinB with: 5)
 ]
 
-{ #category : 'programs' }
+{ #category : 'macros' }
 AvrArduinoNano >> softReset [
 
 	asm jmp: 0

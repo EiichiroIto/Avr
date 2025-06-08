@@ -75,3 +75,9 @@ AvrLabeler >> nextLabel [
 	labelNo := labelNo + 1.
 	^ 'label' , labelNo asString
 ]
+
+{ #category : 'accessing' }
+AvrLabeler >> peekLabel [
+
+	^ 'label' , (labelNo + 1) asString
+]
