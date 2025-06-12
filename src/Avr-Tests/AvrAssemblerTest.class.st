@@ -135,6 +135,16 @@ AvrAssemblerTest >> testBrge [
 ]
 
 { #category : 'tests' }
+AvrAssemblerTest >> testBrlt [
+
+	| obj |
+	obj := self newObj.
+	obj brlt: 123.
+	self assert: obj program codes first second mnemonic equals: #BRLT.
+	self assert: obj program codes first second immediate equals: 123
+]
+
+{ #category : 'tests' }
 AvrAssemblerTest >> testBrne [
 
 	| obj |

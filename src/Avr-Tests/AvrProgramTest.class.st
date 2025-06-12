@@ -125,6 +125,12 @@ AvrProgramTest >> testNewLabeler [
 ]
 
 { #category : 'tests' }
+AvrProgramTest >> testNewResolver [
+
+	self assert: (self newObj newResolver isKindOf: AvrLabelResolver)
+]
+
+{ #category : 'tests' }
 AvrProgramTest >> testPrintLabeledOpAtOn [
 
 	| obj stream op |
@@ -149,10 +155,29 @@ AvrProgramTest >> testPrintMethodString [
 	obj add: AvrOpNOP new.
 	obj add: AvrOpNOP new.
 	r := obj printMethodString.
-	self assert: r equals: 'self jmp: 10.
-self nop.
-self nop.
+	self assert: r equals: 'asm jmp: 10.
+asm nop.
+asm nop.
 '
+]
+
+{ #category : 'tests' }
+AvrProgramTest >> testPrintOn [
+
+	| obj s |
+	obj := self newObj.
+	s := String new writeStream.
+	obj printOn: s.
+	self assert: s contents equals: 'AvrProgram(0 bytes, 0 ops)'.
+	obj add: AvrOpNOP new.
+	s := String new writeStream.
+	obj printOn: s.
+	self assert: s contents equals: 'AvrProgram(2 bytes, 1 ops)'.
+	obj address: 100.
+	obj add: AvrOpNOP new.
+	s := String new writeStream.
+	obj printOn: s.
+	self assert: s contents equals: 'AvrProgram(102 bytes, 2 ops)'
 ]
 
 { #category : 'tests' }
@@ -225,4 +250,40 @@ AvrProgramTest >> testPrintWithoutLabel [
   68:	00 00 	nop	
   6a:	00 00 	nop	
 '
+]
+
+{ #category : 'tests' }
+AvrProgramTest >> testResolvedCodes [
+
+	| obj list code |
+	obj := self newObj.
+	obj address: 30.
+	obj add: (AvrOpJMP new immediate: #label).
+	obj labeler labelNameAt: #label put: 100.
+	list := obj resolvedCodes.
+	self assert: list size equals: 1.
+	self assert: list first first equals: 30.
+	code := list first second.
+	self assert: code mnemonic equals: #JMP.
+	self assert: code immediate equals: 50
+]
+
+{ #category : 'tests' }
+AvrProgramTest >> testValidatedCodes [
+
+	| obj list code |
+	obj := self newObj.
+	obj address: 30.
+	obj add: (AvrOpJMP new immediate: #label).
+	obj labeler labelNameAt: #label put: 100.
+	list := obj validatedCodes.
+	self assert: list size equals: 1.
+	self assert: list first first equals: 30.
+	code := list first second.
+	self assert: code mnemonic equals: #JMP.
+	self assert: code immediate equals: 50.
+	obj add: (AvrOpLDI new
+			 register: 0;
+			 immediate: 1).
+	self should: [ obj validatedCodes ] raise: Error
 ]

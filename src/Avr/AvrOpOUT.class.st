@@ -44,7 +44,7 @@ AvrOpOUT >> operandText [
 	^ (self printHexImmediate: immediate) , ', ' , self registerString
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'accessing' }
 AvrOpOUT >> selector [
 
 	^ #out:r:

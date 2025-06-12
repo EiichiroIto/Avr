@@ -21,6 +21,13 @@ AvrOpSTS >> description [
 ]
 
 { #category : 'accessing' }
+AvrOpSTS >> messageText [
+
+	^ 'stsAddress: ' , self arguments second asString , ' r: '
+	  , self arguments first asString
+]
+
+{ #category : 'accessing' }
 AvrOpSTS >> mnemonic [
 
 	^ #STS

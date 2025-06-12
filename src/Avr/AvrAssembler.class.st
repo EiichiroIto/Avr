@@ -86,6 +86,12 @@ AvrAssembler >> brge: anInteger [
 ]
 
 { #category : 'immediate' }
+AvrAssembler >> brlt: anInteger [
+
+	self add: (AvrOpBRLT new immediate: anInteger)
+]
+
+{ #category : 'immediate' }
 AvrAssembler >> brne: anInteger [
 
 	self add: (AvrOpBRNE new immediate: anInteger)

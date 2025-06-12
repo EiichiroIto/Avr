@@ -53,3 +53,9 @@ AvrImmediateTest >> testImmediate [
 	obj immediate: 123.
 	self assert: obj immediate equals: 123
 ]
+
+{ #category : 'tests' }
+AvrImmediateTest >> testIsRelative [
+
+	self assert: self newOp isRelative
+]

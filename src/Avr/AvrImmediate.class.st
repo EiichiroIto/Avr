@@ -15,20 +15,6 @@ AvrImmediate >> arguments [
 	^ Array with: immediate
 ]
 
-{ #category : 'copying' }
-AvrImmediate >> copyUsingLabeler: aLabeler address: anInteger [
-
-	| obj addr |
-	obj := self copy.
-	obj immediate isInteger ifTrue: [ ^ obj ].
-	addr := aLabeler labelNameAt: obj immediate.
-	addr ifNil: [ self error: 'Unresolved label:' , obj immediate ].
-	self isRelative ifTrue: [ addr := addr - anInteger - self codeSize ].
-	addr := addr // 2.
-	obj immediate: addr.
-	^ obj
-]
-
 { #category : 'testing' }
 AvrImmediate >> hasImmediate [
 

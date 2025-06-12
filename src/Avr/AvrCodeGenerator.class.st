@@ -31,14 +31,13 @@ AvrCodeGenerator >> generateProgram: aProgram [
 	| offset addr op |
 	offset := 0.
 	output := self newByteStream.
-	aProgram codes do: [ :each |
+	aProgram validatedCodes do: [ :each |
 		addr := each first.
 		op := each second.
 		addr < offset ifTrue: [ self error: 'Invalid Address' ].
 		addr > offset ifTrue: [
 			addr - offset timesRepeat: [ output nextPut: 0 ] ].
-		output nextPutAll:
-			(op copyUsingLabeler: aProgram labeler address: addr) binaryCodes.
+		output nextPutAll: op binaryCodes.
 		offset := addr + op codeSize ].
 	^ output contents
 ]

@@ -86,6 +86,14 @@ AvrProgram >> newLabeler [
 	^ AvrLabeler new
 ]
 
+{ #category : 'instance creation' }
+AvrProgram >> newResolver [
+
+	^ AvrLabelResolver new
+		  labeler: labeler;
+		  yourself
+]
+
 { #category : 'printing' }
 AvrProgram >> printLabeledOp: anOpcode at: anInteger on: aStream [
 
@@ -103,11 +111,27 @@ AvrProgram >> printMethodString [
 	stream := String new writeStream.
 	codes do: [ :each |
 		stream
-			nextPutAll: 'self ';
+			nextPutAll: 'asm ';
 			nextPutAll: each second messageText;
 			nextPut: $.;
 			nextPut: Character cr ].
 	^ stream contents
+]
+
+{ #category : 'printing' }
+AvrProgram >> printOn: aStream [
+
+	| bytes |
+	bytes := 0.
+	codes isEmpty ifFalse: [
+		bytes := codes last first + codes last second codeSize ].
+	aStream
+		nextPutAll: self class name;
+		nextPutAll: '(';
+		nextPutAll: bytes asString;
+		nextPutAll: ' bytes, ';
+		nextPutAll: codes size asString;
+		nextPutAll: ' ops)'
 ]
 
 { #category : 'printing' }
@@ -186,4 +210,21 @@ AvrProgram >> printWithoutLabel [
 		self printOp: each second at: addr on: stream.
 		stream nextPut: Character cr ].
 	^ stream contents
+]
+
+{ #category : 'accessing' }
+AvrProgram >> resolvedCodes [
+
+	^ self newResolver resolveCollection: codes
+]
+
+{ #category : 'accessing' }
+AvrProgram >> validatedCodes [
+
+	| list |
+	list := self resolvedCodes.
+	list do: [ :each |
+		each second isValid ifFalse: [
+			self error: each first asString , ':' , each second asString ] ].
+	^ list
 ]

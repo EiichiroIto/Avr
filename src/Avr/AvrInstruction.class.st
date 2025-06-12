@@ -36,12 +36,6 @@ AvrInstruction >> codeSize [
 	^ 2
 ]
 
-{ #category : 'copying' }
-AvrInstruction >> copyUsingLabeler: aLabeler address: anInteger [
-
-	^ self copy
-]
-
 { #category : 'accessing' }
 AvrInstruction >> description [
 

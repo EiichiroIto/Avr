@@ -69,6 +69,16 @@ I8HEX >> newSizeFor: anInteger [
 	  // self defaultSize * self defaultSize
 ]
 
+{ #category : 'printing' }
+I8HEX >> printOn: aStream [
+
+	aStream
+		nextPutAll: self class name;
+		nextPutAll: '(';
+		nextPutAll: binarySize asString;
+		nextPutAll: ' bytes)'
+]
+
 { #category : 'private' }
 I8HEX >> put: anArray address: anInteger [
 

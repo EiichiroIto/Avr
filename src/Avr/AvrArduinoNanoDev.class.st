@@ -1,12 +1,12 @@
 Class {
 	#name : 'AvrArduinoNanoDev',
-	#superclass : 'AvrArduinoNano',
+	#superclass : 'AvrATmega328P',
 	#category : 'Avr-Arduino',
 	#package : 'Avr',
 	#tag : 'Arduino'
 }
 
-{ #category : 'programs' }
+{ #category : 'as yet unclassified' }
 AvrArduinoNanoDev >> boot [
 
 	asm eorDest: 1 source: 1.
@@ -1989,8 +1989,8 @@ AvrArduinoNanoDev >> sample4 [
 	asm rjmp: -1
 ]
 
-{ #category : 'programs' }
-AvrArduinoNanoDev >> setVectors [
+{ #category : 'as yet unclassified' }
+AvrArduinoNanoDev >> setupVectors [
 
 	asm jmp: #boot.
 	asm jmp: #softReset.

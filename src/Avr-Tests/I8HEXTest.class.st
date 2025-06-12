@@ -63,6 +63,20 @@ I8HEXTest >> testNewSizeFor [
 ]
 
 { #category : 'tests' }
+I8HEXTest >> testPrintOn [
+
+	| obj s |
+	obj := self newObj.
+	s := String new writeStream.
+	obj printOn: s.
+	self assert: s contents equals: 'I8HEX(0 bytes)'.
+	obj binarySize: 123.
+	s := String new writeStream.
+	obj printOn: s.
+	self assert: s contents equals: 'I8HEX(123 bytes)'
+]
+
+{ #category : 'tests' }
 I8HEXTest >> testPutAddress [
 
 	| obj |
@@ -113,6 +127,32 @@ I8HEXTest >> testReadString [
 		should: [
 		obj readString: ':100000000C945C000C946E000C946E000C946E00CA0' ]
 		raise: Error
+]
+
+{ #category : 'tests' }
+I8HEXTest >> testTruncateToBinarySize [
+
+	| obj |
+	obj := self newObj.
+	obj binary: (ByteArray
+			 with: 1
+			 with: 2
+			 with: 3
+			 with: 4).
+	obj binarySize: 2.
+	self assert: obj binary size equals: 4.
+	obj truncateToBinarySize.
+	self assertCollection: obj binary equals: #[ 1 2 ]
+]
+
+{ #category : 'tests' }
+I8HEXTest >> testWriteEndOfFileTo [
+
+	| obj s |
+	obj := self newObj.
+	s := String new writeStream.
+	obj writeEndOfFileTo: s.
+	self assert: s contents equals: ':00000001FF' , String crlf
 ]
 
 { #category : 'tests' }

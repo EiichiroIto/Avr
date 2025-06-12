@@ -77,6 +77,17 @@ AvrArduinoTest >> testNewProgram [
 ]
 
 { #category : 'tests' }
+AvrArduinoTest >> testNextLabel [
+
+	| obj |
+	obj := self newObj.
+	self assert: obj program labeler peekLabel equals: 'label1'.
+	self assert: obj nextLabel equals: 'label1'.
+	self assert: obj program labeler peekLabel equals: 'label2'.
+	self assert: obj nextLabel equals: 'label2'
+]
+
+{ #category : 'tests' }
 AvrArduinoTest >> testProgram [
 
 	| obj a |

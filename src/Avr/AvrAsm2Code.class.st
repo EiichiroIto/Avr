@@ -62,5 +62,6 @@ AvrAsm2Code >> readString: aString [
 	parser := self newParser.
 	tuples := parser parse: aString.
 	tuples isPetitFailure ifTrue: [ ^ self ].
+	program address: tuples first.
 	program add: tuples third
 ]

@@ -10,6 +10,17 @@ Class {
 	#tag : 'Assembly'
 }
 
+{ #category : 'instance creation' }
+AvrDisAssembler class >> fromI8HEX: aFileReference [
+
+	| i8hex |
+	i8hex := I8HEX fromFileNamed: aFileReference asFileReference.
+	^ (self new
+		   program: AvrProgram new;
+		   readFrom: i8hex binary readStream;
+		   yourself) program
+]
+
 { #category : 'initialization' }
 AvrDisAssembler >> initialize [
 
