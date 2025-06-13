@@ -59,7 +59,7 @@ AvrProgram >> initialize [
 { #category : 'accessing' }
 AvrProgram >> label: aString [
 
-	labeler labels at: address put: aString
+	labeler labelNameAt: aString put: address
 ]
 
 { #category : 'accessing' }

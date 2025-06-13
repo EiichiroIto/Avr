@@ -20,7 +20,7 @@ AvrLabeler >> initialize [
 { #category : 'accessing' }
 AvrLabeler >> labelAddressAt: anInteger [
 
-	^ labels at: anInteger ifAbsent: nil
+	^ labels keyAtValue: anInteger ifAbsent: nil
 ]
 
 { #category : 'accessing' }
@@ -36,13 +36,13 @@ AvrLabeler >> labelAddressPut: anInteger [
 { #category : 'accessing' }
 AvrLabeler >> labelNameAt: aString [
 
-	^ labels keyAtValue: aString ifAbsent: nil
+	^ labels at: aString ifAbsent: nil
 ]
 
 { #category : 'accessing' }
 AvrLabeler >> labelNameAt: aString put: anInteger [
 
-	labels at: anInteger put: aString
+	labels at: aString put: anInteger
 ]
 
 { #category : 'accessing' }

@@ -24,7 +24,7 @@ AvrArduinoNanoMinimal >> all [
 	asm rjmp: #loop
 ]
 
-{ #category : 'programs' }
+{ #category : 'as yet unclassified' }
 AvrArduinoNanoMinimal >> boot [
 
 	asm eorDest: 1 source: 1.

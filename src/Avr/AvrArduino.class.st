@@ -2,7 +2,8 @@ Class {
 	#name : 'AvrArduino',
 	#superclass : 'Object',
 	#instVars : [
-		'asm'
+		'asm',
+		'registerPool'
 	],
 	#category : 'Avr-Arduino',
 	#package : 'Avr',
@@ -68,7 +69,8 @@ AvrArduino >> forever: aBlock [
 AvrArduino >> initialize [
 
 	asm := self newAssembler.
-	asm program: self newProgram
+	asm program: self newProgram.
+	registerPool := OrderedCollection new
 ]
 
 { #category : 'programs' }
@@ -109,6 +111,32 @@ AvrArduino >> program: anObject [
 	asm program: anObject
 ]
 
+{ #category : 'macros' }
+AvrArduino >> pushRegisters: aCollection during: aBlock [
+
+	aCollection do: [ :each | asm push: each ].
+	aBlock value.
+	aCollection reverseDo: [ :each | asm pop: each ]
+]
+
+{ #category : 'accessing' }
+AvrArduino >> registerPool [
+
+	^ registerPool
+]
+
+{ #category : 'accessing' }
+AvrArduino >> registerPool: anObject [
+
+	registerPool := anObject
+]
+
+{ #category : 'private' }
+AvrArduino >> setupRegisterPool [
+
+	self subclassResponsibility
+]
+
 { #category : 'programs' }
 AvrArduino >> subroutine: aBlock named: aString [
 
@@ -130,19 +158,7 @@ AvrArduino >> uploadTo: aString [
 				   filename })
 ]
 
-{ #category : 'accessing' }
-AvrArduino >> useRegister32: anInteger [
-
-	^ anInteger
-]
-
-{ #category : 'accessing' }
-AvrArduino >> useRegister: anInteger [
-
-	^ anInteger
-]
-
-{ #category : 'accessing' }
+{ #category : 'constants' }
 AvrArduino >> writerFormat [
 
 	self subclassResponsibility

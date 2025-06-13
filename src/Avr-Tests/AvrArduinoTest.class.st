@@ -60,7 +60,7 @@ AvrArduinoTest >> testLabel [
 	self assert: obj program labeler labels isEmpty.
 	obj program address: 123.
 	obj program label: 'abc'.
-	self assert: (obj program labeler labels at: 123) equals: 'abc'
+	self assert: (obj program labeler labelAddressAt: 123) equals: 'abc'
 ]
 
 { #category : 'tests' }
@@ -96,6 +96,15 @@ AvrArduinoTest >> testProgram [
 	a := AvrProgram new.
 	obj program: a.
 	self assert: obj program identicalTo: a
+]
+
+{ #category : 'tests' }
+AvrArduinoTest >> testRegisterPool [
+
+	| obj |
+	obj := self newObj.
+	self assert: obj registerPool isCollection.
+	self assert: obj registerPool isEmpty
 ]
 
 { #category : 'tests' }
