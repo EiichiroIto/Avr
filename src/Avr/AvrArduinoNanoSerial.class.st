@@ -9,9 +9,9 @@ Class {
 { #category : 'programs' }
 AvrArduinoNanoSerial >> all [
 
+	self setupVectors.
+	asm label: #boot.
 	self
-		setupVectors;
-		label: #boot;
 		boot;
 		clearCounter;
 		setupTimer0;
@@ -20,9 +20,8 @@ AvrArduinoNanoSerial >> all [
 	asm rjmp: #setup.
 	self intHandler: [  ] named: #noInterrupt.
 	self intHandler: [ self timer0compa ] named: #timer0compa.
-	self
-		label: #setup;
-		setup.
+	asm label: #setup.
+	self setup.
 	self forever: [ self loop ]
 ]
 

@@ -53,6 +53,16 @@ AvrArduinoTest >> testIntHandlerNamed [
 ]
 
 { #category : 'tests' }
+AvrArduinoTest >> testIo [
+
+	| obj |
+	obj := self newObj.
+	self assert: obj io isNil.
+	obj io: AvrArduinoNanoIO.
+	self assert: obj io identicalTo: AvrArduinoNanoIO
+]
+
+{ #category : 'tests' }
 AvrArduinoTest >> testLabel [
 
 	| obj |
@@ -99,12 +109,36 @@ AvrArduinoTest >> testProgram [
 ]
 
 { #category : 'tests' }
+AvrArduinoTest >> testRam [
+
+	| obj |
+	obj := self newObj.
+	self assert: obj ram isNil.
+	obj ram: AvrArduinoNanoRam.
+	self assert: obj ram identicalTo: AvrArduinoNanoRam
+]
+
+{ #category : 'tests' }
 AvrArduinoTest >> testRegisterPool [
 
 	| obj |
 	obj := self newObj.
 	self assert: obj registerPool isCollection.
 	self assert: obj registerPool isEmpty
+]
+
+{ #category : 'tests' }
+AvrArduinoTest >> testReturnRegisters [
+
+	| obj list |
+	obj := self newObj.
+	list := obj registerPool.
+	list addAll: #( 1 2 3 ).
+	obj returnRegisters: #( 4 5 ).
+	self
+		assertCollection: obj registerPool
+		equals: #( 1 2 3 4 5 ) asOrderedCollection.
+	self should: [ obj returnRegisters: #( 5 6 ) ] raise: Error
 ]
 
 { #category : 'tests' }
@@ -123,4 +157,54 @@ AvrArduinoTest >> testSubroutineNamed [
 	self assert: code first equals: 2.
 	self assert: code second mnemonic equals: #RET.
 	self assert: (program labeler labelNameAt: 'test1') equals: 0
+]
+
+{ #category : 'tests' }
+AvrArduinoTest >> testUseRegisterDuring [
+
+	| obj list |
+	obj := self newObj.
+	list := obj registerPool.
+	list addAll: (0 to: 31).
+	self assert: list size equals: 32.
+	obj useRegisterDuring: [ :r |
+		self assert: r equals: 0.
+		self deny: (list includes: r) ].
+	self assert: list size equals: 32.
+	self
+		should: [ obj useRegisterDuring: [ :r | list add: r ] ]
+		raise: Error
+]
+
+{ #category : 'tests' }
+AvrArduinoTest >> testUseRegistersDuring [
+
+	| obj list |
+	obj := self newObj.
+	list := obj registerPool.
+	list addAll: (0 to: 31).
+	self assert: list size equals: 32.
+	obj use: 4 registersDuring: [ :r |
+		self assertCollection: r equals: #( 0 1 2 3 ).
+		obj
+			use: 4
+			registersDuring: [ :r2 |
+			self assertCollection: r2 equals: #( 4 5 6 7 ) ] ].
+	self assert: list size equals: 32
+]
+
+{ #category : 'tests' }
+AvrArduinoTest >> testUseRegistersDuring2 [
+
+	| obj list |
+	obj := self newObj.
+	list := obj registerPool.
+	list addAll: (0 to: 31).
+	self assert: list size equals: 32.
+	obj useRegisters: #( 0 2 4 ) during: [ :r |
+		self assertCollection: r equals: #( 0 2 4 ).
+		self deny: (list includes: 0).
+		self deny: (list includes: 2).
+		self deny: (list includes: 4) ].
+	self assert: list size equals: 32
 ]

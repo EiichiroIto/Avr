@@ -41,6 +41,12 @@ AvrInputOutput >> fromWord: anInteger [
 	self io: (anInteger >> 3 bitAnd: 2r11111)
 ]
 
+{ #category : 'testing' }
+AvrInputOutput >> hasIO [
+
+	^ true
+]
+
 { #category : 'accessing' }
 AvrInputOutput >> io [
 

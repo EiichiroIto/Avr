@@ -24,12 +24,13 @@ AvrLabelResolver >> labeler: anObject [
 { #category : 'private' }
 AvrLabelResolver >> resolve: anArray [
 
-	| address op newOp targetAddress |
+	| address op newOp targetAddress immediate |
 	address := anArray first.
 	op := anArray second.
-	op hasImmediate ifFalse: [ ^ anArray ].
-	op immediate isInteger ifTrue: [ ^ anArray ].
-	newOp := op copy.
+	newOp := self resolvedCopyOf: op.
+	op hasImmediate ifFalse: [ ^ Array with: address with: newOp ].
+	immediate := newOp immediate.
+	immediate isInteger ifTrue: [ ^ Array with: address with: newOp ].
 	targetAddress := labeler labelNameAt: newOp immediate.
 	targetAddress ifNil: [
 		self error: 'Unresolved label:' , newOp immediate ].
@@ -44,4 +45,14 @@ AvrLabelResolver >> resolve: anArray [
 AvrLabelResolver >> resolveCollection: aCollection [
 
 	^ aCollection collect: [ :each | self resolve: each ]
+]
+
+{ #category : 'private' }
+AvrLabelResolver >> resolvedCopyOf: anInstruction [
+
+	| op |
+	op := anInstruction copy.
+	op hasIO ifTrue: [ op io: op io value ].
+	op hasImmediate ifTrue: [ op immediate: op immediate value ].
+	^ op
 ]

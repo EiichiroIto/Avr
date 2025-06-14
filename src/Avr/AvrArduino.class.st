@@ -3,7 +3,9 @@ Class {
 	#superclass : 'Object',
 	#instVars : [
 		'asm',
-		'registerPool'
+		'registerPool',
+		'io',
+		'ram'
 	],
 	#category : 'Avr-Arduino',
 	#package : 'Avr',
@@ -48,23 +50,6 @@ AvrArduino >> asm: anObject [
 	asm := anObject
 ]
 
-{ #category : 'programs' }
-AvrArduino >> chunk: aBlock named: aString [
-
-	asm label: aString.
-	aBlock value
-]
-
-{ #category : 'programs' }
-AvrArduino >> forever: aBlock [
-
-	| label |
-	label := self nextLabel.
-	asm label: label.
-	aBlock value.
-	asm rjmp: label
-]
-
 { #category : 'initialization' }
 AvrArduino >> initialize [
 
@@ -79,6 +64,18 @@ AvrArduino >> intHandler: aBlock named: aString [
 	asm label: aString.
 	aBlock value.
 	asm reti
+]
+
+{ #category : 'accessing' }
+AvrArduino >> io [
+
+	^ io
+]
+
+{ #category : 'accessing' }
+AvrArduino >> io: anObject [
+
+	io := anObject
 ]
 
 { #category : 'instance creation' }
@@ -111,12 +108,16 @@ AvrArduino >> program: anObject [
 	asm program: anObject
 ]
 
-{ #category : 'macros' }
-AvrArduino >> pushRegisters: aCollection during: aBlock [
+{ #category : 'accessing' }
+AvrArduino >> ram [
 
-	aCollection do: [ :each | asm push: each ].
-	aBlock value.
-	aCollection reverseDo: [ :each | asm pop: each ]
+	^ ram
+]
+
+{ #category : 'accessing' }
+AvrArduino >> ram: anObject [
+
+	ram := anObject
 ]
 
 { #category : 'accessing' }
@@ -129,6 +130,14 @@ AvrArduino >> registerPool [
 AvrArduino >> registerPool: anObject [
 
 	registerPool := anObject
+]
+
+{ #category : 'private' }
+AvrArduino >> returnRegisters: aCollection [
+
+	(registerPool includesAny: aCollection) ifTrue: [ self error ].
+	registerPool addAll: aCollection.
+	registerPool sort
 ]
 
 { #category : 'private' }
@@ -156,6 +165,34 @@ AvrArduino >> uploadTo: aString [
 	^ OSPlatform current runCommand: (self writerFormat format: {
 				   aString.
 				   filename })
+]
+
+{ #category : 'private' }
+AvrArduino >> use: anInteger registersDuring: aBlock [
+
+	| registers |
+	registers := registerPool removeFirst: anInteger.
+	aBlock value: registers.
+	self returnRegisters: registers
+]
+
+{ #category : 'private' }
+AvrArduino >> useRegisterDuring: aBlock [
+
+	| register |
+	register := registerPool removeFirst.
+	aBlock value: register.
+	(registerPool includes: register) ifTrue: [ self error ].
+	registerPool addFirst: register.
+	registerPool sort
+]
+
+{ #category : 'private' }
+AvrArduino >> useRegisters: aCollection during: aBlock [
+
+	aCollection do: [ :each | registerPool remove: each ].
+	aBlock value: aCollection.
+	self returnRegisters: aCollection
 ]
 
 { #category : 'constants' }

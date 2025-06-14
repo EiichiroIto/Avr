@@ -67,6 +67,12 @@ AvrInstruction >> hasAddress [
 ]
 
 { #category : 'testing' }
+AvrInstruction >> hasIO [
+
+	^ false
+]
+
+{ #category : 'testing' }
 AvrInstruction >> hasImmediate [
 
 	^ false
@@ -159,8 +165,10 @@ AvrInstruction >> printHexImmediate: anObject [
 	anObject in: [ :value |
 		value ifNil: [ ^ 'nil' ].
 		value isString ifTrue: [ ^ '@' , value ].
-		^ '0x'
-		  , (value printStringBase: 16 length: 2 padded: true) asLowercase ]
+		value isNumber ifTrue: [
+			^ '0x'
+			  , (value printStringBase: 16 length: 2 padded: true) asLowercase ].
+		^ value asString ]
 ]
 
 { #category : 'printing' }

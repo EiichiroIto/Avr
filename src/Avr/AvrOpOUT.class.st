@@ -8,7 +8,7 @@ Class {
 	#tag : 'Instructions'
 }
 
-{ #category : 'as yet unclassified' }
+{ #category : 'accessing' }
 AvrOpOUT >> arguments [
 
 	^ Array with: immediate with: register

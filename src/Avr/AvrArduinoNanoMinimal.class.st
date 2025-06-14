@@ -9,30 +9,28 @@ Class {
 { #category : 'programs' }
 AvrArduinoNanoMinimal >> all [
 
-	self
-		setupVectors;
-		label: #boot;
-		boot.
+	self setupVectors.
+	asm label: #boot.
+	self boot.
 	asm rjmp: #setup.
-	self
-		label: #softReset;
-		softReset;
-		label: #setup;
-		setup;
-		label: #loop;
-		loop.
+	asm label: #softReset.
+	self softReset.
+	asm label: #setup.
+	self setup.
+	asm label: #loop.
+	self loop.
 	asm rjmp: #loop
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'programs' }
 AvrArduinoNanoMinimal >> boot [
 
 	asm eorDest: 1 source: 1.
-	asm out: self sreg r: 1.
-	asm ldiR: self yl data: self ramEndLow.
-	asm ldiR: self yh data: self ramEndHigh.
-	asm out: self sph r: self yh.
-	asm out: self spl r: self yl
+	asm out: io sreg r: 1.
+	asm ldiR: self yl data: ram ramEndLow.
+	asm ldiR: self yh data: ram ramEndHigh.
+	asm out: io sph r: self yh.
+	asm out: io spl r: self yl
 ]
 
 { #category : 'programs' }

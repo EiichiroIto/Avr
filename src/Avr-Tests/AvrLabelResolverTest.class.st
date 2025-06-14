@@ -37,12 +37,15 @@ AvrLabelResolverTest >> testResolve [
 
 	pair := Array with: 50 with: AvrOpNOP new.
 	pair2 := obj resolve: pair.
-	self assert: pair2 identicalTo: pair.
+	self assert: pair2 first equals: 50.
+	self assert: pair2 second mnemonic equals: #NOP.
 
 	pair := Array with: 50 with: AvrOpJMP new.
 	pair second immediate: 123.
 	pair2 := obj resolve: pair.
-	self assert: pair2 identicalTo: pair.
+	self assert: pair2 first equals: 50.
+	self assert: pair2 second mnemonic equals: #JMP.
+	self assert: pair2 second immediate equals: 123.
 
 	pair := Array with: 90 with: AvrOpJMP new.
 	pair second immediate: #test1.
