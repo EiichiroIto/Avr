@@ -386,7 +386,34 @@ AvrAssemblerTest >> testLdz [
 	r := obj program codes first second.
 	self assert: (r isKindOf: AvrOpLDZ1).
 	self assert: r mnemonic equals: #LD.
-	self assert: r register equals: 2
+	self assert: r register equals: 2.
+	self assert: r selector equals: #ldz:
+]
+
+{ #category : 'tests' }
+AvrAssemblerTest >> testLdzDec [
+
+	| obj r |
+	obj := self newObj.
+	obj ldzDec: 2.
+	r := obj program codes first second.
+	self assert: (r isKindOf: AvrOpLDZ3).
+	self assert: r mnemonic equals: #LD.
+	self assert: r register equals: 2.
+	self assert: r selector equals: #ldzDec:
+]
+
+{ #category : 'tests' }
+AvrAssemblerTest >> testLdzInc [
+
+	| obj r |
+	obj := self newObj.
+	obj ldzInc: 2.
+	r := obj program codes first second.
+	self assert: (r isKindOf: AvrOpLDZ2).
+	self assert: r mnemonic equals: #LD.
+	self assert: r register equals: 2.
+	self assert: r selector equals: #ldzInc:
 ]
 
 { #category : 'tests' }

@@ -252,6 +252,18 @@ AvrAssembler >> ldz: register [
 ]
 
 { #category : 'one register' }
+AvrAssembler >> ldzDec: register [
+
+	self add: (AvrOpLDZ3 new register: register)
+]
+
+{ #category : 'one register' }
+AvrAssembler >> ldzInc: register [
+
+	self add: (AvrOpLDZ2 new register: register)
+]
+
+{ #category : 'one register' }
 AvrAssembler >> lpmz: register [
 
 	self add: (AvrOpLPM2 new register: register)

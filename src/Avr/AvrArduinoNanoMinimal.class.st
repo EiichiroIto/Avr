@@ -23,17 +23,6 @@ AvrArduinoNanoMinimal >> all [
 ]
 
 { #category : 'programs' }
-AvrArduinoNanoMinimal >> boot [
-
-	asm eorDest: 1 source: 1.
-	asm out: io sreg r: 1.
-	asm ldiR: self yl data: ram ramEndLow.
-	asm ldiR: self yh data: ram ramEndHigh.
-	asm out: io sph r: self yh.
-	asm out: io spl r: self yl
-]
-
-{ #category : 'programs' }
 AvrArduinoNanoMinimal >> loop [
 
 	self digitalWrite: 7 boolean: true.
