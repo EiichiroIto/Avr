@@ -106,3 +106,22 @@ AvrLabelResolverTest >> testResolveCollection [
 	self assert: code mnemonic equals: #CALL.
 	self assert: code immediate equals: 205
 ]
+
+{ #category : 'tests' }
+AvrLabelResolverTest >> testResolvedCopyOf [
+
+	| obj op ret io |
+	obj := self newObj.
+	io := AvrArduinoIO new port: 12.
+	op := AvrOpJMP new immediate: 52.
+	ret := obj resolvedCopyOf: op.
+	self assert: (ret isKindOf: AvrOpJMP).
+	self assert: ret immediate equals: 52.
+	op := AvrOpOUT new
+		      immediate: io;
+		      register: 10.
+	ret := obj resolvedCopyOf: op.
+	self assert: (ret isKindOf: AvrOpOUT).
+	self assert: ret register equals: 10.
+	self assert: ret immediate equals: 12
+]

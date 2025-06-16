@@ -531,6 +531,12 @@ AvrAssembler >> subiR: register data: immediate [
 			 immediate: immediate)
 ]
 
+{ #category : 'one register' }
+AvrAssembler >> swap: register [
+
+	self add: (AvrOpSWAP new register: register)
+]
+
 { #category : 'immediate' }
 AvrAssembler >> word: anInteger [
 

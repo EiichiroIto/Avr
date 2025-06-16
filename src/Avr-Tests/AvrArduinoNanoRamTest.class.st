@@ -52,24 +52,6 @@ AvrArduinoNanoRamTest >> testAdmux [
 ]
 
 { #category : 'tests' }
-AvrArduinoNanoRamTest >> testAdmuxHigh [
-
-	| obj |
-	obj := self targetClass admuxHigh.
-	self assert: obj label equals: #admuxHigh .
-	self assert: obj address equals: 16r40
-]
-
-{ #category : 'tests' }
-AvrArduinoNanoRamTest >> testAdmuxMask [
-
-	| obj |
-	obj := self targetClass admuxMask.
-	self assert: obj label equals: #admuxMask.
-	self assert: obj address equals: 16r0F
-]
-
-{ #category : 'tests' }
 AvrArduinoNanoRamTest >> testPrr [
 
 	| obj |

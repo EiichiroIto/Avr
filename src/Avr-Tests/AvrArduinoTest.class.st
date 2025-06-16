@@ -27,6 +27,45 @@ AvrArduinoTest >> testAsm [
 ]
 
 { #category : 'tests' }
+AvrArduinoTest >> testAssembledCodes [
+
+	| obj codes code |
+	obj := self newObj.
+	codes := obj assembledCodes.
+	self assert: codes isCollection.
+	self assert: codes isEmpty.
+	obj asm rjmp: 'abc'.
+	obj program labeler labelNameAt: 'abc' put: 12.
+	codes := obj assembledCodes.
+	self assert: codes size equals: 1.
+	code := codes first.
+	self assert: code first equals: 0.
+	self assert: code second mnemonic equals: #RJMP.
+	self assert: code second immediate equals: 12 - 2 / 2
+]
+
+{ #category : 'tests' }
+AvrArduinoTest >> testCallSubroutine [
+
+	| obj codes code |
+	obj := self newObj.
+	obj callSubroutine: 'abc'.
+	obj callSubroutine: 'def'.
+	codes := obj program codes.
+	self assert: codes size equals: 2.
+	code := codes first.
+	self assert: code first equals: 0.
+	self assert: code second mnemonic equals: #RCALL.
+	self assert: code second immediate equals: 'abc'.
+	code := codes second.
+	self assert: code first equals: 2.
+	self assert: code second mnemonic equals: #RCALL.
+	self assert: code second immediate equals: 'def'.
+	self assert: (obj subroutines includes: 'abc').
+	self assert: (obj subroutines includes: 'def')
+]
+
+{ #category : 'tests' }
 AvrArduinoTest >> testInitialize [
 
 	| obj |
@@ -121,10 +160,24 @@ AvrArduinoTest >> testRam [
 { #category : 'tests' }
 AvrArduinoTest >> testRegisterPool [
 
-	| obj |
+	| obj a |
 	obj := self newObj.
 	self assert: obj registerPool isCollection.
-	self assert: obj registerPool isEmpty
+	self assert: obj registerPool isEmpty.
+	a := OrderedCollection new.
+	obj registerPool: a.
+	self assert: obj registerPool identicalTo: a
+]
+
+{ #category : 'tests' }
+AvrArduinoTest >> testResolveUndefinedSubroutines [
+
+	| obj |
+	obj := self newObj.
+	obj callSubroutine: 'all'.
+	self assert: (obj program labeler labelNameAt: 'all') isNil.
+	obj resolveUndefinedSubroutines.
+	self assert: (obj program labeler labelNameAt: 'all') notNil
 ]
 
 { #category : 'tests' }
@@ -160,6 +213,18 @@ AvrArduinoTest >> testSubroutineNamed [
 ]
 
 { #category : 'tests' }
+AvrArduinoTest >> testSubroutines [
+
+	| obj a |
+	obj := self newObj.
+	self assert: obj subroutines isCollection.
+	self assert: obj subroutines isEmpty.
+	a := Set new.
+	obj subroutines: a.
+	self assert: obj subroutines identicalTo: a
+]
+
+{ #category : 'tests' }
 AvrArduinoTest >> testUseRegisterDuring [
 
 	| obj list |
@@ -173,6 +238,23 @@ AvrArduinoTest >> testUseRegisterDuring [
 	self assert: list size equals: 32.
 	self
 		should: [ obj useRegisterDuring: [ :r | list add: r ] ]
+		raise: Error
+]
+
+{ #category : 'tests' }
+AvrArduinoTest >> testUseRegisterDuring2 [
+
+	| obj list |
+	obj := self newObj.
+	list := obj registerPool.
+	list addAll: (0 to: 31).
+	self assert: list size equals: 32.
+	obj useRegister: 1 during: [ :r |
+		self assert: r equals: 1.
+		self deny: (list includes: r) ].
+	self assert: list size equals: 32.
+	self
+		should: [ obj useRegister: 1 during: [ :r | list add: r ] ]
 		raise: Error
 ]
 

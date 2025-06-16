@@ -16,6 +16,12 @@ AvrATmega328P >> adcStartConversion [
 	^ 2r01000000
 ]
 
+{ #category : 'constants' }
+AvrATmega328P >> adcsraDefault [
+
+	^ 2r10000111
+]
+
 { #category : 'macros' }
 AvrATmega328P >> addDests: aCollection sources: aCollection2 [
 
@@ -33,6 +39,12 @@ AvrATmega328P >> addRegisters: aCollection byte: anInteger usingZeroRegister: an
 		asm adcDest: each source: anInteger2 ]
 ]
 
+{ #category : 'constants' }
+AvrATmega328P >> admuxDefault [
+
+	^ 16r40
+]
+
 { #category : 'gpio' }
 AvrATmega328P >> analogRead: anInteger into: aCollection [
 
@@ -43,13 +55,12 @@ AvrATmega328P >> analogRead: anInteger into: aCollection [
 		useRegisters: {
 				self zl.
 				self zh }
-		during: [ :rs |
-			asm ldiR: r1 data: anInteger.
-			asm andiR: r1 data: ram admuxMask.
-			asm oriR: r1 data: ram admuxHigh.
+		during: [ :z |
+			asm ldsR: r1 address: ram admux.
+			asm oriR: r1 data: anInteger.
 			asm stsAddress: ram admux r: r1.
-			asm ldiR: rs first data: ram adcsra.
-			asm ldiR: rs second data: 0.
+			asm ldiR: z first data: ram adcsra.
+			asm ldiR: z second data: 0.
 			asm ldz: r1.
 			asm oriR: r1 data: self adcStartConversion.
 			asm stz: r1.
@@ -108,20 +119,18 @@ AvrATmega328P >> cpDests: aCollection sources: aCollection2 [
 ]
 
 { #category : 'timer' }
-AvrATmega328P >> delay: anInteger [
+AvrATmega328P >> delay: aCollection [
 
 	| label1 |
-	self use: 4 latterHalfRegistersDuring: [ :rs1 |
-		self use: 4 registersDuring: [ :rs2 |
-			self pushRegisters: rs1 , rs2 during: [
-				self ldRegisters: rs1 immediate: anInteger.
-				self ldRegisters: rs2 address: counter.
-				self addDests: rs1 sources: rs2.
-				label1 := self nextLabel.
-				asm label: label1.
-				self ldRegisters: rs2 address: counter.
-				self cpDests: rs2 sources: rs1.
-				asm brlt: label1 ] ] ]
+	self use: 4 registersDuring: [ :rs2 |
+		self pushRegisters: aCollection , rs2 during: [
+			self ldRegisters: rs2 address: counter.
+			self addDests: aCollection sources: rs2.
+			label1 := self nextLabel.
+			asm label: label1.
+			self ldRegisters: rs2 address: counter.
+			self cpDests: rs2 sources: aCollection.
+			asm brlt: label1 ] ]
 ]
 
 { #category : 'misc' }
@@ -353,6 +362,24 @@ AvrATmega328P >> milliSecondsInto: aCollection [
 	self ldRegisters: aCollection address: counter
 ]
 
+{ #category : 'misc' }
+AvrATmega328P >> nibble2HexDigitRegister: anInteger [
+
+	| label |
+	label := self nextLabel.
+	self useLatterHalfRegisterDuring: [ :r |
+		self pushRegisters: { r } during: [
+			asm ldiR: r data: 16r0F.
+			asm andDest: anInteger source: r.
+			asm ldiR: r data: 48.
+			asm addDest: anInteger source: r.
+			asm cpiR: anInteger data: 58.
+			asm brlt: label.
+			asm ldiR: r data: 7.
+			asm addDest: anInteger source: r.
+			asm label: label ] ]
+]
+
 { #category : 'macros' }
 AvrATmega328P >> outPort: anInteger immediate: anInteger2 [
 
@@ -364,6 +391,8 @@ AvrATmega328P >> outPort: anInteger immediate: anInteger2 [
 { #category : 'macros' }
 AvrATmega328P >> pushRegisters: aCollection during: aBlock [
 
+	aCollection size = aCollection asSet size ifFalse: [
+		self error: 'registers duplicated' ].
 	aCollection do: [ :each | asm push: each ].
 	aBlock value.
 	aCollection reverseDo: [ :each | asm pop: each ]
@@ -373,8 +402,9 @@ AvrATmega328P >> pushRegisters: aCollection during: aBlock [
 AvrATmega328P >> serial0DataAvailable [
 
 	self useLatterHalfRegisterDuring: [ :r |
-		asm ldsR: r address: ram ucsr0a.
-		asm andiR: r data: self serialReceiveComplete ]
+		self pushRegisters: { r } during: [
+			asm ldsR: r address: ram ucsr0a.
+			asm andiR: r data: self serialReceiveComplete ] ]
 ]
 
 { #category : 'serial' }
@@ -399,12 +429,13 @@ AvrATmega328P >> serial0SendRegister: anInteger [
 
 	| label |
 	label := self nextLabel.
-	asm label: label.
 	self useLatterHalfRegisterDuring: [ :r |
-		asm ldsR: r address: ram ucsr0a.
-		asm andiR: r data: self serialDataRegisterEmpty.
-		asm breq: label.
-		asm stsAddress: ram udr0 r: anInteger ]
+		self pushRegisters: { r } during: [
+			asm label: label.
+			asm ldsR: r address: ram ucsr0a.
+			asm andiR: r data: self serialDataRegisterEmpty.
+			asm breq: label.
+			asm stsAddress: ram udr0 r: anInteger ] ]
 ]
 
 { #category : 'constants' }
@@ -441,6 +472,16 @@ AvrATmega328P >> serialTxRxEnable [
 AvrATmega328P >> setup [
 
 	self subclassResponsibility
+]
+
+{ #category : 'gpio' }
+AvrATmega328P >> setupAnalog [
+
+	self useLatterHalfRegisterDuring: [ :r |
+		asm ldiR: r data: self admuxDefault.
+		asm stsAddress: ram admux r: r.
+		asm ldiR: r data: self adcsraDefault.
+		asm stsAddress: ram adcsra r: r ]
 ]
 
 { #category : 'private' }

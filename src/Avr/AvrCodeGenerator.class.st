@@ -10,6 +10,23 @@ Class {
 }
 
 { #category : 'api' }
+AvrCodeGenerator >> generate: anAVR [
+
+	| offset addr op |
+	offset := 0.
+	output := self newByteStream.
+	anAVR assembledCodes do: [ :each |
+		addr := each first.
+		op := each second.
+		addr < offset ifTrue: [ self error: 'Invalid Address' ].
+		addr > offset ifTrue: [
+			addr - offset timesRepeat: [ output nextPut: 0 ] ].
+		output nextPutAll: op binaryCodes.
+		offset := addr + op codeSize ].
+	^ output contents
+]
+
+{ #category : 'api' }
 AvrCodeGenerator >> generateCollection: aCollection [
 
 	output := self newByteStream.
@@ -22,23 +39,6 @@ AvrCodeGenerator >> generateOp: op [
 
 	output := self newByteStream.
 	self privGenerateOp: op.
-	^ output contents
-]
-
-{ #category : 'api' }
-AvrCodeGenerator >> generateProgram: aProgram [
-
-	| offset addr op |
-	offset := 0.
-	output := self newByteStream.
-	aProgram validatedCodes do: [ :each |
-		addr := each first.
-		op := each second.
-		addr < offset ifTrue: [ self error: 'Invalid Address' ].
-		addr > offset ifTrue: [
-			addr - offset timesRepeat: [ output nextPut: 0 ] ].
-		output nextPutAll: op binaryCodes.
-		offset := addr + op codeSize ].
 	^ output contents
 ]
 

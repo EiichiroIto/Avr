@@ -840,6 +840,18 @@ AvrAssemblerTest >> testSubiRData [
 ]
 
 { #category : 'tests' }
+AvrAssemblerTest >> testSwap [
+
+	| obj r |
+	obj := self newObj.
+	obj swap: 2.
+	r := obj program codes first second.
+	self assert: (r isKindOf: AvrOpSWAP).
+	self assert: r mnemonic equals: #SWAP.
+	self assert: r register equals: 2
+]
+
+{ #category : 'tests' }
 AvrAssemblerTest >> testWord [
 
 	| obj |

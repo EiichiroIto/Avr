@@ -10,6 +10,12 @@ Class {
 	#tag : 'Assembly'
 }
 
+{ #category : 'accessing' }
+AvrLabeler >> hasAddressNameAt: aString [
+
+	^ labels includesKey: aString
+]
+
 { #category : 'initialization' }
 AvrLabeler >> initialize [
 

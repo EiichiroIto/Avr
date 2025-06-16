@@ -28,7 +28,9 @@ AvrArduinoNanoBlink >> all [
 AvrArduinoNanoBlink >> loop [
 
 	self togglePin: 13.
-	self delay: 1000
+	self use: 4 latterHalfRegistersDuring: [ :rs |
+		self ldRegisters: rs immediate: 1000.
+		self delay: rs ]
 ]
 
 { #category : 'programs' }

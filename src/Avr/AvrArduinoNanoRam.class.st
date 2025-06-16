@@ -37,18 +37,6 @@ AvrArduinoNanoRam class >> admux [
 ]
 
 { #category : 'instance creation' }
-AvrArduinoNanoRam class >> admuxHigh [
-
-	^ self label: #admuxHigh address: 16r40
-]
-
-{ #category : 'instance creation' }
-AvrArduinoNanoRam class >> admuxMask [
-
-	^ self label: #admuxMask address: 16r0F
-]
-
-{ #category : 'instance creation' }
 AvrArduinoNanoRam class >> prr [
 
 	^ self label: #prr address: 16r64

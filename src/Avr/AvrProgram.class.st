@@ -212,7 +212,7 @@ AvrProgram >> printWithoutLabel [
 	^ stream contents
 ]
 
-{ #category : 'accessing' }
+{ #category : 'private' }
 AvrProgram >> resolvedCodes [
 
 	^ self newResolver resolveCollection: codes

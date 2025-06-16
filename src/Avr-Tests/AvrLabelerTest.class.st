@@ -16,6 +16,19 @@ AvrLabelerTest >> newObj [
 ]
 
 { #category : 'tests' }
+AvrLabelerTest >> testHasAddressNameAt [
+
+	| obj |
+	obj := self newObj.
+	self deny: (obj hasAddressNameAt: 'abc').
+	self deny: (obj hasAddressNameAt: 'def').
+	obj labelNameAt: 'abc' put: 123.
+	self assert: (obj hasAddressNameAt: 'abc').
+	obj labelNameAt: 'def' put: 456.
+	self assert: (obj hasAddressNameAt: 'def')
+]
+
+{ #category : 'tests' }
 AvrLabelerTest >> testInitialize [
 
 	| obj |

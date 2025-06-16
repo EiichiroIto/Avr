@@ -5,7 +5,8 @@ Class {
 		'asm',
 		'registerPool',
 		'io',
-		'ram'
+		'ram',
+		'subroutines'
 	],
 	#category : 'Avr-Arduino',
 	#package : 'Avr',
@@ -18,7 +19,7 @@ AvrArduino class >> example1 [
 	| obj program binary |
 	obj := self new.
 	program := obj all program.
-	binary := AvrCodeGenerator new generateProgram: program.
+	binary := AvrCodeGenerator new generate: obj.
 	(I8HEX fromByteArray: binary) writeTo:
 		(self name , '.hex') asFileReference writeStream
 ]
@@ -27,7 +28,7 @@ AvrArduino class >> example1 [
 AvrArduino class >> toI8HEX: aFileReference [
 
 	| binary i8hex |
-	binary := AvrCodeGenerator new generateProgram: self new all program.
+	binary := AvrCodeGenerator new generate: self new.
 	i8hex := I8HEX fromByteArray: binary.
 	i8hex writeTo: aFileReference asFileReference writeStream
 ]
@@ -35,7 +36,7 @@ AvrArduino class >> toI8HEX: aFileReference [
 { #category : 'programs' }
 AvrArduino >> all [
 
-	self subclassResponsibility
+	"self subclassResponsibility"
 ]
 
 { #category : 'accessing' }
@@ -50,15 +51,31 @@ AvrArduino >> asm: anObject [
 	asm := anObject
 ]
 
+{ #category : 'api' }
+AvrArduino >> assembledCodes [
+
+	self all.
+	self resolveUndefinedSubroutines.
+	^ asm program validatedCodes
+]
+
+{ #category : 'macros' }
+AvrArduino >> callSubroutine: aSymbol [
+
+	subroutines add: aSymbol.
+	asm rcall: aSymbol
+]
+
 { #category : 'initialization' }
 AvrArduino >> initialize [
 
 	asm := self newAssembler.
 	asm program: self newProgram.
-	registerPool := OrderedCollection new
+	registerPool := OrderedCollection new.
+	subroutines := Set new
 ]
 
-{ #category : 'programs' }
+{ #category : 'macros' }
 AvrArduino >> intHandler: aBlock named: aString [
 
 	asm label: aString.
@@ -133,6 +150,17 @@ AvrArduino >> registerPool: anObject [
 ]
 
 { #category : 'private' }
+AvrArduino >> resolveUndefinedSubroutines [
+
+	subroutines do: [ :each |
+		(asm labeler hasAddressNameAt: each) ifFalse: [
+			(self class canPerform: each asSymbol)
+				ifTrue: [
+				self subroutine: [ self perform: each asSymbol ] named: each ]
+				ifFalse: [ self error ] ] ]
+]
+
+{ #category : 'private' }
 AvrArduino >> returnRegisters: aCollection [
 
 	(registerPool includesAny: aCollection) ifTrue: [ self error ].
@@ -146,7 +174,7 @@ AvrArduino >> setupRegisterPool [
 	self subclassResponsibility
 ]
 
-{ #category : 'programs' }
+{ #category : 'macros' }
 AvrArduino >> subroutine: aBlock named: aString [
 
 	asm label: aString.
@@ -154,12 +182,24 @@ AvrArduino >> subroutine: aBlock named: aString [
 	asm ret
 ]
 
+{ #category : 'accessing' }
+AvrArduino >> subroutines [
+
+	^ subroutines
+]
+
+{ #category : 'accessing' }
+AvrArduino >> subroutines: anObject [
+
+	subroutines := anObject
+]
+
 { #category : 'api' }
 AvrArduino >> uploadTo: aString [
 
 	| binary i8hex filename |
 	filename := self class name , '.hex'.
-	binary := AvrCodeGenerator new generateProgram: self all program.
+	binary := AvrCodeGenerator new generate: self.
 	i8hex := I8HEX fromByteArray: binary.
 	i8hex writeTo: filename asFileReference writeStream.
 	^ OSPlatform current runCommand: (self writerFormat format: {
@@ -177,14 +217,20 @@ AvrArduino >> use: anInteger registersDuring: aBlock [
 ]
 
 { #category : 'private' }
+AvrArduino >> useRegister: anInteger during: aBlock [
+
+	registerPool remove: anInteger.
+	aBlock value: anInteger.
+	self returnRegisters: { anInteger }
+]
+
+{ #category : 'private' }
 AvrArduino >> useRegisterDuring: aBlock [
 
 	| register |
 	register := registerPool removeFirst.
 	aBlock value: register.
-	(registerPool includes: register) ifTrue: [ self error ].
-	registerPool addFirst: register.
-	registerPool sort
+	self returnRegisters: { register }
 ]
 
 { #category : 'private' }
