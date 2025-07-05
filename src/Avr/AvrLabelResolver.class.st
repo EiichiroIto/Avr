@@ -53,6 +53,7 @@ AvrLabelResolver >> resolvedCopyOf: anInstruction [
 	| op |
 	op := anInstruction copy.
 	op hasIO ifTrue: [ op io: op io value ].
-	op hasImmediate ifTrue: [ op immediate: op immediate value ].
+	op hasImmediate ifTrue: [
+		op immediate: (op immediate valueWithLabeler: labeler) ].
 	^ op
 ]

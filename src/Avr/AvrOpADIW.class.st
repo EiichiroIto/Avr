@@ -31,3 +31,9 @@ AvrOpADIW >> opcode [
 
 	^ 16r9600
 ]
+
+{ #category : 'accessing' }
+AvrOpADIW >> selector [
+
+	^ #adiwR:data:
+]

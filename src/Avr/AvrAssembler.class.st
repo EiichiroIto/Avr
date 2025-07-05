@@ -2,7 +2,10 @@ Class {
 	#name : 'AvrAssembler',
 	#superclass : 'Object',
 	#instVars : [
-		'program'
+		'program',
+		'subroutines',
+		'literals',
+		'availableRegisters'
 	],
 	#category : 'Avr-Assembly',
 	#package : 'Avr',
@@ -53,6 +56,26 @@ AvrAssembler >> andiR: register data: immediate [
 	self add: (AvrOpANDI new
 			 register: register;
 			 immediate: immediate)
+]
+
+{ #category : 'api' }
+AvrAssembler >> assembledCodesFor: anObject [
+
+	self resolveUndefinedSubroutinesFor: anObject.
+	self resolveLiteralsFor: anObject.
+	^ program validatedCodes
+]
+
+{ #category : 'accessing' }
+AvrAssembler >> availableRegisters [
+
+	^ availableRegisters
+]
+
+{ #category : 'accessing' }
+AvrAssembler >> availableRegisters: anObject [
+
+	availableRegisters := anObject
 ]
 
 { #category : 'one register' }
@@ -109,12 +132,32 @@ AvrAssembler >> call: anInteger [
 	self add: (AvrOpCALL new immediate: anInteger)
 ]
 
+{ #category : 'api' }
+AvrAssembler >> callSubroutine: aSymbol [
+
+	subroutines add: aSymbol.
+	self rcall: aSymbol
+]
+
 { #category : 'register-immediate' }
 AvrAssembler >> cbi: io bit: bit [
 
 	self add: (AvrOpCBI new
 			 io: io;
 			 bit: bit)
+]
+
+{ #category : 'api' }
+AvrAssembler >> checkAnyRegistersAvailable: aCollection [
+
+	aCollection ifNil: [ ^ false ].
+	^ availableRegisters includesAny: aCollection
+]
+
+{ #category : 'api' }
+AvrAssembler >> clearAvailableRegisters [
+
+	availableRegisters := OrderedCollection new
 ]
 
 { #category : 'no register' }
@@ -175,6 +218,18 @@ AvrAssembler >> eorDest: destRegister source: sourceRegister [
 			 source: sourceRegister)
 ]
 
+{ #category : 'api' }
+AvrAssembler >> getRegisters: aCollection [
+
+	^ availableRegisters removeAll: aCollection
+]
+
+{ #category : 'api' }
+AvrAssembler >> getRegistersCount: anInteger [
+
+	^ availableRegisters removeFirst: anInteger
+]
+
 { #category : 'register-immediate' }
 AvrAssembler >> inR: register address: io [
 
@@ -189,13 +244,22 @@ AvrAssembler >> inc: register [
 	self add: (AvrOpINC new register: register)
 ]
 
+{ #category : 'initialization' }
+AvrAssembler >> initialize [
+
+	super initialize.
+	subroutines := Set new.
+	literals := Set new.
+	availableRegisters := OrderedCollection new
+]
+
 { #category : 'immediate' }
 AvrAssembler >> jmp: anInteger [
 
 	self add: (AvrOpJMP new immediate: anInteger)
 ]
 
-{ #category : 'accessing' }
+{ #category : 'api' }
 AvrAssembler >> label: aString [
 
 	program label: aString
@@ -208,7 +272,7 @@ AvrAssembler >> labeler [
 ]
 
 { #category : 'register-immediate' }
-AvrAssembler >> lddR: register y: immediate [
+AvrAssembler >> lddR: register yOffset: immediate [
 
 	self add: (AvrOpLDDY new
 			 register: register;
@@ -216,7 +280,7 @@ AvrAssembler >> lddR: register y: immediate [
 ]
 
 { #category : 'register-immediate' }
-AvrAssembler >> lddR: register z: immediate [
+AvrAssembler >> lddR: register zOffset: immediate [
 
 	self add: (AvrOpLDDZ new
 			 register: register;
@@ -246,6 +310,36 @@ AvrAssembler >> ldx: register [
 ]
 
 { #category : 'one register' }
+AvrAssembler >> ldxDec: register [
+
+	self add: (AvrOpLDX3 new register: register)
+]
+
+{ #category : 'one register' }
+AvrAssembler >> ldxInc: register [
+
+	self add: (AvrOpLDX2 new register: register)
+]
+
+{ #category : 'one register' }
+AvrAssembler >> ldy: register [
+
+	self add: (AvrOpLDY1 new register: register)
+]
+
+{ #category : 'one register' }
+AvrAssembler >> ldyDec: register [
+
+	self add: (AvrOpLDY3 new register: register)
+]
+
+{ #category : 'one register' }
+AvrAssembler >> ldyInc: register [
+
+	self add: (AvrOpLDY2 new register: register)
+]
+
+{ #category : 'one register' }
 AvrAssembler >> ldz: register [
 
 	self add: (AvrOpLDZ1 new register: register)
@@ -261,6 +355,18 @@ AvrAssembler >> ldzDec: register [
 AvrAssembler >> ldzInc: register [
 
 	self add: (AvrOpLDZ2 new register: register)
+]
+
+{ #category : 'accessing' }
+AvrAssembler >> literals [
+
+	^ literals
+]
+
+{ #category : 'accessing' }
+AvrAssembler >> literals: anObject [
+
+	literals := anObject
 ]
 
 { #category : 'one register' }
@@ -367,6 +473,41 @@ AvrAssembler >> rcall: relative [
 	self add: (AvrOpRCALL new immediate: relative)
 ]
 
+{ #category : 'api' }
+AvrAssembler >> releaseRegisters: aCollection [
+
+	(availableRegisters includesAny: aCollection) ifTrue: [ self error ].
+	availableRegisters addAll: aCollection.
+	availableRegisters sort
+]
+
+{ #category : 'private' }
+AvrAssembler >> resolveLiteralsFor: anObject [
+
+	literals do: [ :each |
+		(program labeler hasAddressOfName: each) ifFalse: [
+			(anObject class canPerform: each)
+				ifTrue: [
+					self label: each.
+					(anObject perform: each) addLiteralCodesFor: self ]
+				ifFalse: [ self error ] ] ]
+]
+
+{ #category : 'private' }
+AvrAssembler >> resolveUndefinedSubroutinesFor: anObject [
+
+	| flag |
+	[
+	flag := false.
+	subroutines do: [ :each |
+		(program labeler hasAddressOfName: each) ifFalse: [
+			(anObject class canPerform: each asSymbol)
+				ifTrue: [
+					anObject subroutineNamed: each asSymbol.
+					flag := true ]
+				ifFalse: [ self error ] ] ] ] doWhileTrue: [ flag ]
+]
+
 { #category : 'no register' }
 AvrAssembler >> ret [
 
@@ -383,6 +524,12 @@ AvrAssembler >> reti [
 AvrAssembler >> rjmp: relative [
 
 	self add: (AvrOpRJMP new immediate: relative)
+]
+
+{ #category : 'one register' }
+AvrAssembler >> ror: register [
+
+	self add: (AvrOpROR new register: register)
 ]
 
 { #category : 'two registers' }
@@ -456,7 +603,7 @@ AvrAssembler >> sei [
 ]
 
 { #category : 'register-immediate' }
-AvrAssembler >> stdY: immediate r: register [
+AvrAssembler >> stdYOffset: immediate r: register [
 
 	self add: (AvrOpSTDY new
 			 register: register;
@@ -464,7 +611,7 @@ AvrAssembler >> stdY: immediate r: register [
 ]
 
 { #category : 'register-immediate' }
-AvrAssembler >> stdZ: immediate r: register [
+AvrAssembler >> stdZOffset: immediate r: register [
 
 	self add: (AvrOpSTDZ new
 			 register: register;
@@ -510,6 +657,12 @@ AvrAssembler >> stz: register [
 ]
 
 { #category : 'one register' }
+AvrAssembler >> stzDec: register [
+
+	self add: (AvrOpSTZ3 new register: register)
+]
+
+{ #category : 'one register' }
 AvrAssembler >> stzInc: register [
 
 	self add: (AvrOpSTZ2 new register: register)
@@ -531,10 +684,28 @@ AvrAssembler >> subiR: register data: immediate [
 			 immediate: immediate)
 ]
 
+{ #category : 'accessing' }
+AvrAssembler >> subroutines [
+
+	^ subroutines
+]
+
+{ #category : 'accessing' }
+AvrAssembler >> subroutines: anObject [
+
+	subroutines := anObject
+]
+
 { #category : 'one register' }
 AvrAssembler >> swap: register [
 
 	self add: (AvrOpSWAP new register: register)
+]
+
+{ #category : 'api' }
+AvrAssembler >> useLiteral: aSymbol [
+
+	literals add: aSymbol asSymbol
 ]
 
 { #category : 'immediate' }

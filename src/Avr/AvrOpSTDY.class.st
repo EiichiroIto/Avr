@@ -48,5 +48,5 @@ AvrOpSTDY >> operandText [
 { #category : 'accessing' }
 AvrOpSTDY >> selector [
 
-	^ #stdY:r:
+	^ #stdYOffset:r:
 ]

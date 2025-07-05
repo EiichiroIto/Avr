@@ -9,16 +9,19 @@ Class {
 { #category : 'programs' }
 AvrArduinoNanoBlink >> all [
 
+	ram setSize: const ramSize.
+	self setupRegisterPool.
 	self setupVectors.
 	asm label: #boot.
 	self
 		boot;
+		setupCounter;
 		clearCounter;
 		setupTimer0.
 	asm sei.
 	asm rjmp: #setup.
-	self intHandler: [  ] named: #noInterrupt.
-	self intHandler: [ self timer0compa ] named: #timer0compa.
+	self intHandlerNamed: #noInterrupt.
+	self intHandlerNamed: #timer0compa.
 	asm label: #setup.
 	self setup.
 	self forever: [ self loop ]
@@ -28,8 +31,8 @@ AvrArduinoNanoBlink >> all [
 AvrArduinoNanoBlink >> loop [
 
 	self togglePin: 13.
-	self use: 4 latterHalfRegistersDuring: [ :rs |
-		self ldRegisters: rs immediate: 1000.
+	self use: 4 latterHalfRegistersIn: [ :rs |
+		self loadRegisters: rs immediate: 1000.
 		self delay: rs ]
 ]
 

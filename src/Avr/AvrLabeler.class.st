@@ -11,7 +11,7 @@ Class {
 }
 
 { #category : 'accessing' }
-AvrLabeler >> hasAddressNameAt: aString [
+AvrLabeler >> hasAddressOfName: aString [
 
 	^ labels includesKey: aString
 ]
@@ -48,6 +48,7 @@ AvrLabeler >> labelNameAt: aString [
 { #category : 'accessing' }
 AvrLabeler >> labelNameAt: aString put: anInteger [
 
+	(self hasAddressOfName: aString) ifTrue: [ self error ].
 	labels at: aString put: anInteger
 ]
 

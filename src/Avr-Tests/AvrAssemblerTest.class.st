@@ -84,6 +84,17 @@ AvrAssemblerTest >> testAndiRData [
 ]
 
 { #category : 'tests' }
+AvrAssemblerTest >> testAvailableRegisters [
+
+	| obj a |
+	obj := self newObj.
+	self assert: obj availableRegisters isEmpty.
+	a := OrderedCollection new.
+	obj availableRegisters: a.
+	self assert: obj availableRegisters identicalTo: a
+]
+
+{ #category : 'tests' }
 AvrAssemblerTest >> testBclr [
 
 	| obj r |
@@ -176,6 +187,27 @@ AvrAssemblerTest >> testCall [
 ]
 
 { #category : 'tests' }
+AvrAssemblerTest >> testCallSubroutine [
+
+	| obj codes code |
+	obj := self newObj.
+	obj callSubroutine: 'abc'.
+	obj callSubroutine: 'def'.
+	codes := obj program codes.
+	self assert: codes size equals: 2.
+	code := codes first.
+	self assert: code first equals: 0.
+	self assert: code second mnemonic equals: #RCALL.
+	self assert: code second immediate equals: 'abc'.
+	code := codes second.
+	self assert: code first equals: 2.
+	self assert: code second mnemonic equals: #RCALL.
+	self assert: code second immediate equals: 'def'.
+	self assert: (obj subroutines includes: 'abc').
+	self assert: (obj subroutines includes: 'def')
+]
+
+{ #category : 'tests' }
 AvrAssemblerTest >> testCbiBit [
 
 	| obj r |
@@ -185,6 +217,28 @@ AvrAssemblerTest >> testCbiBit [
 	self assert: r mnemonic equals: #CBI.
 	self assert: r io equals: 16r3E.
 	self assert: r bit equals: 2
+]
+
+{ #category : 'tests' }
+AvrAssemblerTest >> testCheckAnyRegistersAvailable [
+
+	| obj |
+	obj := self newObj.
+	obj availableRegisters: #( 4 6 9 10 12 16 ) asOrderedCollection.
+	self assert: (obj checkAnyRegistersAvailable: #( 2 3 4 )).
+	self deny: (obj checkAnyRegistersAvailable: #( 2 3 5 )).
+	self assert: (obj checkAnyRegistersAvailable: #( 4 6 9 ))
+]
+
+{ #category : 'tests' }
+AvrAssemblerTest >> testClearAvailableRegisters [
+
+	| obj |
+	obj := self newObj.
+	obj availableRegisters: #( 1 2 3 ) asOrderedCollection.
+	self deny: obj availableRegisters isEmpty.
+	obj clearAvailableRegisters.
+	self assert: obj availableRegisters isEmpty
 ]
 
 { #category : 'tests' }
@@ -272,6 +326,32 @@ AvrAssemblerTest >> testEorDestSource [
 ]
 
 { #category : 'tests' }
+AvrAssemblerTest >> testGetRegisters [
+
+	| obj r |
+	obj := self newObj.
+	obj availableRegisters: #( 4 6 9 10 12 16 ) asOrderedCollection.
+	r := obj getRegisters: #( 12 10 4 ).
+	self assertCollection: r equals: #( 12 10 4 ).
+	self
+		assertCollection: obj availableRegisters
+		equals: #( 6 9 16 ) asOrderedCollection
+]
+
+{ #category : 'tests' }
+AvrAssemblerTest >> testGetRegistersCount [
+
+	| obj r |
+	obj := self newObj.
+	obj availableRegisters: #( 4 6 9 ) asOrderedCollection.
+	r := obj getRegistersCount: 2.
+	self assertCollection: r equals: #( 4 6 ).
+	self
+		assertCollection: obj availableRegisters
+		equals: #( 9 ) asOrderedCollection
+]
+
+{ #category : 'tests' }
 AvrAssemblerTest >> testInRAddress [
 
 	| obj |
@@ -290,6 +370,20 @@ AvrAssemblerTest >> testInc [
 	obj inc: 2.
 	self assert: obj program codes first second mnemonic equals: #INC.
 	self assert: obj program codes first second register equals: 2
+]
+
+{ #category : 'tests' }
+AvrAssemblerTest >> testInitialize [
+
+	| obj |
+	obj := AvrAssembler basicNew.
+	self assert: obj subroutines isNil.
+	self assert: obj literals isNil.
+	obj initialize.
+	self assert: obj subroutines isCollection.
+	self assert: obj subroutines isEmpty.
+	self assert: obj literals isCollection.
+	self assert: obj literals isEmpty
 ]
 
 { #category : 'tests' }
@@ -321,11 +415,11 @@ AvrAssemblerTest >> testLabeler [
 ]
 
 { #category : 'tests' }
-AvrAssemblerTest >> testLddRY [
+AvrAssemblerTest >> testLddRYOffset [
 
 	| obj |
 	obj := self newObj.
-	obj lddR: 12 y: 23.
+	obj lddR: 12 yOffset: 23.
 	self assert: (obj program codes first second isKindOf: AvrOpLDDY).
 	self assert: obj program codes first second mnemonic equals: #LDD.
 	self assert: obj program codes first second register equals: 12.
@@ -333,11 +427,11 @@ AvrAssemblerTest >> testLddRY [
 ]
 
 { #category : 'tests' }
-AvrAssemblerTest >> testLddRZ [
+AvrAssemblerTest >> testLddRZOffset [
 
 	| obj |
 	obj := self newObj.
-	obj lddR: 12 z: 23.
+	obj lddR: 12 zOffset: 23.
 	self assert: (obj program codes first second isKindOf: AvrOpLDDZ).
 	self assert: obj program codes first second mnemonic equals: #LDD.
 	self assert: obj program codes first second register equals: 12.
@@ -378,6 +472,69 @@ AvrAssemblerTest >> testLdx [
 ]
 
 { #category : 'tests' }
+AvrAssemblerTest >> testLdxDec [
+
+	| obj r |
+	obj := self newObj.
+	obj ldxDec: 2.
+	r := obj program codes first second.
+	self assert: (r isKindOf: AvrOpLDX3).
+	self assert: r mnemonic equals: #LD.
+	self assert: r register equals: 2.
+	self assert: r selector equals: #ldxDec:
+]
+
+{ #category : 'tests' }
+AvrAssemblerTest >> testLdxInc [
+
+	| obj r |
+	obj := self newObj.
+	obj ldxInc: 2.
+	r := obj program codes first second.
+	self assert: (r isKindOf: AvrOpLDX2).
+	self assert: r mnemonic equals: #LD.
+	self assert: r register equals: 2.
+	self assert: r selector equals: #ldxInc:
+]
+
+{ #category : 'tests' }
+AvrAssemblerTest >> testLdy [
+
+	| obj |
+	obj := self newObj.
+	obj ldy: 3.
+	self assert: (obj program codes first second isKindOf: AvrOpLDY1).
+	self assert: obj program codes first second mnemonic equals: #LD.
+	self assert: obj program codes first second register equals: 3
+]
+
+{ #category : 'tests' }
+AvrAssemblerTest >> testLdyDec [
+
+	| obj r |
+	obj := self newObj.
+	obj ldyDec: 2.
+	r := obj program codes first second.
+	self assert: (r isKindOf: AvrOpLDY3).
+	self assert: r mnemonic equals: #LD.
+	self assert: r register equals: 2.
+	self assert: r selector equals: #ldyDec:
+]
+
+{ #category : 'tests' }
+AvrAssemblerTest >> testLdyInc [
+
+	| obj r |
+	obj := self newObj.
+	obj ldyInc: 2.
+	r := obj program codes first second.
+	self assert: (r isKindOf: AvrOpLDY2).
+	self assert: r mnemonic equals: #LD.
+	self assert: r register equals: 2.
+	self assert: r selector equals: #ldyInc:
+]
+
+{ #category : 'tests' }
 AvrAssemblerTest >> testLdz [
 
 	| obj r |
@@ -414,6 +571,18 @@ AvrAssemblerTest >> testLdzInc [
 	self assert: r mnemonic equals: #LD.
 	self assert: r register equals: 2.
 	self assert: r selector equals: #ldzInc:
+]
+
+{ #category : 'tests' }
+AvrAssemblerTest >> testLiterals [
+
+	| obj a |
+	obj := self newObj.
+	self assert: obj literals isCollection.
+	self assert: obj literals isEmpty.
+	a := OrderedCollection new.
+	obj literals: a.
+	self assert: obj literals identicalTo: a
 ]
 
 { #category : 'tests' }
@@ -570,6 +739,65 @@ AvrAssemblerTest >> testRcall [
 ]
 
 { #category : 'tests' }
+AvrAssemblerTest >> testReleaseRegisters [
+
+	| obj list |
+	obj := self newObj.
+	list := obj availableRegisters.
+	list addAll: #( 1 2 3 ).
+	obj releaseRegisters: #( 4 5 ).
+	self
+		assertCollection: obj availableRegisters
+		equals: #( 1 2 3 4 5 ) asOrderedCollection.
+	self should: [ obj releaseRegisters: #( 5 6 ) ] raise: Error
+]
+
+{ #category : 'tests' }
+AvrAssemblerTest >> testResolveLiteralsFor [
+
+	| obj codes code device |
+	obj := self newObj.
+	obj useLiteral: 'abc'.
+	obj useLiteral: 'def'.
+	device := AvrTestDevice new.
+	device asm: obj.
+	obj resolveLiteralsFor: device.
+	codes := obj program codes.
+	self assert: codes size equals: 4.
+	code := codes first.
+	self assert: code first equals: 0.
+	self assert: code second selector equals: #word:.
+	self assert: code second immediate equals: 16r0201.
+	code := codes second.
+	self assert: code first equals: 2.
+	self assert: code second selector equals: #word:.
+	self assert: code second immediate equals: 16r0003.
+	code := codes third.
+	self assert: code first equals: 4.
+	self assert: code second selector equals: #word:.
+	self assert: code second immediate equals: 16r6564.
+	code := codes fourth.
+	self assert: code first equals: 6.
+	self assert: code second selector equals: #word:.
+	self assert: code second immediate equals: 16r0066.
+	self assert: (obj labeler labelNameAt: #abc) equals: 0.
+	self assert: (obj labeler labelNameAt: #def) equals: 4
+]
+
+{ #category : 'tests' }
+AvrAssemblerTest >> testResolveUndefinedSubroutinesFor [
+
+	| obj device |
+	obj := self newObj.
+	device := AvrArduino new.
+	device asm: obj.
+	obj callSubroutine: 'all'.
+	self assert: (obj program labeler labelNameAt: 'all') isNil.
+	obj resolveUndefinedSubroutinesFor: device.
+	self assert: (obj program labeler labelNameAt: 'all') notNil
+]
+
+{ #category : 'tests' }
 AvrAssemblerTest >> testRet [
 
 	| obj r |
@@ -598,6 +826,18 @@ AvrAssemblerTest >> testRjmp [
 	r := obj program codes first second.
 	self assert: r mnemonic equals: #RJMP.
 	self assert: r immediate equals: 123
+]
+
+{ #category : 'tests' }
+AvrAssemblerTest >> testRor [
+
+	| obj r |
+	obj := self newObj.
+	obj ror: 2.
+	r := obj program codes first second.
+	self assert: r mnemonic equals: #ROR.
+	self assert: r register equals: 2.
+	self assert: r selector equals: #ror:
 ]
 
 { #category : 'tests' }
@@ -707,11 +947,11 @@ AvrAssemblerTest >> testSei [
 ]
 
 { #category : 'tests' }
-AvrAssemblerTest >> testStdYR [
+AvrAssemblerTest >> testStdYOffsetR [
 
 	| obj r |
 	obj := self newObj.
-	obj stdY: 12 r: 23.
+	obj stdYOffset: 12 r: 23.
 	r := obj program codes first second.
 	self assert: (r isKindOf: AvrOpSTDY).
 	self assert: r mnemonic equals: #STD.
@@ -720,11 +960,11 @@ AvrAssemblerTest >> testStdYR [
 ]
 
 { #category : 'tests' }
-AvrAssemblerTest >> testStdZR [
+AvrAssemblerTest >> testStdZOffsetR [
 
 	| obj r |
 	obj := self newObj.
-	obj stdZ: 12 r: 23.
+	obj stdZOffset: 12 r: 23.
 	r := obj program codes first second.
 	self assert: (r isKindOf: AvrOpSTDZ).
 	self assert: r mnemonic equals: #STD.
@@ -805,6 +1045,19 @@ AvrAssemblerTest >> testStz [
 ]
 
 { #category : 'tests' }
+AvrAssemblerTest >> testStzDec [
+
+	| obj r |
+	obj := self newObj.
+	obj stzDec: 3.
+	r := obj program codes first second.
+	self assert: (r isKindOf: AvrOpSTZ3).
+	self assert: r selector equals: #stzDec:.
+	self assert: r mnemonic equals: #ST.
+	self assert: r register equals: 3
+]
+
+{ #category : 'tests' }
 AvrAssemblerTest >> testStzInc [
 
 	| obj r |
@@ -840,6 +1093,18 @@ AvrAssemblerTest >> testSubiRData [
 ]
 
 { #category : 'tests' }
+AvrAssemblerTest >> testSubroutines [
+
+	| obj a |
+	obj := self newObj.
+	self assert: obj subroutines isCollection.
+	self assert: obj subroutines isEmpty.
+	a := Set new.
+	obj subroutines: a.
+	self assert: obj subroutines identicalTo: a
+]
+
+{ #category : 'tests' }
 AvrAssemblerTest >> testSwap [
 
 	| obj r |
@@ -849,6 +1114,21 @@ AvrAssemblerTest >> testSwap [
 	self assert: (r isKindOf: AvrOpSWAP).
 	self assert: r mnemonic equals: #SWAP.
 	self assert: r register equals: 2
+]
+
+{ #category : 'tests' }
+AvrAssemblerTest >> testUseLiteral [
+
+	| obj |
+	obj := self newObj.
+	self assert: obj literals isEmpty.
+	obj useLiteral: 'abc'.
+	obj useLiteral: 'def'.
+	obj useLiteral: 'abc'.
+	self assert: obj literals size equals: 2.
+	self assert: (obj literals includes: #abc).
+	self assert: (obj literals includes: #def).
+	self deny: (obj literals includes: #ghi)
 ]
 
 { #category : 'tests' }

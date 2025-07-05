@@ -41,5 +41,5 @@ AvrOpLDDZ >> operandText [
 { #category : 'accessing' }
 AvrOpLDDZ >> selector [
 
-	^ #lddR:z:
+	^ #lddR:zOffset:
 ]

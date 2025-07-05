@@ -112,7 +112,7 @@ AvrLabelResolverTest >> testResolvedCopyOf [
 
 	| obj op ret io |
 	obj := self newObj.
-	io := AvrArduinoIO new port: 12.
+	io := AvrLiteral label: #test port: 12.
 	op := AvrOpJMP new immediate: 52.
 	ret := obj resolvedCopyOf: op.
 	self assert: (ret isKindOf: AvrOpJMP).

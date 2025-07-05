@@ -9,6 +9,8 @@ Class {
 { #category : 'programs' }
 AvrArduinoNanoMinimal >> all [
 
+	ram setSize: const ramSize.
+	self setupRegisterPool.
 	self setupVectors.
 	asm label: #boot.
 	self boot.
@@ -25,12 +27,12 @@ AvrArduinoNanoMinimal >> all [
 { #category : 'programs' }
 AvrArduinoNanoMinimal >> loop [
 
-	self digitalWrite: 7 boolean: true.
-	"self digitalWrite: 11 boolean: true."
-	self wait8.
-	self digitalWrite: 7 boolean: false.
-	"self digitalWrite: 11 boolean: false."
-	self wait8
+	| rs |
+	rs := #( 24 25 ).
+	self useRegisters: rs in: [ :r24 :r25 |
+		self togglePin: 7.
+		self loadRegisters: rs immediate: 1000.
+		self delayMicroseconds: rs ]
 ]
 
 { #category : 'programs' }

@@ -31,3 +31,9 @@ AvrOpSBIW >> opcode [
 
 	^ 16r9700
 ]
+
+{ #category : 'accessing' }
+AvrOpSBIW >> selector [
+
+	^ #sbiwR:data:
+]

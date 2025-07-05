@@ -48,5 +48,5 @@ AvrOpSTDZ >> operandText [
 { #category : 'accessing' }
 AvrOpSTDZ >> selector [
 
-	^ #stdZ:r:
+	^ #stdZOffset:r:
 ]

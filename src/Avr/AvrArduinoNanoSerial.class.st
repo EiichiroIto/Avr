@@ -9,17 +9,16 @@ Class {
 { #category : 'programs' }
 AvrArduinoNanoSerial >> all [
 
+	ram setSize: const ramSize.
+	self setupRegisterPool.
 	self setupVectors.
 	asm label: #boot.
 	self
 		boot;
-		clearCounter;
-		setupTimer0;
 		setupSerial0Baud: 9600.
 	asm sei.
 	asm rjmp: #setup.
-	self intHandler: [  ] named: #noInterrupt.
-	self intHandler: [ self timer0compa ] named: #timer0compa.
+	self intHandlerNamed: #noInterrupt.
 	asm label: #setup.
 	self setup.
 	self forever: [ self loop ]
@@ -29,7 +28,7 @@ AvrArduinoNanoSerial >> all [
 AvrArduinoNanoSerial >> loop [
 
 	| label1 label2 |
-	self useLatterHalfRegisterDuring: [ :r |
+	self useLatterHalfRegisterIn: [ :r |
 		label2 := self nextLabel.
 		asm label: label2.
 		self serial0DataAvailable.
@@ -41,10 +40,6 @@ AvrArduinoNanoSerial >> loop [
 		self wait8.
 		asm rjmp: label2.
 		asm label: label1 ]
-	"self useLatterHalfRegisterDuring: [ :r |
-		asm ldiR: r data: $. asInteger.
-		self serial0SendRegister: r ].
-	self delay: 1000"
 ]
 
 { #category : 'programs' }
@@ -70,9 +65,9 @@ AvrArduinoNanoSerial >> setupVectors [
 	asm jmp: #noInterrupt.
 	asm jmp: #noInterrupt.
 	asm jmp: #noInterrupt.
-	asm jmp: #timer0compa.
-	asm jmp: #timer0compa.
-	asm jmp: #timer0compa.
+	asm jmp: #noInterrupt.
+	asm jmp: #noInterrupt.
+	asm jmp: #noInterrupt.
 	asm jmp: #noInterrupt.
 	asm jmp: #noInterrupt.
 	asm jmp: #noInterrupt.

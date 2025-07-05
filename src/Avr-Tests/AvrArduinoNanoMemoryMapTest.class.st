@@ -2,150 +2,143 @@
 An AvrArduinoNanoRamTest is a test class for testing the behavior of AvrArduinoNanoRam
 "
 Class {
-	#name : 'AvrArduinoNanoRamTest',
+	#name : 'AvrArduinoNanoMemoryMapTest',
 	#superclass : 'TestCase',
 	#category : 'Avr-Tests-Arduino',
 	#package : 'Avr-Tests',
 	#tag : 'Arduino'
 }
 
-{ #category : 'accessing' }
-AvrArduinoNanoRamTest >> targetClass [
+{ #category : 'instance creation' }
+AvrArduinoNanoMemoryMapTest >> newObj [
 
-	^ AvrArduinoNanoRam
+	^ AvrArduinoNanoMemoryMap new
 ]
 
 { #category : 'tests' }
-AvrArduinoNanoRamTest >> testAdch [
+AvrArduinoNanoMemoryMapTest >> testAdch [
 
 	| obj |
-	obj := self targetClass adch.
+	obj := self newObj adch.
 	self assert: obj label equals: #adch.
-	self assert: obj address equals: self targetClass adcl address + 1
+	self assert: obj address equals: self newObj adcl address + 1
 ]
 
 { #category : 'tests' }
-AvrArduinoNanoRamTest >> testAdcl [
+AvrArduinoNanoMemoryMapTest >> testAdcl [
 
 	| obj |
-	obj := self targetClass adcl.
+	obj := self newObj adcl.
 	self assert: obj label equals: #adcl.
 	self assert: obj address equals: 16r78
 ]
 
 { #category : 'tests' }
-AvrArduinoNanoRamTest >> testAdcsra [
+AvrArduinoNanoMemoryMapTest >> testAdcsra [
 
 	| obj |
-	obj := self targetClass adcsra.
+	obj := self newObj adcsra.
 	self assert: obj label equals: #adcsra.
 	self assert: obj address equals: 16r7A
 ]
 
 { #category : 'tests' }
-AvrArduinoNanoRamTest >> testAdmux [
+AvrArduinoNanoMemoryMapTest >> testAdcsrb [
 
 	| obj |
-	obj := self targetClass admux.
+	obj := self newObj adcsrb.
+	self assert: obj label equals: #adcsrb.
+	self assert: obj address equals: 16r7B
+]
+
+{ #category : 'tests' }
+AvrArduinoNanoMemoryMapTest >> testAdmux [
+
+	| obj |
+	obj := self newObj admux.
 	self assert: obj label equals: #admux.
 	self assert: obj address equals: 16r7C
 ]
 
 { #category : 'tests' }
-AvrArduinoNanoRamTest >> testPrr [
+AvrArduinoNanoMemoryMapTest >> testPrr [
 
 	| obj |
-	obj := self targetClass prr.
+	obj := self newObj prr.
 	self assert: obj label equals: #prr.
 	self assert: obj address equals: 16r64
 ]
 
 { #category : 'tests' }
-AvrArduinoNanoRamTest >> testRamEnd [
+AvrArduinoNanoMemoryMapTest >> testRamEnd [
 
-	| obj |
-	obj := self targetClass ramEnd.
+	| mmap obj |
+	mmap := self newObj.
+	mmap setSize: 16r900.
+	obj := mmap ramEnd.
 	self assert: obj label equals: #ramEnd.
 	self assert: obj address equals: 16r8FF
 ]
 
 { #category : 'tests' }
-AvrArduinoNanoRamTest >> testRamEndHigh [
+AvrArduinoNanoMemoryMapTest >> testTimsk0 [
 
 	| obj |
-	obj := self targetClass ramEndHigh.
-	self assert: obj label equals: #ramEndHigh.
-	self assert: obj address equals: 16r08
-]
-
-{ #category : 'tests' }
-AvrArduinoNanoRamTest >> testRamEndLow [
-
-	| obj |
-	obj := self targetClass ramEndLow.
-	self assert: obj label equals: #ramEndLow.
-	self assert: obj address equals: 16rFF
-]
-
-{ #category : 'tests' }
-AvrArduinoNanoRamTest >> testTimsk0 [
-
-	| obj |
-	obj := self targetClass timsk0.
+	obj := self newObj timsk0.
 	self assert: obj label equals: #timsk0.
 	self assert: obj address equals: 16r6E
 ]
 
 { #category : 'tests' }
-AvrArduinoNanoRamTest >> testUbrr0h [
+AvrArduinoNanoMemoryMapTest >> testUbrr0h [
 
 	| obj |
-	obj := self targetClass ubrr0h.
+	obj := self newObj ubrr0h.
 	self assert: obj label equals: #ubrr0h.
 	self assert: obj address equals: 16rC5
 ]
 
 { #category : 'tests' }
-AvrArduinoNanoRamTest >> testUbrr0l [
+AvrArduinoNanoMemoryMapTest >> testUbrr0l [
 
 	| obj |
-	obj := self targetClass ubrr0l.
+	obj := self newObj ubrr0l.
 	self assert: obj label equals: #ubrr0l.
 	self assert: obj address equals: 16rC4
 ]
 
 { #category : 'tests' }
-AvrArduinoNanoRamTest >> testUcsr0a [
+AvrArduinoNanoMemoryMapTest >> testUcsr0a [
 
 	| obj |
-	obj := self targetClass ucsr0a.
+	obj := self newObj ucsr0a.
 	self assert: obj label equals: #ucsr0a.
 	self assert: obj address equals: 16rC0
 ]
 
 { #category : 'tests' }
-AvrArduinoNanoRamTest >> testUcsr0b [
+AvrArduinoNanoMemoryMapTest >> testUcsr0b [
 
 	| obj |
-	obj := self targetClass ucsr0b.
+	obj := self newObj ucsr0b.
 	self assert: obj label equals: #ucsr0b.
 	self assert: obj address equals: 16rC1
 ]
 
 { #category : 'tests' }
-AvrArduinoNanoRamTest >> testUcsr0c [
+AvrArduinoNanoMemoryMapTest >> testUcsr0c [
 
 	| obj |
-	obj := self targetClass ucsr0c.
+	obj := self newObj ucsr0c.
 	self assert: obj label equals: #ucsr0c.
 	self assert: obj address equals: 16rC2
 ]
 
 { #category : 'tests' }
-AvrArduinoNanoRamTest >> testUdr0 [
+AvrArduinoNanoMemoryMapTest >> testUdr0 [
 
 	| obj |
-	obj := self targetClass udr0.
+	obj := self newObj udr0.
 	self assert: obj label equals: #udr0.
 	self assert: obj address equals: 16rC6
 ]

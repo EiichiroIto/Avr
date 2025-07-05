@@ -3,10 +3,8 @@ Class {
 	#superclass : 'Object',
 	#instVars : [
 		'asm',
-		'registerPool',
 		'io',
-		'ram',
-		'subroutines'
+		'ram'
 	],
 	#category : 'Avr-Arduino',
 	#package : 'Avr',
@@ -55,15 +53,7 @@ AvrArduino >> asm: anObject [
 AvrArduino >> assembledCodes [
 
 	self all.
-	self resolveUndefinedSubroutines.
-	^ asm program validatedCodes
-]
-
-{ #category : 'macros' }
-AvrArduino >> callSubroutine: aSymbol [
-
-	subroutines add: aSymbol.
-	asm rcall: aSymbol
+	^ asm assembledCodesFor: self
 ]
 
 { #category : 'initialization' }
@@ -71,15 +61,19 @@ AvrArduino >> initialize [
 
 	asm := self newAssembler.
 	asm program: self newProgram.
-	registerPool := OrderedCollection new.
-	subroutines := Set new
+	io := self newIO.
+	ram := self newRam
 ]
 
 { #category : 'macros' }
-AvrArduino >> intHandler: aBlock named: aString [
+AvrArduino >> intHandlerNamed: aSymbol [
 
-	asm label: aString.
-	aBlock value.
+	| tmp |
+	asm label: aSymbol.
+	tmp := asm availableRegisters.
+	asm clearAvailableRegisters.
+	self perform: aSymbol.
+	asm availableRegisters: tmp.
 	asm reti
 ]
 
@@ -102,15 +96,33 @@ AvrArduino >> newAssembler [
 ]
 
 { #category : 'instance creation' }
+AvrArduino >> newIO [
+
+	^ AvrIOMap new
+]
+
+{ #category : 'instance creation' }
 AvrArduino >> newProgram [
 
 	^ AvrProgram new
+]
+
+{ #category : 'instance creation' }
+AvrArduino >> newRam [
+
+	^ AvrMemoryMap new
 ]
 
 { #category : 'accessing' }
 AvrArduino >> nextLabel [
 
 	^ asm labeler nextLabel
+]
+
+{ #category : 'programs' }
+AvrArduino >> nop [
+
+	asm nop
 ]
 
 { #category : 'accessing' }
@@ -137,37 +149,6 @@ AvrArduino >> ram: anObject [
 	ram := anObject
 ]
 
-{ #category : 'accessing' }
-AvrArduino >> registerPool [
-
-	^ registerPool
-]
-
-{ #category : 'accessing' }
-AvrArduino >> registerPool: anObject [
-
-	registerPool := anObject
-]
-
-{ #category : 'private' }
-AvrArduino >> resolveUndefinedSubroutines [
-
-	subroutines do: [ :each |
-		(asm labeler hasAddressNameAt: each) ifFalse: [
-			(self class canPerform: each asSymbol)
-				ifTrue: [
-				self subroutine: [ self perform: each asSymbol ] named: each ]
-				ifFalse: [ self error ] ] ]
-]
-
-{ #category : 'private' }
-AvrArduino >> returnRegisters: aCollection [
-
-	(registerPool includesAny: aCollection) ifTrue: [ self error ].
-	registerPool addAll: aCollection.
-	registerPool sort
-]
-
 { #category : 'private' }
 AvrArduino >> setupRegisterPool [
 
@@ -175,23 +156,15 @@ AvrArduino >> setupRegisterPool [
 ]
 
 { #category : 'macros' }
-AvrArduino >> subroutine: aBlock named: aString [
+AvrArduino >> subroutineNamed: aSymbol [
 
-	asm label: aString.
-	aBlock value.
+	| tmp |
+	asm label: aSymbol.
+	tmp := asm availableRegisters.
+	asm clearAvailableRegisters.
+	self perform: aSymbol.
+	asm availableRegisters: tmp.
 	asm ret
-]
-
-{ #category : 'accessing' }
-AvrArduino >> subroutines [
-
-	^ subroutines
-]
-
-{ #category : 'accessing' }
-AvrArduino >> subroutines: anObject [
-
-	subroutines := anObject
 ]
 
 { #category : 'api' }
@@ -208,37 +181,52 @@ AvrArduino >> uploadTo: aString [
 ]
 
 { #category : 'private' }
-AvrArduino >> use: anInteger registersDuring: aBlock [
+AvrArduino >> use: anInteger registersIn: aBlock [
 
 	| registers |
-	registers := registerPool removeFirst: anInteger.
+	registers := asm getRegistersCount: anInteger.
 	aBlock value: registers.
-	self returnRegisters: registers
+	asm releaseRegisters: registers
 ]
 
 { #category : 'private' }
-AvrArduino >> useRegister: anInteger during: aBlock [
+AvrArduino >> useInputs: aCollection outputs: aCollection2 in: aBlock [
 
-	registerPool remove: anInteger.
-	aBlock value: anInteger.
-	self returnRegisters: { anInteger }
+	| registers |
+	registers := (aCollection ifNil: [ #(  ) ]) copy asOrderedCollection.
+	registers addAll: ((aCollection2 ifNil: [ #(  ) ]) reject: [ :each |
+			 registers includes: each ]).
+	(asm checkAnyRegistersAvailable: registers) ifTrue: [ self error ].
+	aBlock numArgs = 0
+		ifTrue: [ aBlock value ]
+		ifFalse: [ aBlock valueWithArguments: registers ]
 ]
 
 { #category : 'private' }
-AvrArduino >> useRegisterDuring: aBlock [
+AvrArduino >> useRegister: anInteger in: aBlock [
+
+	asm getRegisters: { anInteger }.
+	aBlock cull: anInteger.
+	asm releaseRegisters: { anInteger }
+]
+
+{ #category : 'private' }
+AvrArduino >> useRegisterIn: aBlock [
 
 	| register |
-	register := registerPool removeFirst.
+	register := (asm getRegistersCount: 1) first.
 	aBlock value: register.
-	self returnRegisters: { register }
+	asm releaseRegisters: { register }
 ]
 
 { #category : 'private' }
-AvrArduino >> useRegisters: aCollection during: aBlock [
+AvrArduino >> useRegisters: aCollection in: aBlock [
 
-	aCollection do: [ :each | registerPool remove: each ].
-	aBlock value: aCollection.
-	self returnRegisters: aCollection
+	asm getRegisters: aCollection.
+	aBlock numArgs = 0
+		ifTrue: [ aBlock value ]
+		ifFalse: [ aBlock valueWithArguments: aCollection ].
+	asm releaseRegisters: aCollection
 ]
 
 { #category : 'constants' }
