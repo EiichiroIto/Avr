@@ -997,6 +997,19 @@ AvrAssemblerTest >> testStx [
 ]
 
 { #category : 'tests' }
+AvrAssemblerTest >> testStxDec [
+
+	| obj r |
+	obj := self newObj.
+	obj stxDec: 2.
+	r := obj program codes first second.
+	self assert: (r isKindOf: AvrOpSTX3).
+	self assert: r mnemonic equals: #ST.
+	self assert: r register equals: 2.
+	self assert: r selector equals: #stxDec:
+]
+
+{ #category : 'tests' }
 AvrAssemblerTest >> testStxInc [
 
 	| obj r |
@@ -1018,6 +1031,19 @@ AvrAssemblerTest >> testSty [
 	self assert: (r isKindOf: AvrOpSTY1).
 	self assert: r mnemonic equals: #ST.
 	self assert: r register equals: 2
+]
+
+{ #category : 'tests' }
+AvrAssemblerTest >> testStyDec [
+
+	| obj r |
+	obj := self newObj.
+	obj styDec: 2.
+	r := obj program codes first second.
+	self assert: (r isKindOf: AvrOpSTY3).
+	self assert: r mnemonic equals: #ST.
+	self assert: r register equals: 2.
+	self assert: r selector equals: #styDec:
 ]
 
 { #category : 'tests' }

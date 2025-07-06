@@ -505,7 +505,8 @@ AvrAssembler >> resolveUndefinedSubroutinesFor: anObject [
 				ifTrue: [
 					anObject subroutineNamed: each asSymbol.
 					flag := true ]
-				ifFalse: [ self error ] ] ] ] doWhileTrue: [ flag ]
+				ifFalse: [ self error: each , ' is not defined' ] ] ] ]
+		doWhileTrue: [ flag ]
 ]
 
 { #category : 'no register' }
@@ -633,6 +634,12 @@ AvrAssembler >> stx: register [
 ]
 
 { #category : 'one register' }
+AvrAssembler >> stxDec: register [
+
+	self add: (AvrOpSTX3 new register: register)
+]
+
+{ #category : 'one register' }
 AvrAssembler >> stxInc: register [
 
 	self add: (AvrOpSTX2 new register: register)
@@ -642,6 +649,12 @@ AvrAssembler >> stxInc: register [
 AvrAssembler >> sty: register [
 
 	self add: (AvrOpSTY1 new register: register)
+]
+
+{ #category : 'one register' }
+AvrAssembler >> styDec: register [
+
+	self add: (AvrOpSTY3 new register: register)
 ]
 
 { #category : 'one register' }

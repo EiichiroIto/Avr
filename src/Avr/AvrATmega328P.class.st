@@ -387,7 +387,7 @@ AvrATmega328P >> loadRegisters: aCollection address: anInteger [
 AvrATmega328P >> loadRegisters: aCollection immediate: anInteger2 [
 
 	| value |
-	value := anInteger2.
+	value := anInteger2 value.
 	aCollection do: [ :each |
 		asm ldiR: each data: (value bitAnd: 16rFF).
 		value := value >> 8 ]
