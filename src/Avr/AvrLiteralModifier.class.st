@@ -46,6 +46,12 @@ AvrLiteralModifier >> asModifier [
 ]
 
 { #category : 'converting' }
+AvrLiteralModifier >> half [
+
+	list add: #half
+]
+
+{ #category : 'converting' }
 AvrLiteralModifier >> highByte [
 
 	list add: #highByte

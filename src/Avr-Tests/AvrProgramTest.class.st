@@ -108,6 +108,17 @@ AvrProgramTest >> testLabelAddressPut [
 ]
 
 { #category : 'tests' }
+AvrProgramTest >> testLabelNameAt [
+
+	| obj |
+	obj := self newObj.
+	self assert: obj labeler labels isEmpty.
+	obj address: 123.
+	obj label: 'abc'.
+	self assert: (obj labelNameAt: 'abc') equals: 123
+]
+
+{ #category : 'tests' }
 AvrProgramTest >> testLabeler [
 
 	| obj a |

@@ -9,6 +9,12 @@ Integer >> expandSignWith: anInteger [
 ]
 
 { #category : '*Avr' }
+Integer >> half [
+
+	^ self // 2
+]
+
+{ #category : '*Avr' }
 Integer >> highByte [
 
 	^ (self >> 8) bitAnd: 16rFF

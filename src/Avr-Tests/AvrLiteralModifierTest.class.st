@@ -35,6 +35,16 @@ AvrLiteralModifierTest >> testAsModifier [
 ]
 
 { #category : 'tests' }
+AvrLiteralModifierTest >> testHighByte [
+
+	| obj |
+	obj := self newObj.
+	self assert: obj list isEmpty.
+	obj highByte.
+	self assert: (obj list includes: #highByte)
+]
+
+{ #category : 'tests' }
 AvrLiteralModifierTest >> testLabel [
 
 	| obj lit |
@@ -65,6 +75,17 @@ AvrLiteralModifierTest >> testLiteral [
 	lit := AvrLiteral label: #abc port: 123.
 	obj literal: lit.
 	self assert: obj literal identicalTo: lit
+]
+
+{ #category : 'tests' }
+AvrLiteralModifierTest >> testLowByte [
+
+	| obj |
+	obj := self newObj.
+	self assert: obj list isEmpty.
+	obj lowByte.
+	self assert: (obj list includes: #lowByte)  
+
 ]
 
 { #category : 'tests' }

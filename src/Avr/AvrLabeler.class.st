@@ -48,7 +48,8 @@ AvrLabeler >> labelNameAt: aString [
 { #category : 'accessing' }
 AvrLabeler >> labelNameAt: aString put: anInteger [
 
-	(self hasAddressOfName: aString) ifTrue: [ self error ].
+	(self hasAddressOfName: aString) ifTrue: [
+		self error: 'Duplicate label ' , aString ].
 	labels at: aString put: anInteger
 ]
 

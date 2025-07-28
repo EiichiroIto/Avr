@@ -40,6 +40,17 @@ AvrLiteralTest >> testAsModifier [
 ]
 
 { #category : 'tests' }
+AvrLiteralTest >> testHighByte [
+
+	| obj r |
+	obj := self newObj.
+	r := obj highByte.
+	self assert: (r isKindOf: AvrLiteralModifier).
+	self assert: r literal identicalTo: obj.
+	self assert: (r list includes: #highByte)
+]
+
+{ #category : 'tests' }
 AvrLiteralTest >> testLabel [
 
 	| obj |
@@ -49,6 +60,17 @@ AvrLiteralTest >> testLabel [
 	self assert: obj label equals: #abc.
 	obj label: #def.
 	self assert: obj label equals: #def
+]
+
+{ #category : 'tests' }
+AvrLiteralTest >> testLowByte [
+
+	| obj r |
+	obj := self newObj.
+	r := obj lowByte.
+	self assert: (r isKindOf: AvrLiteralModifier).
+	self assert: r literal identicalTo: obj.
+	self assert: (r list includes: #lowByte)
 ]
 
 { #category : 'tests' }

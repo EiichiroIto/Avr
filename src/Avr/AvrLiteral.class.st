@@ -47,6 +47,7 @@ AvrLiteral >> - anInteger [
 { #category : 'comparing' }
 AvrLiteral >> = anObject [
 
+	(anObject isKindOf: AvrLiteral) ifFalse: [ ^ false ].
 	^ label = anObject label and: [
 		  (self perform: type) = (anObject perform: type) ]
 ]
@@ -69,6 +70,12 @@ AvrLiteral >> asModifier [
 	^ AvrLiteralModifier new
 		  literal: self;
 		  yourself
+]
+
+{ #category : 'converting' }
+AvrLiteral >> half [
+
+	^ self asModifier half
 ]
 
 { #category : 'converting' }

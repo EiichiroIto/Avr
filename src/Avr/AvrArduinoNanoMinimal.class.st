@@ -10,7 +10,7 @@ Class {
 AvrArduinoNanoMinimal >> all [
 
 	ram setSize: const ramSize.
-	self setupRegisterPool.
+	asm setupRegisterFrames.
 	self setupVectors.
 	asm label: #boot.
 	self boot.
@@ -29,7 +29,7 @@ AvrArduinoNanoMinimal >> loop [
 
 	| rs |
 	rs := #( 24 25 ).
-	self useRegisters: rs in: [ :r24 :r25 |
+	asm useRegisters: rs in: [ :r24 :r25 |
 		self togglePin: 7.
 		self loadRegisters: rs immediate: 1000.
 		self delayMicroseconds: rs ]

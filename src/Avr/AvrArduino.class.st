@@ -52,6 +52,7 @@ AvrArduino >> asm: anObject [
 { #category : 'api' }
 AvrArduino >> assembledCodes [
 
+	self reset.
 	self all.
 	^ asm assembledCodesFor: self
 ]
@@ -59,21 +60,16 @@ AvrArduino >> assembledCodes [
 { #category : 'initialization' }
 AvrArduino >> initialize [
 
-	asm := self newAssembler.
-	asm program: self newProgram.
 	io := self newIO.
-	ram := self newRam
+	ram := self newRam.
+	self reset
 ]
 
 { #category : 'macros' }
 AvrArduino >> intHandlerNamed: aSymbol [
 
-	| tmp |
 	asm label: aSymbol.
-	tmp := asm availableRegisters.
-	asm clearAvailableRegisters.
 	self perform: aSymbol.
-	asm availableRegisters: tmp.
 	asm reti
 ]
 
@@ -87,6 +83,12 @@ AvrArduino >> io [
 AvrArduino >> io: anObject [
 
 	io := anObject
+]
+
+{ #category : 'api' }
+AvrArduino >> labelNameAt: aSymbol [
+
+	^ asm labelNameAt: aSymbol
 ]
 
 { #category : 'instance creation' }
@@ -149,21 +151,23 @@ AvrArduino >> ram: anObject [
 	ram := anObject
 ]
 
-{ #category : 'private' }
-AvrArduino >> setupRegisterPool [
+{ #category : 'initialization' }
+AvrArduino >> reset [
 
-	self subclassResponsibility
+	asm := self newAssembler.
+	asm program: self newProgram.
+	asm setupRegisterFrames
 ]
 
 { #category : 'macros' }
 AvrArduino >> subroutineNamed: aSymbol [
 
 	| tmp |
+	tmp := asm registerFrames unusedRegisters.
 	asm label: aSymbol.
-	tmp := asm availableRegisters.
-	asm clearAvailableRegisters.
+	asm registerFrames unusedRegisters: OrderedCollection new.
 	self perform: aSymbol.
-	asm availableRegisters: tmp.
+	asm registerFrames unusedRegisters: tmp.
 	asm ret
 ]
 
@@ -178,55 +182,6 @@ AvrArduino >> uploadTo: aString [
 	^ OSPlatform current runCommand: (self writerFormat format: {
 				   aString.
 				   filename })
-]
-
-{ #category : 'private' }
-AvrArduino >> use: anInteger registersIn: aBlock [
-
-	| registers |
-	registers := asm getRegistersCount: anInteger.
-	aBlock value: registers.
-	asm releaseRegisters: registers
-]
-
-{ #category : 'private' }
-AvrArduino >> useInputs: aCollection outputs: aCollection2 in: aBlock [
-
-	| registers |
-	registers := (aCollection ifNil: [ #(  ) ]) copy asOrderedCollection.
-	registers addAll: ((aCollection2 ifNil: [ #(  ) ]) reject: [ :each |
-			 registers includes: each ]).
-	(asm checkAnyRegistersAvailable: registers) ifTrue: [ self error ].
-	aBlock numArgs = 0
-		ifTrue: [ aBlock value ]
-		ifFalse: [ aBlock valueWithArguments: registers ]
-]
-
-{ #category : 'private' }
-AvrArduino >> useRegister: anInteger in: aBlock [
-
-	asm getRegisters: { anInteger }.
-	aBlock cull: anInteger.
-	asm releaseRegisters: { anInteger }
-]
-
-{ #category : 'private' }
-AvrArduino >> useRegisterIn: aBlock [
-
-	| register |
-	register := (asm getRegistersCount: 1) first.
-	aBlock value: register.
-	asm releaseRegisters: { register }
-]
-
-{ #category : 'private' }
-AvrArduino >> useRegisters: aCollection in: aBlock [
-
-	asm getRegisters: aCollection.
-	aBlock numArgs = 0
-		ifTrue: [ aBlock value ]
-		ifFalse: [ aBlock valueWithArguments: aCollection ].
-	asm releaseRegisters: aCollection
 ]
 
 { #category : 'constants' }

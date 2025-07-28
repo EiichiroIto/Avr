@@ -27,24 +27,6 @@ AvrArduinoTest >> testAsm [
 ]
 
 { #category : 'tests' }
-AvrArduinoTest >> testAssembledCodes [
-
-	| obj codes code |
-	obj := self newObj.
-	codes := obj assembledCodes.
-	self assert: codes isCollection.
-	self assert: codes isEmpty.
-	obj asm rjmp: 'abc'.
-	obj program labeler labelNameAt: 'abc' put: 12.
-	codes := obj assembledCodes.
-	self assert: codes size equals: 1.
-	code := codes first.
-	self assert: code first equals: 0.
-	self assert: code second mnemonic equals: #RJMP.
-	self assert: code second immediate equals: 12 - 2 / 2
-]
-
-{ #category : 'tests' }
 AvrArduinoTest >> testInitialize [
 
 	| obj |
@@ -89,6 +71,17 @@ AvrArduinoTest >> testLabel [
 	obj program address: 123.
 	obj program label: 'abc'.
 	self assert: (obj program labeler labelAddressAt: 123) equals: 'abc'
+]
+
+{ #category : 'tests' }
+AvrArduinoTest >> testLabelNameAt [
+
+	| obj |
+	obj := self newObj.
+	self assert: obj program labeler labels isEmpty.
+	obj program address: 123.
+	obj program label: 'abc'.
+	self assert: (obj labelNameAt: 'abc') equals: 123
 ]
 
 { #category : 'tests' }
@@ -163,6 +156,17 @@ AvrArduinoTest >> testRam [
 ]
 
 { #category : 'tests' }
+AvrArduinoTest >> testReset [
+
+	| obj asm |
+	obj := self newObj.
+	asm := obj asm.
+	self assert: obj asm equals: asm.
+	obj reset.
+	self deny: obj asm equals: asm
+]
+
+{ #category : 'tests' }
 AvrArduinoTest >> testSubroutineNamed [
 
 	| obj program code |
@@ -177,105 +181,4 @@ AvrArduinoTest >> testSubroutineNamed [
 	self assert: code first equals: 2.
 	self assert: code second mnemonic equals: #RET.
 	self assert: (program labeler labelNameAt: #nop) equals: 0
-]
-
-{ #category : 'tests' }
-AvrArduinoTest >> testUseInputsOutputsIn [
-
-	| obj list |
-	obj := self newObj.
-	list := obj asm availableRegisters.
-	list addAll: (1 to: 3).
-	self assert: list size equals: 3.
-	obj useInputs: #( 0 4 ) outputs: nil in: [ :r1 :r2 |
-		self assert: r1 equals: 0.
-		self assert: r2 equals: 4.
-		self deny: (list includesAny: #( 0 4 )) ].
-	self assert: list size equals: 3.
-	self
-		should: [
-		obj useInputs: #( 3 4 ) outputs: #( 4 ) in: [ :r1 :r2 |  ] ]
-		raise: Error.
-
-	obj := self newObj.
-	list := obj asm availableRegisters.
-	list addAll: (1 to: 3).
-	self assert: list size equals: 3.
-	obj useInputs: #( 4 ) outputs: #( 0 ) in: [ :r1 :r2 |
-		self assert: r1 equals: 4.
-		self assert: r2 equals: 0.
-		self deny: (list includesAny: #( 0 4 )) ].
-	self assert: list size equals: 3.
-	self
-		should: [ obj useInputs: #( 3 ) outputs: #( 4 ) in: [ :r1 :r2 |  ] ]
-		raise: Error
-]
-
-{ #category : 'tests' }
-AvrArduinoTest >> testUseRegisterIn [
-
-	| obj list |
-	obj := self newObj.
-	list := obj asm availableRegisters.
-	list addAll: (0 to: 31).
-	self assert: list size equals: 32.
-	obj useRegisterIn: [ :r |
-		self assert: r equals: 0.
-		self deny: (list includes: r) ].
-	self assert: list size equals: 32.
-	self
-		should: [ obj useRegisterIn: [ :r | list add: r ] ]
-		raise: Error
-]
-
-{ #category : 'tests' }
-AvrArduinoTest >> testUseRegisterIn2 [
-
-	| obj list |
-	obj := self newObj.
-	list := obj asm availableRegisters.
-	list addAll: (0 to: 31).
-	self assert: list size equals: 32.
-	obj useRegister: 1 in: [ :r |
-		self assert: r equals: 1.
-		self deny: (list includes: r) ].
-	self assert: list size equals: 32.
-	self
-		should: [ obj useRegister: 1 in: [ :r | list add: r ] ]
-		raise: Error
-]
-
-{ #category : 'tests' }
-AvrArduinoTest >> testUseRegistersIn [
-
-	| obj list |
-	obj := self newObj.
-	list := obj asm availableRegisters.
-	list addAll: (0 to: 31).
-	self assert: list size equals: 32.
-	obj use: 4 registersIn: [ :r |
-		self assertCollection: r equals: #( 0 1 2 3 ).
-		obj
-			use: 4
-			registersIn: [ :r2 |
-			self assertCollection: r2 equals: #( 4 5 6 7 ) ] ].
-	self assert: list size equals: 32
-]
-
-{ #category : 'tests' }
-AvrArduinoTest >> testUseRegistersIn2 [
-
-	| obj list |
-	obj := self newObj.
-	list := obj asm availableRegisters.
-	list addAll: (0 to: 31).
-	self assert: list size equals: 32.
-	obj useRegisters: #( 0 2 4 ) in: [ :r0 :r2 :r4 |
-		self assert: r0 equals: 0.
-		self assert: r2 equals: 2.
-		self assert: r4 equals: 4.
-		self deny: (list includes: r0).
-		self deny: (list includes: r2).
-		self deny: (list includes: r4) ].
-	self assert: list size equals: 32
 ]

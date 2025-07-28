@@ -24,12 +24,6 @@ AvrATmegaConstants >> admuxDefault [
 	^ 16r40
 ]
 
-{ #category : 'defaults' }
-AvrATmegaConstants >> defaultCounterAddress [
-
-	^ 16r0100
-]
-
 { #category : 'serial' }
 AvrATmegaConstants >> fosc [
 

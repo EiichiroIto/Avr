@@ -3,7 +3,6 @@ Class {
 	#superclass : 'AvrArduino',
 	#instVars : [
 		'digitalPins',
-		'counter',
 		'const'
 	],
 	#category : 'Avr-Arduino',
@@ -24,7 +23,7 @@ AvrATmega328P >> addDests: aCollection sources: aCollection2 [
 AvrATmega328P >> addRegisters: aCollection byte: anInteger [
 
 	self useLatterHalfRegisterIn: [ :r |
-		self pushRegisters: { r } during: [
+		asm pushRegisters: { r } during: [
 			asm ldiR: r data: anInteger.
 			asm addDest: aCollection first source: r.
 			asm eorDest: r source: r.
@@ -38,7 +37,7 @@ AvrATmega328P >> analogRead: anInteger into: aCollection [
 	| label r1 r2 |
 	r1 := aCollection first.
 	r2 := aCollection second.
-	self
+	asm
 		useRegisters: {
 				const zl.
 				const zh }
@@ -63,9 +62,8 @@ AvrATmega328P >> analogRead: anInteger into: aCollection [
 { #category : 'private' }
 AvrATmega328P >> availableLatterHalfRegisters: anInteger [
 
-	^ (asm availableRegisters select: [ :each | each >= 16 ])
-		  copyFrom: 1
-		  to: anInteger
+	^ (asm registerFrames unusedRegisters intersection: self latterHalfRegisters)
+		  sorted copyFrom: 1 to: anInteger
 ]
 
 { #category : 'programs' }
@@ -84,12 +82,11 @@ AvrATmega328P >> chunk: aBlock named: aString [
 ]
 
 { #category : 'timer' }
-AvrATmega328P >> clearCounter [
+AvrATmega328P >> clearCounterAddress: aLiteral [
 
-	self useRegisterIn: [ :r |
+	asm useRegisterIn: [ :r |
 		asm eorDest: r source: r.
-		0 to: 3 do: [ :each |
-		asm stsAddress: counter + each r: r ] ]
+		0 to: 3 do: [ :each | asm stsAddress: aLiteral + each r: r ] ]
 ]
 
 { #category : 'macros' }
@@ -113,18 +110,6 @@ AvrATmega328P >> const: anObject [
 	const := anObject
 ]
 
-{ #category : 'accessing' }
-AvrATmega328P >> counter [
-
-	^ counter
-]
-
-{ #category : 'accessing' }
-AvrATmega328P >> counter: anObject [
-
-	counter := anObject
-]
-
 { #category : 'macros' }
 AvrATmega328P >> cpDests: aCollection sources: aCollection2 [
 
@@ -135,17 +120,18 @@ AvrATmega328P >> cpDests: aCollection sources: aCollection2 [
 ]
 
 { #category : 'timer' }
-AvrATmega328P >> delay: aCollection [
+AvrATmega328P >> delay: aCollection address: aLiteral [
 
-	| label1 |
-	self use: 4 registersIn: [ :rs2 |
-		self pushRegisters: aCollection , rs2 during: [
-			self milliSecondsGet: rs2.
-			self addDests: aCollection sources: rs2.
+	| label1 rs |
+	rs := self takeRegistersCount: 4 excepts: aCollection.
+	asm pushAndUseRegisters: rs during: [
+		asm pushRegisters: aCollection during: [
+			self loadRegisters: rs address: aLiteral.
+			self addDests: aCollection sources: rs.
 			label1 := self nextLabel.
 			asm label: label1.
-			self milliSecondsGet: rs2.
-			self cpDests: rs2 sources: aCollection.
+			self loadRegisters: rs address: aLiteral.
+			self cpDests: rs sources: aCollection.
 			asm brcs: label1 ] ]
 ]
 
@@ -158,7 +144,7 @@ AvrATmega328P >> delayMicroseconds: aCollection [
 	label2 := self nextLabel.
 	r1 := aCollection first.
 	r2 := aCollection second.
-	self useRegisterIn: [ :r |
+	asm useRegisterIn: [ :r |
 		asm eorDest: r source: r.
 		asm cpiR: r1 data: 16r02.
 		asm cpcDest: r2 source: r.
@@ -289,7 +275,7 @@ AvrATmega328P >> for: anInteger from: anInteger2 to: anInteger3 do: aBlock [
 	label := self nextLabel.
 	asm ldiR: anInteger data: anInteger2.
 	asm label: label.
-	self pushRegisters: { anInteger } during: [ aBlock cull: anInteger ].
+	asm pushRegisters: { anInteger } during: [ aBlock cull: anInteger ].
 	asm cpiR: anInteger data: anInteger3.
 	self ifLessThan: [
 		asm inc: anInteger.
@@ -360,6 +346,24 @@ AvrATmega328P >> ifNotEqual: aBlock [
 	asm label: label1
 ]
 
+{ #category : 'macros' }
+AvrATmega328P >> ifNotZero: aBlock [
+
+	self ifNotEqual: aBlock
+]
+
+{ #category : 'macros' }
+AvrATmega328P >> ifNotZero: aBlock ifZero: aBlock2 [
+
+	self ifEqual: aBlock2 ifNotEqual: aBlock
+]
+
+{ #category : 'macros' }
+AvrATmega328P >> ifZero: aBlock [
+
+	self ifEqual: aBlock
+]
+
 { #category : 'initialization' }
 AvrATmega328P >> initialize [
 
@@ -369,11 +373,9 @@ AvrATmega328P >> initialize [
 ]
 
 { #category : 'private' }
-AvrATmega328P >> latterHalfRegisters: anInteger excepts: aCollection [
+AvrATmega328P >> latterHalfRegisters [
 
-	| list |
-	list := (16 to: 31) \ (aCollection ifNil: [ #(  ) ]).
-	^ list copyFrom: 1 to: anInteger
+	^ 16 to: 31
 ]
 
 { #category : 'macros' }
@@ -397,18 +399,6 @@ AvrATmega328P >> loadRegisters: aCollection immediate: anInteger2 [
 AvrATmega328P >> loop [
 
 	self subclassResponsibility
-]
-
-{ #category : 'timer' }
-AvrATmega328P >> milliSecondsGet: aCollection [
-
-	self loadRegisters: aCollection address: counter
-]
-
-{ #category : 'timer' }
-AvrATmega328P >> milliSecondsPut: aCollection [
-
-	self storeAddress: counter registers: aCollection
 ]
 
 { #category : 'macros' }
@@ -440,20 +430,22 @@ AvrATmega328P >> newRam [
 { #category : 'misc' }
 AvrATmega328P >> nibble2HexDigitRegister: anInteger [
 
-	| label rs |
+	| label |
 	label := self nextLabel.
-	rs := self latterHalfRegisters: 1 excepts: { anInteger }.
-	self pushAndUseRegisters: rs during: [ :r |
-		asm ldiR: r data: 16r0F.
-		asm andDest: anInteger source: r.
-		asm ldiR: r data: 48.
-		asm addDest: anInteger source: r.
-		asm ldiR: r data: 58.
-		asm cpDest: anInteger source: r.
-		asm brcs: label.
-		asm ldiR: r data: 7.
-		asm addDest: anInteger source: r.
-		asm label: label ]
+	asm
+		pushAndUseRegisters:
+		(self takeRegistersCount: 1 excepts: { anInteger })
+		during: [ :r |
+			asm ldiR: r data: 16r0F.
+			asm andDest: anInteger source: r.
+			asm ldiR: r data: 48.
+			asm addDest: anInteger source: r.
+			asm ldiR: r data: 58.
+			asm cpDest: anInteger source: r.
+			asm brcs: label.
+			asm ldiR: r data: 7.
+			asm addDest: anInteger source: r.
+			asm label: label ]
 ]
 
 { #category : 'programs' }
@@ -470,51 +462,23 @@ AvrATmega328P >> outPort: anInteger immediate: anInteger2 [
 		asm out: anInteger r: r ]
 ]
 
-{ #category : 'macros' }
-AvrATmega328P >> pushAndUseRegisters: aCollection during: aBlock [
-
-	self pushRegisters: aCollection during: [
-		asm getRegisters: aCollection.
-		aBlock numArgs = 0
-			ifTrue: [ aBlock value ]
-			ifFalse: [ aBlock valueWithArguments: aCollection ].
-		asm releaseRegisters: aCollection ]
-]
-
-{ #category : 'macros' }
-AvrATmega328P >> pushRegisters: aCollection during: aBlock [
-
-	| reuseRegisters tmp |
-	aCollection size = aCollection asSet size ifFalse: [
-		self error: 'registers duplicated' ].
-	reuseRegisters := aCollection \ asm availableRegisters.
-	aCollection do: [ :each | asm push: each ].
-	tmp := asm availableRegisters copy.
-	asm releaseRegisters: reuseRegisters.
-	aBlock value.
-	asm getRegisters: reuseRegisters.
-	((asm availableRegisters includesAll: tmp) and: [
-		 tmp includesAll: asm availableRegisters ]) ifFalse: [ self error ].
-	aCollection reverseDo: [ :each | asm pop: each ]
-]
-
-{ #category : 'serial' }
+{ #category : 'serials' }
 AvrATmega328P >> serial0DataAvailable [
 
-	| rs |
-	rs := self latterHalfRegisters: 1 excepts: #(  ).
-	self pushAndUseRegisters: rs during: [ :r |
-		asm ldsR: r address: ram ucsr0a.
-		asm andiR: r data: const serialReceiveComplete ]
+	asm
+		pushAndUseRegisters: (self takeRegistersCount: 1)
+		during: [ :r |
+			asm ldsR: r address: ram ucsr0a.
+			asm andiR: r data: const serialReceiveComplete ]
 ]
 
-{ #category : 'serial' }
+{ #category : 'serials' }
 AvrATmega328P >> serial0PeekDataInto: anInteger [
 
 	asm ldsR: anInteger address: ram udr0
 ]
 
-{ #category : 'serial' }
+{ #category : 'serials' }
 AvrATmega328P >> serial0ReceiveDataInto: anInteger [
 
 	| label |
@@ -525,18 +489,20 @@ AvrATmega328P >> serial0ReceiveDataInto: anInteger [
 	self serial0PeekDataInto: anInteger
 ]
 
-{ #category : 'serial' }
+{ #category : 'serials' }
 AvrATmega328P >> serial0SendRegister: anInteger [
 
-	| label rs |
+	| label |
 	label := self nextLabel.
-	rs := self latterHalfRegisters: 1 excepts: { anInteger }.
-	self pushAndUseRegisters: rs during: [ :r |
-		asm label: label.
-		asm ldsR: r address: ram ucsr0a.
-		asm andiR: r data: const serialDataRegisterEmpty.
-		asm breq: label.
-		asm stsAddress: ram udr0 r: anInteger ]
+	asm
+		pushAndUseRegisters:
+		(self takeRegistersCount: 1 excepts: { anInteger })
+		during: [ :r |
+			asm label: label.
+			asm ldsR: r address: ram ucsr0a.
+			asm andiR: r data: const serialDataRegisterEmpty.
+			asm breq: label.
+			asm stsAddress: ram udr0 r: anInteger ]
 ]
 
 { #category : 'programs' }
@@ -553,12 +519,6 @@ AvrATmega328P >> setupAnalog [
 		asm stsAddress: ram admux r: r.
 		asm ldiR: r data: const adcsraDefault.
 		asm stsAddress: ram adcsra r: r ]
-]
-
-{ #category : 'timer' }
-AvrATmega328P >> setupCounter [
-
-	counter := ram label: #counter address: const defaultCounterAddress
 ]
 
 { #category : 'private' }
@@ -581,13 +541,7 @@ AvrATmega328P >> setupDigitalPins [
 	digitalPins at: 14 put: (Array with: io pinB with: 5)
 ]
 
-{ #category : 'private' }
-AvrATmega328P >> setupRegisterPool [
-
-	asm availableRegisters: (0 to: 31) asOrderedCollection
-]
-
-{ #category : 'serial' }
+{ #category : 'serials' }
 AvrATmega328P >> setupSerial0Baud: anInteger [
 
 	| ubrr |
@@ -645,19 +599,29 @@ AvrATmega328P >> subDests: aCollection sources: aCollection2 [
 		do: [ :each :each2 | asm sbcDest: each source: each2 ]
 ]
 
-{ #category : 'timer' }
-AvrATmega328P >> timer0compa [
+{ #category : 'private' }
+AvrATmega328P >> takeRegistersCount: anInteger [
 
-	| rs |
-	rs := #( 16 17 18 19 ).
-	self pushRegisters: rs , #( 2 20 ) during: [
-		self useRegister: 2 in: [ :r |
+	^ self latterHalfRegisters copyFrom: 1 to: anInteger
+]
+
+{ #category : 'private' }
+AvrATmega328P >> takeRegistersCount: anInteger excepts: aCollection [
+
+	^ (self latterHalfRegisters \ aCollection) copyFrom: 1 to: anInteger
+]
+
+{ #category : 'timer' }
+AvrATmega328P >> timerAddress: aLiteral registers: aCollection [
+
+	asm
+		pushAndUseRegisters: #( 2 ) , aCollection
+		during: [ :r :a :b :c :d |
 			asm inR: r address: io sreg.
-			self useRegisters: rs in: [ :a :b :c :d |
-				self milliSecondsGet: rs.
-				self addRegisters: rs byte: 1.
-				self milliSecondsPut: rs ].
-			asm out: io sreg r: r ] ]
+			self loadRegisters: aCollection address: aLiteral.
+			self addRegisters: aCollection byte: 1.
+			self storeAddress: aLiteral registers: aCollection.
+			asm out: io sreg r: r ]
 ]
 
 { #category : 'gpio' }
@@ -676,24 +640,24 @@ AvrATmega328P >> ubrrForBaud: anInteger [
 	^ (const fosc / 16 / anInteger) rounded - 1
 ]
 
-{ #category : 'private' }
+{ #category : 'api' }
 AvrATmega328P >> use: anInteger latterHalfRegistersIn: aBlock [
 
 	| registers |
 	registers := self availableLatterHalfRegisters: anInteger.
-	asm getRegisters: registers.
+	asm registerFrames allocateRegisters: registers.
 	aBlock value: registers.
-	asm releaseRegisters: registers
+	asm registerFrames freeRegisters: registers
 ]
 
-{ #category : 'private' }
+{ #category : 'api' }
 AvrATmega328P >> useLatterHalfRegisterIn: aBlock [
 
 	| registers |
 	registers := self availableLatterHalfRegisters: 1.
-	asm getRegisters: registers.
+	asm registerFrames allocateRegisters: registers.
 	aBlock cull: registers first.
-	asm releaseRegisters: registers
+	asm registerFrames freeRegisters: registers
 ]
 
 { #category : 'misc' }
@@ -701,7 +665,7 @@ AvrATmega328P >> wait8 [
 	"wait for approximately 40us"
 
 	| label |
-	self useRegisterIn: [ :r |
+	asm useRegisterIn: [ :r |
 		asm eorDest: r source: r.
 		label := self nextLabel.
 		asm label: label.

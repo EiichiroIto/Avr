@@ -50,7 +50,6 @@ AvrATmega328PTest >> testAddRegistersByte [
 
 	| obj program codes code |
 	obj := self newObj.
-	obj setupRegisterPool.
 	program := obj program.
 	obj addRegisters: #( 24 25 26 27 ) byte: 5.
 	self assert: program codes size equals: 8.
@@ -100,11 +99,12 @@ AvrATmega328PTest >> testAvailableLatterHalfRegisters [
 
 	| obj r |
 	obj := self newObj.
-	obj asm availableRegisters: #( 2 4 6 8 18 20 22 ) asOrderedCollection.
+	obj asm registerFrames reset.
+	obj asm registerFrames unusedRegisters: #( 2 4 6 8 18 20 22 ) asOrderedCollection.
 	r := obj availableLatterHalfRegisters: 2.
 	self assertCollection: r equals: #( 18 20 ) asOrderedCollection.
 	self
-		assertCollection: obj asm availableRegisters
+		assertCollection: obj asm registerFrames unusedRegisters
 		equals: #( 2 4 6 8 18 20 22 ) asOrderedCollection
 ]
 
@@ -113,11 +113,11 @@ AvrATmega328PTest >> testBoot [
 
 	| obj codes code |
 	obj := self newObj.
+	obj asm registerFrames unusedRegisters: #( 20 ) asOrderedCollection.
 	obj program address: 100.
-	obj asm availableRegisters: #( 20 ) asOrderedCollection.
 	obj ram setSize: 16r900.
 	obj boot.
-	codes := obj assembledCodes.
+	codes := obj asm assembledCodesFor: obj.
 	self assert: codes size equals: 6.
 	code := codes first.
 	self assert: code first equals: 100.
@@ -184,16 +184,16 @@ AvrATmega328PTest >> testChunkNamed [
 ]
 
 { #category : 'tests' }
-AvrATmega328PTest >> testClearCounter [
+AvrATmega328PTest >> testClearCounterAddress [
 
-	| obj codes code |
+	| obj codes code counter |
 	obj := self newObj.
+	obj asm registerFrames unusedRegisters: #( 5 ) asOrderedCollection.
 	obj program address: 100.
-	obj asm availableRegisters: #( 5 ) asOrderedCollection.
 	obj ram setSize: 16r900.
-	obj setupCounter.
-	obj clearCounter.
-	codes := obj assembledCodes.
+	counter := obj ram label: #counter address: 100.
+	obj clearCounterAddress: counter.
+	codes := obj asm assembledCodesFor: obj.
 	self assert: codes size equals: 5.
 	code := codes first.
 	self assert: code first equals: 100.
@@ -204,22 +204,22 @@ AvrATmega328PTest >> testClearCounter [
 	self assert: code first equals: 102.
 	self assert: code second mnemonic equals: #STS.
 	self assert: code second register equals: 5.
-	self assert: code second immediate equals: obj counter address.
+	self assert: code second immediate equals: 100.
 	code := codes third.
 	self assert: code first equals: 106.
 	self assert: code second mnemonic equals: #STS.
 	self assert: code second register equals: 5.
-	self assert: code second immediate equals: obj counter address + 1.
+	self assert: code second immediate equals: 101.
 	code := codes fourth.
 	self assert: code first equals: 110.
 	self assert: code second mnemonic equals: #STS.
 	self assert: code second register equals: 5.
-	self assert: code second immediate equals: obj counter address + 2.
+	self assert: code second immediate equals: 102.
 	code := codes fifth.
 	self assert: code first equals: 114.
 	self assert: code second mnemonic equals: #STS.
 	self assert: code second register equals: 5.
-	self assert: code second immediate equals: obj counter address + 3
+	self assert: code second immediate equals: 103
 ]
 
 { #category : 'tests' }
@@ -264,17 +264,6 @@ AvrATmega328PTest >> testConst [
 ]
 
 { #category : 'tests' }
-AvrATmega328PTest >> testCounter [
-
-	| obj c |
-	obj := self newObj.
-	self assert: obj counter isNil.
-	c := AvrLiteral new.
-	obj counter: c.
-	self assert: obj counter identicalTo: c
-]
-
-{ #category : 'tests' }
 AvrATmega328PTest >> testCpDestsSources [
 
 	| obj program code |
@@ -311,7 +300,7 @@ AvrATmega328PTest >> testDigitalPinMode [
 	obj := self newObj.
 	program := obj program.
 	obj digitalPin: 5 mode: 0.
-	codes := obj assembledCodes.
+	codes := obj asm assembledCodesFor: obj.
 	self assert: codes size equals: 2.
 	code := codes first.
 	self assert: code first equals: 0.
@@ -327,7 +316,7 @@ AvrATmega328PTest >> testDigitalPinMode [
 	obj := self newObj.
 	program := obj program.
 	obj digitalPin: 5 mode: 1.
-	codes := obj assembledCodes.
+	codes := obj asm assembledCodesFor: obj.
 	self assert: codes size equals: 2.
 	code := codes first.
 	self assert: code first equals: 0.
@@ -343,7 +332,7 @@ AvrATmega328PTest >> testDigitalPinMode [
 	obj := self newObj.
 	program := obj program.
 	obj digitalPin: 5 mode: 2.
-	codes := obj assembledCodes.
+	codes := obj asm assembledCodesFor: obj.
 	self assert: codes size equals: 2.
 	code := codes first.
 	self assert: code first equals: 0.
@@ -376,7 +365,7 @@ AvrATmega328PTest >> testDigitalReadInto [
 	program := obj program.
 	obj digitalRead: 9 into: 16.
 	self assert: program codes size equals: 2.
-	codes := obj assembledCodes.
+	codes := obj asm assembledCodesFor: obj.
 	code := codes first.
 	self assert: code first equals: 0.
 	self assert: code second mnemonic equals: #IN.
@@ -396,7 +385,7 @@ AvrATmega328PTest >> testDigitalWriteBoolean [
 	obj := self newObj.
 	program := obj program.
 	obj digitalWrite: 5 boolean: true.
-	codes := obj assembledCodes.
+	codes := obj asm assembledCodesFor: obj.
 	self assert: codes size equals: 1.
 	code := codes first.
 	self assert: code first equals: 0.
@@ -407,7 +396,7 @@ AvrATmega328PTest >> testDigitalWriteBoolean [
 	obj := self newObj.
 	program := obj program.
 	obj digitalWrite: 5 boolean: false.
-	codes := obj assembledCodes.
+	codes := obj asm assembledCodesFor: obj.
 	self assert: codes size equals: 1.
 	code := codes first.
 	self assert: code first equals: 0.
@@ -424,7 +413,7 @@ AvrATmega328PTest >> testDigitalWriteRegister [
 	program := obj program.
 	obj digitalWrite: 13 register: 4.
 	self assert: program codes size equals: 5.
-	codes := obj assembledCodes.
+	codes := obj asm assembledCodesFor: obj.
 	code := codes first.
 	self assert: code first equals: 0.
 	self assert: code second mnemonic equals: #AND.
@@ -461,7 +450,7 @@ AvrATmega328PTest >> testDoWhileEqual [
 	obj := self newObj.
 	obj program address: 100.
 	obj doWhileEqual: [ obj asm nop ].
-	codes := obj assembledCodes.
+	codes := obj asm assembledCodesFor: obj.
 	self assert: codes size equals: 2.
 	code := codes first.
 	self assert: code first equals: 100.
@@ -479,7 +468,7 @@ AvrATmega328PTest >> testDoWhileLessThan [
 	obj := self newObj.
 	obj program address: 100.
 	obj doWhileLessThan: [ obj asm nop ].
-	codes := obj assembledCodes.
+	codes := obj asm assembledCodesFor: obj.
 	self assert: codes size equals: 2.
 	code := codes first.
 	self assert: code first equals: 100.
@@ -497,7 +486,7 @@ AvrATmega328PTest >> testDoWhileNotEqual [
 	obj := self newObj.
 	obj program address: 100.
 	obj doWhileNotEqual: [ obj asm nop ].
-	codes := obj assembledCodes.
+	codes := obj asm assembledCodesFor: obj.
 	self assert: codes size equals: 2.
 	code := codes first.
 	self assert: code first equals: 100.
@@ -557,7 +546,7 @@ AvrATmega328PTest >> testIfEqual [
 	obj := self newObj.
 	obj program address: 100.
 	obj ifEqual: [ obj asm nop ].
-	codes := obj assembledCodes.
+	codes := obj asm assembledCodesFor: obj.
 	self assert: codes size equals: 2.
 	code := codes first.
 	self assert: code first equals: 100.
@@ -575,7 +564,7 @@ AvrATmega328PTest >> testIfEqualIfNotEqual [
 	obj := self newObj.
 	obj program address: 100.
 	obj ifEqual: [ obj asm sei ] ifNotEqual: [ obj asm cli ].
-	codes := obj assembledCodes.
+	codes := obj asm assembledCodesFor: obj.
 	self assert: codes size equals: 4.
 	code := codes first.
 	self assert: code first equals: 100.
@@ -600,7 +589,7 @@ AvrATmega328PTest >> testIfGreaterEqual [
 	obj := self newObj.
 	obj program address: 100.
 	obj ifGreaterEqual: [ obj asm nop ].
-	codes := obj assembledCodes.
+	codes := obj asm assembledCodesFor: obj.
 	self assert: codes size equals: 2.
 	code := codes first.
 	self assert: code first equals: 100.
@@ -618,7 +607,7 @@ AvrATmega328PTest >> testIfLessThan [
 	obj := self newObj.
 	obj program address: 100.
 	obj ifLessThan: [ obj asm nop ].
-	codes := obj assembledCodes.
+	codes := obj asm assembledCodesFor: obj.
 	self assert: codes size equals: 2.
 	code := codes first.
 	self assert: code first equals: 100.
@@ -636,11 +625,72 @@ AvrATmega328PTest >> testIfNotEqual [
 	obj := self newObj.
 	obj program address: 100.
 	obj ifNotEqual: [ obj asm nop ].
-	codes := obj assembledCodes.
+	codes := obj asm assembledCodesFor: obj.
 	self assert: codes size equals: 2.
 	code := codes first.
 	self assert: code first equals: 100.
 	self assert: code second mnemonic equals: #BREQ.
+	self assert: code second immediate equals: 1.
+	code := codes second.
+	self assert: code first equals: 102.
+	self assert: code second mnemonic equals: #NOP
+]
+
+{ #category : 'tests' }
+AvrATmega328PTest >> testIfNotZero [
+
+	| obj codes code |
+	obj := self newObj.
+	obj program address: 100.
+	obj ifNotZero: [ obj asm nop ].
+	codes := obj asm assembledCodesFor: obj.
+	self assert: codes size equals: 2.
+	code := codes first.
+	self assert: code first equals: 100.
+	self assert: code second mnemonic equals: #BREQ.
+	self assert: code second immediate equals: 1.
+	code := codes second.
+	self assert: code first equals: 102.
+	self assert: code second mnemonic equals: #NOP
+]
+
+{ #category : 'tests' }
+AvrATmega328PTest >> testIfNotZeroIfZero [
+
+	| obj codes code |
+	obj := self newObj.
+	obj program address: 100.
+	obj ifNotZero: [ obj asm sei ] ifZero: [ obj asm cli ].
+	codes := obj asm assembledCodesFor: obj.
+	self assert: codes size equals: 4.
+	code := codes first.
+	self assert: code first equals: 100.
+	self assert: code second mnemonic equals: #BRNE.
+	self assert: code second immediate equals: 2.
+	code := codes second.
+	self assert: code first equals: 102.
+	self assert: code second mnemonic equals: #CLI.
+	code := codes third.
+	self assert: code first equals: 104.
+	self assert: code second mnemonic equals: #RJMP.
+	self assert: code second immediate equals: 1.
+	code := codes fourth.
+	self assert: code first equals: 106.
+	self assert: code second mnemonic equals: #SEI
+]
+
+{ #category : 'tests' }
+AvrATmega328PTest >> testIfZero [
+
+	| obj codes code |
+	obj := self newObj.
+	obj program address: 100.
+	obj ifZero: [ obj asm nop ].
+	codes := obj asm assembledCodesFor: obj.
+	self assert: codes size equals: 2.
+	code := codes first.
+	self assert: code first equals: 100.
+	self assert: code second mnemonic equals: #BRNE.
 	self assert: code second immediate equals: 1.
 	code := codes second.
 	self assert: code first equals: 102.
@@ -656,17 +706,6 @@ AvrATmega328PTest >> testInitialize [
 	obj initialize.
 	self assert: obj digitalPins isArray.
 	self assert: obj digitalPins size equals: 14
-]
-
-{ #category : 'tests' }
-AvrATmega328PTest >> testLatterHalfRegistersExcepts [
-
-	| obj r |
-	obj := self newObj.
-	r := obj latterHalfRegisters: 3 excepts: nil.
-	self assertCollection: r equals: #( 16 17 18 ).
-	r := obj latterHalfRegisters: 3 excepts: #( 17 18 ).
-	self assertCollection: r equals: #( 16 19 20 )
 ]
 
 { #category : 'tests' }
@@ -706,7 +745,7 @@ AvrATmega328PTest >> testLoadRegistersImmediate [
 	obj := self newObj.
 	program := obj program.
 	obj loadRegisters: #( 24 25 30 31 ) immediate: 16r12345678.
-	codes := obj assembledCodes.
+	codes := obj asm assembledCodesFor: obj.
 	self assert: codes size equals: 4.
 	code := codes first.
 	self assert: code first equals: 0.
@@ -728,39 +767,6 @@ AvrATmega328PTest >> testLoadRegistersImmediate [
 	self assert: code second mnemonic equals: #LDI.
 	self assert: code second register equals: 31.
 	self assert: code second immediate equals: 16r12
-]
-
-{ #category : 'tests' }
-AvrATmega328PTest >> testMilliSecondsGet [
-
-	| obj codes code |
-	obj := self newObj.
-	obj program address: 100.
-	obj ram setSize: 16r900.
-	obj setupCounter.
-	obj milliSecondsGet: #( 3 4 5 6 ).
-	codes := obj assembledCodes.
-	self assert: codes size equals: 4.
-	code := codes first.
-	self assert: code first equals: 100.
-	self assert: code second mnemonic equals: #LDS.
-	self assert: code second register equals: 3.
-	self assert: code second immediate equals: obj counter address.
-	code := codes second.
-	self assert: code first equals: 104.
-	self assert: code second mnemonic equals: #LDS.
-	self assert: code second register equals: 4.
-	self assert: code second immediate equals: obj counter address + 1.
-	code := codes third.
-	self assert: code first equals: 108.
-	self assert: code second mnemonic equals: #LDS.
-	self assert: code second register equals: 5.
-	self assert: code second immediate equals: obj counter address + 2.
-	code := codes fourth.
-	self assert: code first equals: 112.
-	self assert: code second mnemonic equals: #LDS.
-	self assert: code second register equals: 6.
-	self assert: code second immediate equals: obj counter address + 3
 ]
 
 { #category : 'tests' }
@@ -786,10 +792,9 @@ AvrATmega328PTest >> testOutPortImmediate [
 
 	| obj codes code |
 	obj := self newObj.
-	obj setupRegisterPool.
 	obj program address: 120.
 	obj outPort: 12 immediate: 45.
-	codes := obj assembledCodes.
+	codes := obj asm assembledCodesFor: obj.
 	self assert: codes size equals: 2.
 	code := codes first.
 	self assert: code first equals: 120.
@@ -801,42 +806,6 @@ AvrATmega328PTest >> testOutPortImmediate [
 	self assert: code second mnemonic equals: #OUT.
 	self assert: code second register equals: 16.
 	self assert: code second immediate equals: 12
-]
-
-{ #category : 'tests' }
-AvrATmega328PTest >> testPushRegistersDuring [
-
-	| obj codes code |
-	obj := self newObj.
-	obj
-		setupRegisterPool;
-		useRegisters: #( 1 2 )
-		in: [ :r1 :r2 |
-			obj pushRegisters: #( 1 2 ) during: [ obj asm nop ] ].
-	codes := obj assembledCodes.
-	self assert: codes size equals: 5.
-	code := codes first.
-	self assert: code first equals: 0.
-	self assert: code second mnemonic equals: #PUSH.
-	self assert: code second register equals: 1.
-	code := codes second.
-	self assert: code first equals: 2.
-	self assert: code second mnemonic equals: #PUSH.
-	self assert: code second register equals: 2.
-	code := codes third.
-	self assert: code first equals: 4.
-	self assert: code second mnemonic equals: #NOP.
-	code := codes fourth.
-	self assert: code first equals: 6.
-	self assert: code second mnemonic equals: #POP.
-	self assert: code second register equals: 2.
-	code := codes fifth.
-	self assert: code first equals: 8.
-	self assert: code second mnemonic equals: #POP.
-	self assert: code second register equals: 1.
-	self
-		should: [ obj pushRegisters: #( 1 2 2 ) during: [  ] ]
-		raise: Error
 ]
 
 { #category : 'tests' }
@@ -855,16 +824,45 @@ AvrATmega328PTest >> testSetupDigitalPins [
 ]
 
 { #category : 'tests' }
-AvrATmega328PTest >> testSetupRegisterPool [
+AvrATmega328PTest >> testSetupTimer0 [
 
-	| obj |
+	| obj stream code |
 	obj := self newObj.
-	self assert: obj asm availableRegisters isEmpty.
-	obj setupRegisterPool.
-	self assert: obj asm availableRegisters isCollection.
-	self
-		assertCollection: obj asm availableRegisters
-		equals: (0 to: 31) asOrderedCollection
+	obj setupTimer0.
+	stream := ReadStream on: obj program codes.
+	code := stream next second.
+	self assert: code selector equals: #ldiR:data:.
+	self assert: code register equals: 16.
+	self assert: code immediate equals: 2r00000010.
+	code := stream next second.
+	self assert: code selector equals: #out:r:.
+	self assert: code register equals: 16.
+	self assert: code immediate value equals: 16r24.
+	code := stream next second.
+	self assert: code selector equals: #ldiR:data:.
+	self assert: code register equals: 16.
+	self assert: code immediate equals: 2r00000011.
+	code := stream next second.
+	self assert: code selector equals: #out:r:.
+	self assert: code register equals: 16.
+	self assert: code immediate value equals: 16r25.
+	code := stream next second.
+	self assert: code selector equals: #ldiR:data:.
+	self assert: code register equals: 16.
+	self assert: code immediate equals: 249.
+	code := stream next second.
+	self assert: code selector equals: #out:r:.
+	self assert: code register equals: 16.
+	self assert: code immediate value equals: 16r27.
+	code := stream next second.
+	self assert: code selector equals: #ldiR:data:.
+	self assert: code register equals: 16.
+	self assert: code immediate equals: 2r00000010.
+	code := stream next second.
+	self assert: code selector equals: #stsR:data:.
+	self assert: code register equals: 16.
+	self assert: code immediate value equals: 16r6E.
+	self assert: stream atEnd
 ]
 
 { #category : 'tests' }
@@ -888,7 +886,7 @@ AvrATmega328PTest >> testStoreAddressRegisters [
 	obj := self newObj.
 	program := obj program.
 	obj storeAddress: 16r0100 registers: #( 4 5 6 7 ).
-	codes := obj assembledCodes.
+	codes := obj asm assembledCodesFor: obj.
 	self assert: codes size equals: 4.
 	code := codes first.
 	self assert: code first equals: 0.
@@ -949,7 +947,7 @@ AvrATmega328PTest >> testTogglePin [
 	obj := self newObj.
 	program := obj program.
 	obj togglePin: 3.
-	codes := obj assembledCodes.
+	codes := obj asm assembledCodesFor: obj.
 	self assert: codes size equals: 1.
 	code := codes first.
 	self assert: code first equals: 0.
@@ -971,17 +969,16 @@ AvrATmega328PTest >> testUseLatterHalfRegisterIn [
 
 	| obj list |
 	obj := self newObj.
-	obj setupRegisterPool.
-	list := obj asm availableRegisters.
+	obj asm registerFrames reset.
+	obj asm registerFrames unusedRegisters: (0 to: 31) asOrderedCollection.
+	list := obj asm registerFrames unusedRegisters.
 	self assert: list size equals: 32.
 	obj useLatterHalfRegisterIn: [ :r |
 		self assert: r equals: 16.
 		self deny: (list includes: r).
 		obj useLatterHalfRegisterIn: [ :r2 | self assert: r2 equals: 17 ] ].
 	self assert: list size equals: 32.
-	self
-		should: [ obj useRegisterIn: [ :r | list add: r ] ]
-		raise: Error
+	self should: [ obj useRegisterIn: [ :r | list add: r ] ] raise: Error
 ]
 
 { #category : 'tests' }
@@ -989,8 +986,9 @@ AvrATmega328PTest >> testUseLatterHalfRegistersIn [
 
 	| obj list |
 	obj := self newObj.
-	obj setupRegisterPool.
-	list := obj asm availableRegisters.
+	obj asm registerFrames reset.
+	obj asm registerFrames unusedRegisters: (0 to: 31) asOrderedCollection.
+	list := obj asm registerFrames unusedRegisters.
 	self assert: list size equals: 32.
 	obj use: 4 latterHalfRegistersIn: [ :r |
 		self assertCollection: r equals: #( 16 17 18 19 ) asOrderedCollection.
@@ -1006,7 +1004,6 @@ AvrATmega328PTest >> testWait8 [
 
 	| obj program code |
 	obj := self newObj.
-	obj setupRegisterPool.
 	program := obj program.
 	obj wait8.
 	self assert: program codes size equals: 3.

@@ -1,6 +1,9 @@
 Class {
 	#name : 'AvrArduinoNanoBlink',
 	#superclass : 'AvrATmega328P',
+	#instVars : [
+		'timer0Counter'
+	],
 	#category : 'Avr-Arduino',
 	#package : 'Avr',
 	#tag : 'Arduino'
@@ -10,14 +13,16 @@ Class {
 AvrArduinoNanoBlink >> all [
 
 	ram setSize: const ramSize.
-	self setupRegisterPool.
+	timer0Counter := ram
+		                 label: #counter
+		                 address: self defaultCounterAddress.
+	asm setupRegisterFrames.
 	self setupVectors.
 	asm label: #boot.
 	self
 		boot;
-		setupCounter;
-		clearCounter;
-		setupTimer0.
+		setupTimer0;
+		clearCounterAddress: timer0Counter.
 	asm sei.
 	asm rjmp: #setup.
 	self intHandlerNamed: #noInterrupt.
@@ -27,13 +32,19 @@ AvrArduinoNanoBlink >> all [
 	self forever: [ self loop ]
 ]
 
+{ #category : 'defaults' }
+AvrArduinoNanoBlink >> defaultCounterAddress [
+
+	^ 16r0100
+]
+
 { #category : 'programs' }
 AvrArduinoNanoBlink >> loop [
 
 	self togglePin: 13.
 	self use: 4 latterHalfRegistersIn: [ :rs |
 		self loadRegisters: rs immediate: 1000.
-		self delay: rs ]
+		self delay: rs address: timer0Counter ]
 ]
 
 { #category : 'programs' }
@@ -71,4 +82,10 @@ AvrArduinoNanoBlink >> setupVectors [
 	asm jmp: #noInterrupt.
 	asm jmp: #noInterrupt.
 	asm jmp: #noInterrupt
+]
+
+{ #category : 'timer' }
+AvrArduinoNanoBlink >> timer0compa [
+
+	self timerAddress: timer0Counter registers: #( 16 17 18 19 )
 ]

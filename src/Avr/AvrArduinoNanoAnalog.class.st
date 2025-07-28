@@ -1,6 +1,9 @@
 Class {
 	#name : 'AvrArduinoNanoAnalog',
 	#superclass : 'AvrATmega328P',
+	#instVars : [
+		'timer0Counter'
+	],
 	#category : 'Avr-Arduino',
 	#package : 'Avr',
 	#tag : 'Arduino'
@@ -10,14 +13,16 @@ Class {
 AvrArduinoNanoAnalog >> all [
 
 	ram setSize: const ramSize.
-	self setupRegisterPool.
+	timer0Counter := ram
+		                 label: #counter
+		                 address: self defaultCounterAddress.
+	asm setupRegisterFrames.
 	self setupVectors.
 	asm label: #boot.
 	self
 		boot;
-		setupCounter;
-		clearCounter;
 		setupTimer0;
+		clearCounterAddress: timer0Counter;
 		setupSerial0Baud: 9600;
 		setupAnalog.
 	asm sei.
@@ -30,10 +35,16 @@ AvrArduinoNanoAnalog >> all [
 	self setupSubroutines
 ]
 
+{ #category : 'defaults' }
+AvrArduinoNanoAnalog >> defaultCounterAddress [
+
+	^ 16r0100
+]
+
 { #category : 'programs' }
 AvrArduinoNanoAnalog >> loop [
 
-	self useRegister: 16 in: [ :r16 |
+	asm useRegister: 16 in: [ :r16 |
 		self use: 2 latterHalfRegistersIn: [ :rs2 |
 			self analogRead: 7 into: rs2.
 			asm movDest: r16 source: rs2 second.
@@ -44,42 +55,43 @@ AvrArduinoNanoAnalog >> loop [
 	self togglePin: 13.
 	self use: 4 latterHalfRegistersIn: [ :rs2 |
 		self loadRegisters: rs2 immediate: 1000.
-		self delay: rs2 ]
+		self delay: rs2 address: timer0Counter ]
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'serials' }
 AvrArduinoNanoAnalog >> serialPrintHexR16 [
 
-	self useInputs: #( 16 ) outputs: nil in: [ :r16 |
-		asm swap: r16.
-		asm callSubroutine: #serialPrintNibbleHexR16.
-		asm swap: r16.
-		asm callSubroutine: #serialPrintNibbleHexR16 ]
+	asm useInputs: #( 16 ) outputs: nil in: [ :r16 |
+		asm pushAndUseRegisters: { 16 } during: [
+			asm swap: r16.
+			asm callSubroutine: #serialPrintNibbleHexR16.
+			asm swap: r16.
+			asm callSubroutine: #serialPrintNibbleHexR16 ] ]
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'serials' }
 AvrArduinoNanoAnalog >> serialPrintLf [
 
-	self pushAndUseRegisters: #( 16 ) during: [ :r16 |
+	asm pushAndUseRegisters: #( 16 ) during: [ :r16 |
 		asm ldiR: r16 data: 13.
 		asm callSubroutine: #serialSendR16.
 		asm ldiR: r16 data: 10.
 		asm callSubroutine: #serialSendR16 ]
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'serials' }
 AvrArduinoNanoAnalog >> serialPrintNibbleHexR16 [
 
-	self useInputs: #( 16 ) outputs: nil in: [ :r16 |
-		self pushRegisters: #( 16 ) during: [
+	asm useInputs: #( 16 ) outputs: nil in: [ :r16 |
+		asm pushRegisters: #( 16 ) during: [
 			self nibble2HexDigitRegister: r16.
 			asm callSubroutine: #serialSendR16 ] ]
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'serials' }
 AvrArduinoNanoAnalog >> serialSendR16 [
 
-	self
+	asm
 		useInputs: #( 16 )
 		outputs: nil
 		in: [ :r16 | self serial0SendRegister: r16 ]
@@ -91,15 +103,15 @@ AvrArduinoNanoAnalog >> setup [
 	self digitalPin: 13 mode: 1.
 	self use: 4 latterHalfRegistersIn: [ :rs2 |
 		self loadRegisters: rs2 immediate: 1000.
-		self delay: rs2 ].
+		self delay: rs2 address: timer0Counter ].
 	0 to: 15 do: [ :each |
-		self useRegister: 16 in: [ :r |
+		asm useRegister: 16 in: [ :r |
 			asm ldiR: r data: each.
 			asm callSubroutine: #serialPrintHexR16 ] ].
 	asm callSubroutine: #serialPrintLf
 ]
 
-{ #category : 'as yet unclassified' }
+{ #category : 'serials' }
 AvrArduinoNanoAnalog >> setupSubroutines [
 
 	self subroutineNamed: #serialPrintHexR16.
@@ -137,4 +149,10 @@ AvrArduinoNanoAnalog >> setupVectors [
 	asm jmp: #noInterrupt.
 	asm jmp: #noInterrupt.
 	asm jmp: #noInterrupt
+]
+
+{ #category : 'timer' }
+AvrArduinoNanoAnalog >> timer0compa [
+
+	self timerAddress: timer0Counter registers: #( 16 17 18 19 )
 ]

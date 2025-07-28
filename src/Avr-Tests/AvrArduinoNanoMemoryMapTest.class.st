@@ -81,6 +81,17 @@ AvrArduinoNanoMemoryMapTest >> testRamEnd [
 ]
 
 { #category : 'tests' }
+AvrArduinoNanoMemoryMapTest >> testRamTop [
+
+	| mmap obj |
+	mmap := self newObj.
+	mmap setSize: 16r900.
+	obj := mmap ramTop.
+	self assert: obj label equals: #ramTop.
+	self assert: obj address equals: 16r100
+]
+
+{ #category : 'tests' }
 AvrArduinoNanoMemoryMapTest >> testTimsk0 [
 
 	| obj |

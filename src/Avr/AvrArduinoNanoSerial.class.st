@@ -10,7 +10,7 @@ Class {
 AvrArduinoNanoSerial >> all [
 
 	ram setSize: const ramSize.
-	self setupRegisterPool.
+	asm setupRegisterFrames.
 	self setupVectors.
 	asm label: #boot.
 	self

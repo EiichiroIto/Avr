@@ -69,6 +69,12 @@ AvrProgram >> labelAddressPut: anInteger [
 ]
 
 { #category : 'accessing' }
+AvrProgram >> labelNameAt: aSymbol [
+
+	^ labeler labelNameAt: aSymbol
+]
+
+{ #category : 'accessing' }
 AvrProgram >> labeler [
 
 	^ labeler

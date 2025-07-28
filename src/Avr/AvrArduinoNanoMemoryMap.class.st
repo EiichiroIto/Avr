@@ -45,7 +45,13 @@ AvrArduinoNanoMemoryMap >> prr [
 { #category : 'instance creation' }
 AvrArduinoNanoMemoryMap >> ramEnd [
 
-	^ self label: #ramEnd address: 16r8FF
+	^ self label: #ramEnd address: 16r08FF
+]
+
+{ #category : 'instance creation' }
+AvrArduinoNanoMemoryMap >> ramTop [
+
+	^ self label: #ramTop address: 16r0100
 ]
 
 { #category : 'instance creation' }
